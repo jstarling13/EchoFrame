@@ -1,0 +1,311 @@
+<!-- JACOB: Review all sections before launch. If you add any new data collection tools (forms, payment processors, email platforms) update this page to reflect them. Consider having an attorney review before you process any paid subscriptions. -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy — EchoFrame</title>
+  <meta name="description" content="EchoFrame's privacy policy. Plain English, like everything else we do.">
+  <meta name="robots" content="index, follow">
+  <style>
+    :root {
+      --navy: #0A274F;
+      --amber: #C9973D;
+      --amber-soft: #FDF3E3;
+      --ink: #111827;
+      --ink-soft: #4B5563;
+      --ink-faint: #6B7280;
+      --line: #E5E7EB;
+      --bg: #FFFFFF;
+      --bg-soft: #F9FAFB;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: var(--ink); }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    .nav { padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--navy); font-size: 22px; letter-spacing: -0.015em; text-decoration: none; }
+    .brand:hover { text-decoration: none; }
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      background: var(--navy);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .brand-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .nav a.btn-link { font-size: 15px; color: var(--navy); font-weight: 500; }
+
+    /* Back link */
+    .back-link {
+      display: block;
+      padding: 14px 0 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--amber);
+      letter-spacing: 0.02em;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Hero */
+    .hero {
+      padding: 64px 0 56px;
+      border-bottom: 1px solid var(--line);
+    }
+    .section-eyebrow {
+      color: var(--amber);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: block;
+    }
+    .hero h1 {
+      font-size: 48px;
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+      color: var(--navy);
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .hero-sub {
+      font-size: 19px;
+      color: var(--ink-soft);
+      margin-bottom: 10px;
+    }
+    .hero-date {
+      font-size: 13px;
+      color: var(--ink-faint);
+      font-style: italic;
+    }
+
+    /* Sections */
+    .policy-section {
+      padding: 56px 0;
+      border-bottom: 1px solid var(--line);
+      max-width: 760px;
+    }
+    .policy-section h2 {
+      font-size: 26px;
+      color: var(--navy);
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    .policy-body {
+      color: var(--ink-soft);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    .policy-body p { margin-bottom: 16px; }
+    .policy-body p:last-child { margin-bottom: 0; }
+    .policy-body ul {
+      margin: 16px 0 16px 0;
+      padding-left: 0;
+      list-style: none;
+    }
+    .policy-body ul li {
+      padding: 10px 0 10px 20px;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+      color: var(--ink-soft);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .policy-body ul li:first-child { border-top: 1px solid var(--line); }
+    .policy-body ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      background: var(--amber);
+      border-radius: 50%;
+    }
+    .contact-block {
+      margin-top: 20px;
+      padding: 24px 28px;
+      background: var(--bg-soft);
+      border-left: 3px solid var(--amber);
+      border-radius: 0 8px 8px 0;
+      font-size: 15px;
+      color: var(--ink-soft);
+      line-height: 1.8;
+    }
+    .contact-block strong { color: var(--navy); }
+
+    /* Footer */
+    footer {
+      padding: 36px 0;
+      border-top: 1px solid var(--line);
+      font-size: 12px;
+      color: #888888;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .footer-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .footer-links a { color: #888888; }
+    .footer-links a:hover { color: var(--amber); }
+
+    /* Mobile */
+    @media (max-width: 760px) {
+      .hero h1 { font-size: 32px; }
+      .hero { padding: 40px 0 36px; }
+      .policy-section { padding: 40px 0; }
+      .policy-section h2 { font-size: 22px; }
+      .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="echoframe_logo.png" alt="EchoFrame logo" /></span>
+        EchoFrame
+      </a>
+      <a class="btn-link" href="mailto:hello@echoframe.co">hello@echoframe.co</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a class="back-link" href="index.html">← Back to home</a>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <span class="section-eyebrow">Legal</span>
+      <h1>Privacy Policy</h1>
+      <p class="hero-sub">Plain English, like everything else we do.</p>
+      <p class="hero-date">Last updated: May 2026</p>
+    </div>
+  </section>
+
+  <!-- Section 1 -->
+  <div class="container">
+    <div class="policy-section">
+      <span class="section-eyebrow">What we collect</span>
+      <h2>The information you share with us.</h2>
+      <div class="policy-body">
+        <p>When you sign up for a free sample report or become a subscriber, we collect the following:</p>
+        <ul>
+          <li><strong>Your name and email address</strong> — so we can send you your report and communicate with you about your account.</li>
+          <li><strong>Your business financial data</strong> — specifically the P&amp;L statements and supporting documents you choose to send us. We never request or require direct access to your accounting software, bank accounts, or any third-party system. You send us what you want us to see.</li>
+          <li><strong>Basic usage information</strong> — standard analytics data about how you interact with this website (pages visited, time on site). This is collected automatically and does not identify you personally.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="policy-section">
+      <span class="section-eyebrow">How we use it</span>
+      <h2>What we do with your information.</h2>
+      <div class="policy-body">
+        <p>We use your information for one purpose: to produce your monthly Clarity Report and communicate with you about it.</p>
+        <p>Specifically:</p>
+        <ul>
+          <li><strong>Your financial data</strong> is used only to generate your report and the benchmarks and recommendations inside it. It is never sold, shared with third parties, or used for any purpose other than producing your report.</li>
+          <li><strong>Your email address</strong> is used to deliver your report and send occasional service-related updates. We do not send marketing emails to non-subscribers without your consent.</li>
+          <li><strong>Your name</strong> is used to personalize your report. That's it.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="policy-section">
+      <span class="section-eyebrow">Who sees your data</span>
+      <h2>Your financials stay with us.</h2>
+      <div class="policy-body">
+        <p>Your financial data is reviewed only by EchoFrame analysts involved in producing your report. We do not share your financial information with any third party, advertiser, partner, or outside service.</p>
+        <p>The only exception: if we are required to disclose information by law or valid legal process, we will comply with that requirement and notify you where legally permitted to do so.</p>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="policy-section">
+      <span class="section-eyebrow">How we store it</span>
+      <h2>How your data is kept.</h2>
+      <div class="policy-body">
+        <p>Your financial documents are stored securely and are retained only as long as needed to produce your reports and maintain your account history. If you cancel your subscription and request deletion of your data, we will permanently delete your financial documents within 30 days.</p>
+        <p>We use industry-standard security practices to protect your information. No system is 100% secure, and we cannot guarantee absolute security — but we take this seriously and treat your financial data with the same care we would want applied to our own.</p>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="policy-section">
+      <span class="section-eyebrow">Your rights</span>
+      <h2>You're in control.</h2>
+      <div class="policy-body">
+        <ul>
+          <li>You can request a copy of the data we hold about you at any time.</li>
+          <li>You can request deletion of your data at any time.</li>
+          <li>You can unsubscribe from communications at any time.</li>
+          <li>You can cancel your subscription at any time with no penalty.</li>
+        </ul>
+        <p style="margin-top:20px;">To exercise any of these rights, email us at <a href="mailto:hello@echoframe.co">hello@echoframe.co</a> and we will respond within 5 business days.</p>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="policy-section">
+      <span class="section-eyebrow">Cookies</span>
+      <h2>We use minimal tracking.</h2>
+      <div class="policy-body">
+        <p>This website uses basic analytics cookies to understand how visitors interact with the page. We do not use advertising cookies, retargeting pixels, or any tracking technology that follows you across other websites.</p>
+        <p>You can disable cookies in your browser settings at any time. This will not affect your ability to use any EchoFrame service.</p>
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <div class="policy-section" style="border-bottom: none;">
+      <span class="section-eyebrow">Contact</span>
+      <h2>Questions about your privacy?</h2>
+      <div class="policy-body">
+        <p>Email us at <a href="mailto:hello@echoframe.co">hello@echoframe.co</a>. We will respond within one business day.</p>
+        <div class="contact-block">
+          <strong>EchoFrame</strong><br>
+          Columbus, Georgia<br>
+          <a href="mailto:hello@echoframe.co">hello@echoframe.co</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>&copy; 2026 EchoFrame &mdash; Plain English Financial Reports for Columbus Small Business Owners</div>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="mailto:hello@echoframe.co">hello@echoframe.co</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
