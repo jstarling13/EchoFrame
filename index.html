@@ -327,11 +327,11 @@
       letter-spacing: 0.02em;
     }
     .product:hover { border-color: var(--amber); transform: translateY(-2px); }
-    .product-name { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .product-name { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; text-align: center; }
     .product-price { font-size: 28px; font-weight: 700; color: var(--amber); margin-bottom: 6px; letter-spacing: -0.01em; }
     .product-price .unit { font-size: 14px; font-weight: 500; color: var(--ink-soft); }
     .product-tag { color: var(--ink-faint); font-size: 13px; margin-bottom: 14px; }
-    .product-desc { font-size: 15px; color: var(--ink-soft); line-height: 1.55; flex: 1; }
+    .product-desc { font-size: 15px; color: var(--ink-soft); line-height: 1.55; flex: 1; text-align: justify; }
 
     /* FAQ */
     .faq-list { max-width: 760px; margin-top: 40px; }
@@ -712,36 +712,6 @@
     </div>
   </section>
 
-  <!-- Task 14: FAQ -->
-  <section class="section">
-    <div class="container">
-      <span class="section-eyebrow">Common questions</span>
-      <h2 class="section-title">What owners ask before signing up.</h2>
-      <div class="faq-list">
-        <details class="faq-item">
-          <summary>Do I have to share my QuickBooks login?</summary>
-          <p class="faq-answer">No. You send us your monthly P&amp;L and any supporting detail you want included. We never need direct system access.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Is this just an AI-generated report?</summary>
-          <p class="faq-answer">No. AI assists with the math and benchmarking. A senior analyst who knows the Columbus market reviews and signs off on the One Thing before every report goes out.</p>
-        </details>
-        <details class="faq-item">
-          <summary>My accountant already sends me a P&amp;L. Why do I need this?</summary>
-          <p class="faq-answer">Your accountant tells you what happened so the IRS is satisfied. We tell you what to do about it next week. Different job.</p>
-        </details>
-        <details class="faq-item">
-          <summary>How do you know what the Columbus benchmarks are?</summary>
-          <p class="faq-answer">We track local market data across food cost, labor, rent, and category-specific line items for Columbus and the Chattahoochee Valley. Your numbers are compared to what similar businesses in your actual market are running — not national averages.</p>
-        </details>
-        <details class="faq-item">
-          <summary>What if the first report doesn't find anything useful?</summary>
-          <p class="faq-answer">Then you don't pay for it. The free sample is genuinely free with no commitment required.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
   <!-- Tasks 10 & 15: Founder Note (replaces testimonials) -->
   <section class="section alt">
     <div class="container">
@@ -785,6 +755,36 @@
       <p>The bucket keeps leaking until you find the holes. The leaks keep growing until somebody names them.</p>
       <span class="final-subhead">See your actual leaks — for free, this week.</span>
       <a class="cta" href="#" onclick="openModal(); return false;">Send me a free sample report</a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container">
+      <span class="section-eyebrow">Common questions</span>
+      <h2 class="section-title">What owners ask before signing up.</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Do I have to share my QuickBooks login?</summary>
+          <p class="faq-answer">No. You send us your monthly P&amp;L and any supporting detail you want included. We never need direct system access.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is this just an AI-generated report?</summary>
+          <p class="faq-answer">No. AI assists with the math and benchmarking. A senior analyst who knows the Columbus market reviews and signs off on the One Thing before every report goes out.</p>
+        </details>
+        <details class="faq-item">
+          <summary>My accountant already sends me a P&amp;L. Why do I need this?</summary>
+          <p class="faq-answer">Your accountant tells you what happened so the IRS is satisfied. We tell you what to do about it next week. Different job.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How do you know what the Columbus benchmarks are?</summary>
+          <p class="faq-answer">We track local market data across food cost, labor, rent, and category-specific line items for Columbus and the Chattahoochee Valley. Your numbers are compared to what similar businesses in your actual market are running — not national averages.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What if the first report doesn't find anything useful?</summary>
+          <p class="faq-answer">Then you don't pay for it. The free sample is genuinely free with no commitment required.</p>
+        </details>
+      </div>
     </div>
   </section>
 
