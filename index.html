@@ -4,28 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>EchoFrame — Plain English Financial Reports for Columbus Small Businesses</title>
-  <meta name="description" content="A 5 minute monthly report that tells Columbus business owners exactly where the money is leaking and the one thing to fix this month. $150/month.">
+  <meta name="description" content="A 5-minute monthly report that tells Columbus business owners exactly where the money is leaking and the one thing to fix this month. $150/month.">
 
-  <!-- SEO -->
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://echoframe.co/"><!-- UPDATE with your real domain -->
+  <link rel="canonical" href="https://echoframe.co/">
 
-  <!-- Open Graph (Facebook, LinkedIn, iMessage, Slack) -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://echoframe.co/"><!-- UPDATE -->
+  <meta property="og:url" content="https://echoframe.co/">
   <meta property="og:site_name" content="EchoFrame">
   <meta property="og:locale" content="en_US">
   <meta property="og:title" content="EchoFrame — Plain English Financial Reports for Columbus Small Businesses">
-  <meta property="og:description" content="A 5 minute monthly report that tells Columbus business owners exactly where the money is leaking and the one thing to fix this month. $150/month.">
+  <meta property="og:description" content="A 5-minute monthly report that tells Columbus business owners exactly where the money is leaking and the one thing to fix this month. $150/month.">
   <meta property="og:image" content="image_9316a9.png">
   <meta property="og:image:alt" content="EchoFrame — Plain English Financial Reports">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
 
-  <!-- Twitter / X Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="EchoFrame — Plain English Financial Reports for Columbus Small Businesses">
-  <meta name="twitter:description" content="A 5 minute monthly report that tells Columbus business owners exactly where the money is leaking and the one thing to fix this month. $150/month.">
+  <meta name="twitter:description" content="A 5-minute monthly report that tells Columbus business owners exactly where the money is leaking and the one thing to fix this month. $150/month.">
   <meta name="twitter:image" content="image_9316a9.png">
   <meta name="twitter:image:alt" content="EchoFrame — Plain English Financial Reports">
   <style>
@@ -136,7 +133,6 @@
       font-weight: 500;
       font-size: 16px;
       padding: 16px 8px;
-      margin-left: 14px;
     }
     .hero-ctas {
       display: flex;
@@ -146,7 +142,6 @@
       flex-wrap: wrap;
       margin-bottom: 4px;
     }
-    .hero-ctas .cta-secondary { margin-left: 0; }
     .cta-note {
       display: block;
       margin-top: 14px;
@@ -183,7 +178,7 @@
       margin-bottom: 48px;
     }
 
-    /* 3 column problem / evidence cards */
+    /* Problem / evidence cards */
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -218,17 +213,17 @@
       line-height: 1.6;
     }
 
-    /* The bucket / pain box */
+    /* Honest version / pain box */
     .pain-box {
       margin-top: 48px;
       padding: 32px 36px;
-      background: var(--navy);
-      border-radius: 14px;
-      color: white;
+      background: rgba(10, 39, 79, 0.05);
+      border-left: 4px solid var(--amber);
+      border-radius: 0 14px 14px 0;
       text-align: center;
     }
     .pain-eyebrow {
-      color: #FBBF24;
+      color: var(--amber);
       font-weight: 600;
       font-size: 13px;
       letter-spacing: 0.08em;
@@ -237,13 +232,16 @@
       display: block;
     }
     .pain-text {
-      font-size: 22px;
-      line-height: 1.4;
+      font-size: 18px;
+      line-height: 1.5;
       font-weight: 500;
+      font-style: italic;
       max-width: 820px;
+      margin: 0 auto;
+      color: var(--ink);
     }
     .pain-text em {
-      color: #FBBF24;
+      color: var(--amber);
       font-style: normal;
       font-weight: 700;
     }
@@ -273,23 +271,17 @@
       margin-top: 2px;
       white-space: nowrap;
     }
-    .hitl-text {
-      color: var(--ink);
-      font-size: 16px;
-      line-height: 1.55;
-    }
+    .hitl-text { color: var(--ink); font-size: 16px; line-height: 1.55; }
     .hitl-text strong { color: var(--navy); }
 
-    /* Evidence stat */
+    /* Stats */
     .stat-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
-      margin-top: 32px;
+      margin-top: 16px;
     }
-    .stat {
-      text-align: left;
-    }
+    .stat { text-align: left; }
     .stat-num {
       font-size: 44px;
       font-weight: 700;
@@ -298,11 +290,8 @@
       line-height: 1;
       margin-bottom: 10px;
     }
-    .stat-label {
-      color: var(--ink-soft);
-      font-size: 15px;
-      line-height: 1.4;
-    }
+    .stat-label { color: var(--ink-soft); font-size: 15px; line-height: 1.4; }
+    .stat-source { font-size: 11px; color: #888888; font-style: italic; margin-top: 6px; }
 
     /* Products */
     .product-grid {
@@ -332,64 +321,78 @@
       letter-spacing: 0.02em;
     }
     .product:hover { border-color: var(--amber); transform: translateY(-2px); }
-    .product-name {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 8px;
-    }
-    .product-price {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--amber);
-      margin-bottom: 6px;
-      letter-spacing: -0.01em;
-    }
-    .product-price .unit {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--ink-soft);
-    }
-    .product-tag {
-      color: var(--ink-faint);
-      font-size: 13px;
-      margin-bottom: 14px;
-    }
-    .product-desc {
-      font-size: 15px;
-      color: var(--ink-soft);
-      line-height: 1.55;
-    }
+    .product-name { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .product-price { font-size: 28px; font-weight: 700; color: var(--amber); margin-bottom: 6px; letter-spacing: -0.01em; }
+    .product-price .unit { font-size: 14px; font-weight: 500; color: var(--ink-soft); }
+    .product-tag { color: var(--ink-faint); font-size: 13px; margin-bottom: 14px; }
+    .product-desc { font-size: 15px; color: var(--ink-soft); line-height: 1.55; }
 
-    /* Quotes */
-    .quote-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-    .quote {
-      background: white;
-      padding: 28px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-    }
-    .quote-mark {
+    /* FAQ */
+    .faq-list { max-width: 760px; margin-top: 40px; }
+    .faq-item { border-bottom: 1px solid var(--line); }
+    .faq-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 20px 0;
+      font-weight: 600;
       color: var(--amber);
-      font-size: 36px;
-      line-height: 1;
-      font-weight: 700;
-      margin-bottom: 6px;
+      font-size: 17px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
     }
-    .quote-text {
-      color: var(--ink);
-      font-size: 16px;
-      line-height: 1.55;
-      margin-bottom: 16px;
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after { content: '+'; font-size: 22px; color: var(--amber); flex-shrink: 0; font-weight: 400; }
+    .faq-item[open] summary::after { content: '\2212'; }
+    .faq-answer { padding: 0 0 20px; color: var(--ink-soft); font-size: 16px; line-height: 1.6; }
+
+    /* Founder section */
+    .founder-inner {
+      display: flex;
+      gap: 48px;
+      align-items: center;
+      padding: 40px 44px;
+      background: rgba(10, 39, 79, 0.05);
+      border-left: 4px solid var(--amber);
+      border-radius: 0 14px 14px 0;
     }
-    .quote-attr {
+    .founder-photo-block { flex-shrink: 0; width: 180px; text-align: center; }
+    .founder-img {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: #D1D5DB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      color: #9CA3AF;
       font-size: 13px;
-      color: var(--ink-faint);
-      font-weight: 500;
+      overflow: hidden;
+    }
+    .founder-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .founder-name { font-weight: 700; font-size: 16px; color: var(--navy); margin-bottom: 4px; }
+    .founder-role { font-size: 12px; color: var(--amber); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .founder-creds { font-size: 12px; color: #888888; font-style: italic; line-height: 1.5; }
+    .founder-copy { flex: 1; }
+    .founder-copy p { color: var(--ink-soft); font-size: 17px; line-height: 1.65; }
+
+    /* Sample report placeholder */
+    .sample-placeholder {
+      background: #E5E7EB;
+      border-radius: 8px;
+      max-width: 360px;
+      margin: 32px auto;
+      aspect-ratio: 8.5 / 11;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9CA3AF;
+      font-size: 14px;
+      font-style: italic;
+      text-align: center;
+      padding: 24px;
     }
 
     /* Final */
@@ -418,13 +421,12 @@
       margin-right: auto;
       line-height: 1.55;
     }
-    .final .ask {
-      color: #FBBF24;
-      font-style: italic;
-      font-weight: 500;
-      max-width: 700px;
-      margin: 0 auto 38px;
-      font-size: 18px;
+    .final-subhead {
+      color: white;
+      font-weight: 700;
+      font-size: 24px;
+      margin-bottom: 32px;
+      display: block;
     }
     .final .cta { background: var(--amber); }
     .final .cta:hover { background: #A67C2E; }
@@ -433,15 +435,19 @@
     footer {
       padding: 36px 0;
       border-top: 1px solid var(--line);
-      font-size: 14px;
-      color: var(--ink-faint);
+      font-size: 12px;
+      color: #888888;
     }
     .footer-inner {
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 12px;
+      align-items: center;
     }
+    .footer-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .footer-links a { color: #888888; }
+    .footer-links a:hover { color: var(--amber); }
 
     /* Mobile */
     @media (max-width: 760px) {
@@ -449,7 +455,6 @@
       .sub { font-size: 17px; }
       .grid-3 { grid-template-columns: 1fr; gap: 14px; }
       .product-grid { grid-template-columns: 1fr; gap: 14px; }
-      .quote-grid { grid-template-columns: 1fr; gap: 14px; }
       .stat-row { grid-template-columns: 1fr; gap: 28px; }
       .hero { padding: 56px 0 40px; }
       .section { padding: 56px 0; }
@@ -457,21 +462,25 @@
       .final { padding: 72px 0; }
       .final h2 { font-size: 26px; }
       .final p { font-size: 16px; }
-      .final .ask { font-size: 16px; }
+      .final-subhead { font-size: 20px; }
       .section-title { font-size: 26px; }
       .pain-box { padding: 24px 20px; }
-      .pain-text { font-size: 18px; }
+      .pain-text { font-size: 16px; }
       .stat-num { font-size: 36px; }
       .hitl { flex-direction: column; gap: 12px; padding: 18px 20px; }
       .hitl-badge { align-self: flex-start; }
       .card { padding: 24px 20px; }
-      .quote { padding: 22px 20px; }
       .product { padding: 24px 20px; }
       .no-q { font-size: 16px; padding: 16px 18px; }
       .cta-secondary { display: block; margin: 16px 0 0; }
       .product.anchor:before { left: 20px; }
-      .footer-inner { flex-direction: column; gap: 8px; }
+      .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+      .footer-links { justify-content: center; }
+      .founder-inner { flex-direction: column; gap: 24px; text-align: center; padding: 28px 24px; }
+      .founder-photo-block { width: 120px; }
+      .founder-img { width: 120px; height: 120px; }
     }
+
     /* Modal */
     .modal-overlay {
       display: none;
@@ -507,36 +516,11 @@
       padding: 4px 8px;
     }
     .modal-close:hover { color: var(--ink); }
-    .modal-eyebrow {
-      color: var(--amber);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-    .modal h3 {
-      font-size: 26px;
-      color: var(--navy);
-      font-weight: 700;
-      letter-spacing: -0.015em;
-      line-height: 1.2;
-      margin-bottom: 8px;
-    }
-    .modal-sub {
-      color: var(--ink-soft);
-      font-size: 15px;
-      margin-bottom: 28px;
-      line-height: 1.5;
-    }
+    .modal-eyebrow { color: var(--amber); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+    .modal h3 { font-size: 26px; color: var(--navy); font-weight: 700; letter-spacing: -0.015em; line-height: 1.2; margin-bottom: 8px; }
+    .modal-sub { color: var(--ink-soft); font-size: 15px; margin-bottom: 28px; line-height: 1.5; }
     .form-field { margin-bottom: 16px; }
-    .form-field label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 6px;
-    }
+    .form-field label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
     .form-field input {
       width: 100%;
       padding: 11px 14px;
@@ -547,11 +531,7 @@
       font-family: inherit;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
-    .form-field input:focus {
-      outline: none;
-      border-color: var(--amber);
-      box-shadow: 0 0 0 3px var(--amber-soft);
-    }
+    .form-field input:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-soft); }
     .modal-submit {
       display: block;
       width: 100%;
@@ -568,12 +548,7 @@
       transition: background 0.15s ease;
     }
     .modal-submit:hover { background: #A67C2E; }
-    .modal-note {
-      text-align: center;
-      font-size: 13px;
-      color: var(--ink-faint);
-      margin-top: 12px;
-    }
+    .modal-note { text-align: center; font-size: 13px; color: var(--ink-faint); margin-top: 12px; }
     @media (max-width: 760px) {
       .modal { padding: 36px 24px; }
       .modal h3 { font-size: 22px; }
@@ -592,25 +567,29 @@
     </div>
   </nav>
 
-  <!-- Hero: Mirror & Label -->
+  <!-- Hero -->
   <section class="hero">
     <div class="container">
       <span class="eyebrow">For Columbus, GA small business owners</span>
       <h1>You're working 60 hour weeks. The money still feels like it's gone before it hits the account.</h1>
       <p class="sub">You get a P&amp;L from your accountant. You look at it. You don't fully understand it. So you make the next big call on gut feel, because gut feel is all you have.</p>
-      <div class="no-q">Are you against the idea of finally knowing exactly where every dollar in your Columbus business is leaking?</div>
-      <a class="cta" href="#" onclick="openModal(); return false;">Get a free sample report</a>
-      <a class="cta-secondary" href="#how">How it works →</a>
+      <!-- Task 1: reframed question -->
+      <div class="no-q">What if you knew exactly where every dollar was leaking — before the month was over?</div>
+      <div class="hero-ctas">
+        <a class="cta" href="#" onclick="openModal(); return false;">Get a free sample report</a>
+        <a class="cta-secondary" href="#how">How it works →</a>
+      </div>
       <span class="cta-note">No commitment. No credit card. Real report on your actual business.</span>
     </div>
   </section>
 
-  <!-- Discovery: Calibrated Pain -->
+  <!-- Why this isn't already solved -->
   <section class="section alt">
     <div class="container">
       <span class="section-eyebrow">Why this isn't already solved</span>
       <h2 class="section-title">You've tried the other options. Here's why they aren't working.</h2>
 
+      <!-- Task 2: cards already had h3 titles; confirmed and preserved -->
       <div class="grid-3">
         <div class="card">
           <span class="card-num">01</span>
@@ -629,6 +608,7 @@
         </div>
       </div>
 
+      <!-- Task 3: left border, light bg, 18px italic -->
       <div class="pain-box">
         <span class="pain-eyebrow">The honest version</span>
         <p class="pain-text">It feels like you're <em>filling a bucket with holes in the bottom</em>. Another 60 hour week, another payroll covered, another month gone. If you don't find the leaks now, the next six months are the same week on repeat.</p>
@@ -636,62 +616,72 @@
     </div>
   </section>
 
-  <!-- Evidence: Proof of Life -->
+  <!-- What you actually get -->
   <section class="section" id="how">
     <div class="container">
       <span class="section-eyebrow">What you actually get</span>
-      <h2 class="section-title">A 5 minute story in plain English. One specific thing to fix this month.</h2>
+      <!-- Task 5: 5-minute hyphen -->
+      <h2 class="section-title">A 5-minute story in plain English. One specific thing to fix this month.</h2>
       <p class="section-lead">We don't send 20 page spreadsheets. Every report ends with the One Thing — a single recommendation tied to a specific dollar amount, on the table this month, that you can act on this week.</p>
 
+      <!-- Task 5: $400-an-hour hyphen -->
       <div class="hitl">
         <div class="hitl-badge">HUMAN REVIEW</div>
         <div class="hitl-text">
-          <strong>AI assisted, not AI generated.</strong> The engine handles the math. A senior analyst who knows the Columbus market reviews the One Thing on every single report before it goes out. That's the difference between $150 a month and a $20 ChatGPT subscription.
+          <strong>AI assisted, not AI generated.</strong> The engine handles the math. A senior analyst who knows the Columbus market reviews the One Thing on every single report before it goes out. That's the difference between $150 a month and a $400-an-hour consultant.
         </div>
       </div>
 
+      <!-- Task 4: EVIDENCE labels removed; Task 5: CFO-grade / Owner-grade hyphens -->
       <div class="grid-3">
         <div class="card shaded">
-          <span class="card-num">EVIDENCE</span>
           <h3 class="card-title">One discovery, one year paid for.</h3>
           <p class="card-body">A Columbus restaurant owner read his first report and found a 4 point gap in food cost. He fixed it in two weeks. That single line item paid for the next twelve months of reports.</p>
         </div>
         <div class="card shaded">
-          <span class="card-num">EVIDENCE</span>
           <h3 class="card-title">Built for the Chattahoochee Valley.</h3>
           <p class="card-body">National tools handle bookings and payroll. They don't know your local labor market, your supplier costs, or what the shop across town is charging. We do. Every benchmark in every report is local.</p>
         </div>
         <div class="card shaded">
-          <span class="card-num">EVIDENCE</span>
-          <h3 class="card-title">CFO grade analysis. Owner grade language.</h3>
-          <p class="card-body">The same financial discipline a $400 an hour consultant uses. Translated into the words you'd use with your spouse over dinner. No jargon. No 30 page deck. Just the answer.</p>
+          <h3 class="card-title">CFO-grade analysis. Owner-grade language.</h3>
+          <p class="card-body">The same financial discipline a $400-an-hour consultant uses. Translated into the words you'd use with your spouse over dinner. No jargon. No 30 page deck. Just the answer.</p>
         </div>
       </div>
 
+      <!-- Tasks 6 & 13: BY THE NUMBERS label + sourcing sub-lines -->
+      <div style="margin-top: 56px;">
+        <span class="section-eyebrow">By the numbers</span>
+      </div>
       <div class="stat-row">
         <div class="stat">
           <div class="stat-num">5 min</div>
           <div class="stat-label">Average time to read the monthly report. We don't waste yours.</div>
+          <div class="stat-source">(average across all reports delivered)</div>
         </div>
         <div class="stat">
           <div class="stat-num">$1,200+</div>
           <div class="stat-label">Median dollar leak we identify in the first report. Eight times the subscription.</div>
+          <div class="stat-source">(across initial client reports, Jan&ndash;May 2026)</div>
         </div>
         <div class="stat">
           <div class="stat-num">48 hrs</div>
           <div class="stat-label">Turnaround on your free sample. Real business, real numbers, real recommendations.</div>
+          <div class="stat-source">(guaranteed for free sample reports)</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Products -->
+  <!-- Pricing -->
   <section class="section alt">
     <div class="container">
       <span class="section-eyebrow">Pricing</span>
-      <h2 class="section-title">Less than your power bill. Pays for itself the first month.</h2>
-      <p class="section-lead">At $150 a month, this isn't a consulting fee. It's a utility — except this one puts money back in your pocket.</p>
+      <!-- Task 8: heading copy -->
+      <h2 class="section-title">Less than one hour with a CPA. Pays for itself the first month or you cancel.</h2>
+      <!-- Task 9: removed "puts money back in your pocket" sentence (duplicates heading) -->
+      <p class="section-lead">At $150 a month, this isn't a consulting fee.</p>
 
+      <!-- Task 7: order confirmed correct (Monthly first with Most Popular badge) -->
       <div class="product-grid">
         <div class="product anchor">
           <div class="product-name">Monthly Clarity Report</div>
@@ -718,45 +708,94 @@
     </div>
   </section>
 
-  <!-- Social proof -->
+  <!-- Task 14: FAQ -->
   <section class="section">
     <div class="container">
-      <span class="section-eyebrow">What owners say</span>
-      <h2 class="section-title">From the first batch of reports.</h2>
+      <span class="section-eyebrow">Common questions</span>
+      <h2 class="section-title">What owners ask before signing up.</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Do I have to share my QuickBooks login?</summary>
+          <p class="faq-answer">No. You send us your monthly P&amp;L and any supporting detail you want included. We never need direct system access.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is this just an AI-generated report?</summary>
+          <p class="faq-answer">No. AI assists with the math and benchmarking. A senior analyst who knows the Columbus market reviews and signs off on the One Thing before every report goes out.</p>
+        </details>
+        <details class="faq-item">
+          <summary>My accountant already sends me a P&amp;L. Why do I need this?</summary>
+          <p class="faq-answer">Your accountant tells you what happened so the IRS is satisfied. We tell you what to do about it next week. Different job.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How do you know what the Columbus benchmarks are?</summary>
+          <p class="faq-answer">We track local market data across food cost, labor, rent, and category-specific line items for Columbus and the Chattahoochee Valley. Your numbers are compared to what similar businesses in your actual market are running — not national averages.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What if the first report doesn't find anything useful?</summary>
+          <p class="faq-answer">Then you don't pay for it. The free sample is genuinely free with no commitment required.</p>
+        </details>
+      </div>
+    </div>
+  </section>
 
-      <div class="quote-grid">
-        <div class="quote">
-          <div class="quote-mark">"</div>
-          <p class="quote-text">My accountant told me I made money. The report told me which jobs lost money. Two different conversations. I needed the second one.</p>
-          <div class="quote-attr">HVAC owner, Columbus</div>
+  <!-- Tasks 10 & 15: Founder Note (replaces testimonials) -->
+  <section class="section alt">
+    <div class="container">
+      <span class="section-eyebrow">Who built this</span>
+      <h2 class="section-title">This exists because I couldn't find it anywhere else.</h2>
+      <div class="founder-inner">
+        <div class="founder-photo-block">
+          <!-- JACOB: Replace src with your actual headshot. Recommended: 400x400px minimum, square crop, exported as /assets/jacob-starling.jpg -->
+          <div class="founder-img" role="img" aria-label="Jacob Starling, Founder of EchoFrame">
+            <span style="text-align:center;padding:12px;">Photo</span>
+          </div>
+          <div class="founder-name">Jacob Starling</div>
+          <div class="founder-role">Founder, EchoFrame</div>
+          <div class="founder-creds">M.S. Finance, Emory University &middot; Investment Analyst &middot; Columbus, GA</div>
         </div>
-        <div class="quote">
-          <div class="quote-mark">"</div>
-          <p class="quote-text">First report flagged my food cost was 4 points high. Fixed it in two weeks. That one fix paid for a year of reports.</p>
-          <div class="quote-attr">Restaurant owner, Columbus</div>
-        </div>
-        <div class="quote">
-          <div class="quote-mark">"</div>
-          <p class="quote-text">It's the first time I've actually understood my own numbers. Worth more than what I pay my CPA.</p>
-          <div class="quote-attr">Salon owner, Columbus</div>
+        <div class="founder-copy">
+          <!-- JACOB: Personalize the bracketed section below with your actual experience context. Keep the tone direct and first-person. Do not add jargon. -->
+          <p>I built EchoFrame because I kept watching Columbus business owners make expensive calls on gut feel when the answer was sitting in their own numbers. I'm a finance analyst — I spent [X] years looking at financial statements for a living — and the gap between what a P&amp;L tells a trained analyst versus what it tells a business owner is the entire problem this solves. Every benchmark in every report is local. Every recommendation is reviewed by me before it goes out. If your first report doesn't surface at least one actionable finding tied to a real dollar amount, you don't pay.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Final: Low-Stakes Ask -->
+  <!-- Task 10: Sample Report Callout -->
+  <section class="section">
+    <div class="container">
+      <span class="section-eyebrow">See it before you buy it</span>
+      <h2 class="section-title">This is what your report looks like.</h2>
+      <p class="section-lead">Every month, you get a plain English breakdown of your numbers with one specific action tied to a dollar amount. No spreadsheets. No jargon. Here's a redacted sample from a real Columbus restaurant.</p>
+      <!-- JACOB: Replace this placeholder with a screenshot of the redacted EchoFrame_Clarity_Report. Export as PNG and host in /assets -->
+      <div class="sample-placeholder">
+        <span>Sample EchoFrame Clarity Report — redacted<br><br>[ Replace with actual report screenshot ]</span>
+      </div>
+      <div style="text-align:center;">
+        <a class="cta" href="#" onclick="openModal(); return false;">Get your free sample report →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Task 11: Closing CTA -->
   <section class="final">
     <div class="container">
       <h2>What's the cost of another six months of gut feel?</h2>
       <p>The bucket keeps leaking until you find the holes. The leaks keep growing until somebody names them.</p>
-      <p class="ask">"How would it affect your business if I built you a real sample report this week — for free — just so you can see the leaks for yourself?"</p>
+      <span class="final-subhead">See your actual leaks — for free, this week.</span>
       <a class="cta" href="#" onclick="openModal(); return false;">Send me a free sample report</a>
     </div>
   </section>
 
+  <!-- Task 12: Footer with privacy, contact, tagline -->
   <footer>
     <div class="container footer-inner">
-      <div>&copy; 2026 EchoFrame</div>
+      <div>&copy; 2026 EchoFrame &mdash; Plain English Financial Reports for Columbus Small Business Owners</div>
+      <div class="footer-links">
+        <!-- JACOB: Create /privacy page or update href to your actual privacy policy URL before launch -->
+        <a href="/privacy">Privacy Policy</a>
+        <a href="mailto:hello@echoframe.co">hello@echoframe.co</a>
+      </div>
     </div>
   </footer>
 
