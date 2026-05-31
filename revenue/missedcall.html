@@ -3,67 +3,227 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Missed-Call Text-Back — Recover Every Missed Lead | EchoFrame Revenue</title>
-  <meta name="description" content="When you can't answer, Missed-Call Text-Back fires an instant automated text that keeps the lead in play — so no caller disappears into voicemail and never comes back.">
-  <link rel="canonical" href="https://echoframe.co/revenue/missedcall">
+  <title>Call Catch — Recover Every Missed Call Before They Call Someone Else | EchoFrame Revenue</title>
+  <meta name="description" content="Call Catch sends an automated text the second you miss a call — keeping the lead warm until you can follow up. No more lost jobs from a missed ring.">
+  <link rel="canonical" href="https://echoframe.co/revenue/missedcall.html">
   <style>
-    :root { --navy: #0A274F; --amber: #C9973D; --amber-soft: #FDF3E3; --ink: #111827; --ink-soft: #4B5563; --ink-faint: #6B7280; --line: #E5E7EB; --bg: #FFFFFF; --bg-soft: #F9FAFB; --bg-deep: #F3F4F6; }
+    :root {
+      --navy: #0A274F; --amber: #C9973D; --amber-soft: #FDF3E3;
+      --ink: #111827; --ink-soft: #4B5563; --ink-faint: #6B7280;
+      --line: #E5E7EB; --bg: #FFFFFF; --bg-soft: #F9FAFB; --bg-deep: #F3F4F6;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { background: var(--bg); color: var(--ink); }
     body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
-    a { color: var(--amber); text-decoration: none; } a:hover { text-decoration: underline; }
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { text-decoration: underline; }
     .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
-    .nav { padding: 18px 0; border-bottom: 1px solid var(--line); }
-    .nav-inner { display: flex; justify-content: space-between; align-items: center; }
-    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--navy); font-size: 22px; letter-spacing: -0.015em; text-decoration: none; }
-    .brand:hover { text-decoration: none; }
-    .brand-logo { width: 48px; height: 48px; background: var(--navy); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .brand-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .nav-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-    .btn-link { font-size: 15px; color: var(--navy); font-weight: 500; } .btn-link.active { color: var(--amber); }
     .breadcrumb { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
-    .breadcrumb a { color: var(--ink-faint); } .breadcrumb a:hover { color: var(--amber); text-decoration: none; } .breadcrumb span { margin: 0 8px; }
-    .product-hero { padding: 80px 0 72px; max-width: 760px; margin: 0 auto; text-align: center; }
-    .eyebrow { display: block; color: var(--amber); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 18px; }
-    .product-hero h1 { font-size: 48px; line-height: 1.05; letter-spacing: -0.025em; color: var(--navy); font-weight: 700; margin-bottom: 24px; }
-    .badge-soon { display: inline-block; background: var(--bg-deep); color: var(--ink-faint); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 12px; border-radius: 6px; margin-bottom: 24px; }
-    .problem-box { padding: 24px 28px; background: rgba(10,39,79,0.05); border-left: 4px solid var(--amber); border-radius: 0 12px 12px 0; margin-bottom: 32px; text-align: left; font-size: 18px; font-weight: 500; font-style: italic; color: var(--ink); line-height: 1.5; }
-    .solution-text { font-size: 20px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 32px; text-align: left; }
-    .roi-strip { display: flex; align-items: flex-start; gap: 16px; padding: 20px 24px; background: white; border: 1px solid var(--line); border-left: 4px solid var(--amber); border-radius: 10px; margin-bottom: 40px; text-align: left; }
-    .roi-label { flex-shrink: 0; padding: 5px 10px; background: var(--amber); color: white; border-radius: 6px; font-weight: 700; font-size: 11px; letter-spacing: 0.06em; margin-top: 2px; white-space: nowrap; }
-    .roi-text { font-size: 16px; color: var(--ink); line-height: 1.55; }
-    .cta { display: inline-block; background: var(--amber); color: white; font-weight: 600; font-size: 16px; padding: 16px 32px; border-radius: 8px; transition: background 0.15s ease; }
+    .breadcrumb a { color: var(--ink-faint); }
+    .breadcrumb a:hover { color: var(--amber); text-decoration: none; }
+    .breadcrumb span { margin: 0 8px; }
+    .product-hero { padding: 80px 0 64px; text-align: center; }
+    .eyebrow { display: block; color: var(--amber); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; }
+    .badge-soon { display: inline-block; background: var(--bg-deep); color: var(--ink-faint); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 12px; border-radius: 6px; margin-bottom: 20px; }
+    .product-hero h1 { font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; color: var(--navy); font-weight: 700; margin-bottom: 20px; max-width: 760px; margin-left: auto; margin-right: auto; }
+    .product-hero .subhead { font-size: 21px; color: var(--ink-soft); line-height: 1.55; margin-bottom: 36px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .hero-ctas { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .cta { display: inline-block; background: var(--amber); color: white; font-weight: 600; font-size: 16px; padding: 16px 32px; border-radius: 8px; transition: background 0.15s; }
     .cta:hover { background: #A67C2E; text-decoration: none; color: white; }
-    footer { padding: 36px 0; border-top: 1px solid var(--line); font-size: 12px; color: #888888; margin-top: 80px; }
+    .problem-strip { background: rgba(10,39,79,0.04); border-left: 4px solid var(--amber); border-radius: 0 12px 12px 0; padding: 24px 28px; max-width: 720px; margin: 0 auto; font-size: 18px; font-weight: 500; font-style: italic; color: var(--ink); line-height: 1.55; }
+    .section { padding: 72px 0; border-top: 1px solid var(--line); }
+    .section-header { margin-bottom: 48px; }
+    .section-eyebrow { color: var(--amber); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: block; }
+    .section-title { font-size: 32px; color: var(--navy); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .section-sub { font-size: 18px; color: var(--ink-soft); max-width: 560px; line-height: 1.55; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .step { display: flex; flex-direction: column; }
+    .step-num { width: 42px; height: 42px; background: var(--amber); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; margin-bottom: 18px; flex-shrink: 0; }
+    .step h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; line-height: 1.3; }
+    .step p { font-size: 15px; color: var(--ink-soft); line-height: 1.65; }
+    .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .feature { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 14px; padding: 28px; }
+    .feature-label { font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
+    .feature h3 { font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .feature p { font-size: 15px; color: var(--ink-soft); line-height: 1.65; }
+    .pricing-wrap { display: flex; justify-content: center; margin-top: 48px; }
+    .pricing-card { background: white; border: 2px solid var(--amber); border-radius: 16px; padding: 40px 44px; max-width: 460px; width: 100%; }
+    .pricing-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+    .pricing-name { font-size: 22px; font-weight: 700; color: var(--navy); }
+    .pricing-badge { background: var(--amber-soft); color: var(--amber); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; }
+    .pricing-price { font-size: 52px; font-weight: 700; color: var(--navy); letter-spacing: -0.03em; line-height: 1; margin-bottom: 4px; }
+    .pricing-price sup { font-size: 24px; font-weight: 600; vertical-align: super; line-height: 0; }
+    .pricing-price sub { font-size: 18px; font-weight: 500; color: var(--ink-faint); }
+    .pricing-note { font-size: 13px; color: var(--ink-faint); margin-bottom: 28px; }
+    .pricing-list { list-style: none; margin-bottom: 32px; }
+    .pricing-list li { font-size: 15px; color: var(--ink-soft); padding: 9px 0; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
+    .pricing-list li:last-child { border-bottom: none; }
+    .check { color: var(--amber); font-weight: 800; font-size: 14px; }
+    .waitlist-section { background: var(--navy); padding: 80px 0; text-align: center; }
+    .waitlist-section h2 { font-size: 34px; font-weight: 700; color: white; letter-spacing: -0.02em; margin-bottom: 14px; }
+    .waitlist-section p { font-size: 18px; color: rgba(255,255,255,0.7); max-width: 480px; margin: 0 auto 36px; line-height: 1.55; }
+    .waitlist-form { display: flex; gap: 10px; max-width: 460px; margin: 0 auto; }
+    .waitlist-form input[type="email"] { flex: 1; padding: 14px 18px; border: none; border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; }
+    .waitlist-form button { background: var(--amber); color: white; font-weight: 600; font-size: 15px; padding: 14px 22px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; transition: background 0.15s; }
+    .waitlist-form button:hover { background: #A67C2E; }
+    footer { padding: 36px 0; border-top: 1px solid var(--line); font-size: 12px; color: #888888; }
     .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; align-items: center; }
     .footer-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-    .footer-links a { color: #888888; } .footer-links a:hover { color: var(--amber); }
-    @media (max-width: 760px) { .product-hero h1 { font-size: 32px; } .product-hero { padding: 52px 0 48px; } .solution-text { font-size: 17px; } .problem-box { font-size: 16px; } .footer-inner { flex-direction: column; gap: 8px; text-align: center; } .footer-links { justify-content: center; } .nav-links { gap: 14px; } }
+    .footer-links a { color: #888888; }
+    .footer-links a:hover { color: var(--amber); }
+    @media (max-width: 760px) {
+      .product-hero h1 { font-size: 34px; } .product-hero .subhead { font-size: 18px; } .product-hero { padding: 52px 0 40px; }
+      .section { padding: 48px 0; } .section-title { font-size: 26px; }
+      .steps { grid-template-columns: 1fr; gap: 28px; }
+      .features { grid-template-columns: 1fr; }
+      .pricing-card { padding: 28px 24px; } .pricing-price { font-size: 40px; }
+      .waitlist-section h2 { font-size: 26px; } .waitlist-form { flex-direction: column; }
+      .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
   </style>
 </head>
 <body>
   <div id="ef-nav"></div>
   <script src="../nav.js"></script>
-  <div class="breadcrumb"><div class="container"><a href="../">EchoFrame</a><span>›</span><a href="./">Revenue</a><span>›</span>Missed-Call Text-Back</div></div>
-  <div class="container">
-    <div class="product-hero">
-      <span class="eyebrow">EchoFrame Revenue</span>
-      <span class="badge-soon">Coming Soon</span>
-      <h1>Missed-Call Text-Back</h1>
-      <div class="problem-box">Every missed call is a lead that went to the competitor down the street.</div>
-      <p class="solution-text">When you can't answer, Missed-Call Text-Back fires an instant automated text that keeps the lead in play until you can follow up. No caller disappears into voicemail and never comes back — every ring gets a response within seconds.</p>
-      <div class="roi-strip">
-        <span class="roi-label">ROI</span>
-        <span class="roi-text">Businesses recover 20–40% of missed-call leads that would otherwise be permanently lost to a competitor who picked up the phone.</span>
-      </div>
-      <a class="cta" href="mailto:jacobstarling4313@gmail.com?subject=Missed-Call%20Text-Back%20Waitlist">Join the Waitlist →</a>
+
+  <div class="breadcrumb">
+    <div class="container">
+      <a href="../">EchoFrame</a><span>›</span>
+      <a href="index.html">Revenue</a><span>›</span>
+      Call Catch
     </div>
   </div>
+
+  <section class="product-hero">
+    <div class="container">
+      <span class="eyebrow">EchoFrame Revenue</span>
+      <span class="badge-soon">Coming Soon</span>
+      <h1>Call Catch</h1>
+      <p class="subhead">The second you miss a call, a text goes out. The lead stays warm until you can follow up.</p>
+      <div class="hero-ctas">
+        <a class="cta" href="#waitlist">Join the Waitlist →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0; border-top:none;">
+    <div class="container">
+      <div class="problem-strip">
+        If your phone rings and nobody answers, that customer isn't leaving a voicemail and waiting around. They're already dialing the next number on the list. By the time you call back, the job is gone.
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">How it works</span>
+        <h2 class="section-title">A missed call becomes a live conversation — automatically.</h2>
+        <p class="section-sub">Set it up once. Every missed call gets a follow-up text in under 60 seconds, no action needed from you.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Connect your business number</h3>
+          <p>Takes about five minutes. We link to your existing business phone line — no new numbers, no app to install, no changes to how you currently receive calls.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Missed call triggers an instant text</h3>
+          <p>The moment a call goes unanswered, an automated text goes out to that number — within 60 seconds. Personalized to your business, professional in tone, and focused on keeping them on the hook.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>You follow up on a warm lead</h3>
+          <p>When you're free, you're not cold-calling a stranger — you're picking up a conversation that's already started. The lead knows who you are and that you want their business.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">What's included</span>
+        <h2 class="section-title">Every missed call covered. Every lead accounted for.</h2>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-label">Speed</div>
+          <h3>Under-60-second response</h3>
+          <p>The text goes out before they've finished dialing your competitor. Speed is the entire game here — and Call Catch wins it automatically every time.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-label">Tone</div>
+          <h3>Custom message templates</h3>
+          <p>Your message, your voice, your offer. We work with you on the text copy so it sounds like you — not like a robot, not like a generic service, but like someone who actually wants the job.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-label">Tracking</div>
+          <h3>Missed call log dashboard</h3>
+          <p>See every missed call, every text sent, and every response — all in one place. Know exactly how many leads you're recovering each week and what they're turning into.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-label">Coverage</div>
+          <h3>After-hours &amp; weekend coverage</h3>
+          <p>Evenings, weekends, holidays — Call Catch runs 24/7. The calls you miss at 7pm on a Friday are often the most valuable ones, and now none of them slip through.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Pricing</span>
+        <h2 class="section-title">One recovered job covers the whole year.</h2>
+        <p class="section-sub">Waitlist members lock in the early bird rate for the first year.</p>
+      </div>
+      <div class="pricing-wrap">
+        <div class="pricing-card">
+          <div class="pricing-top">
+            <div class="pricing-name">Call Catch</div>
+            <div class="pricing-badge">Early Bird</div>
+          </div>
+          <div class="pricing-price"><sup>$</sup>79<sub>/mo</sub></div>
+          <p class="pricing-note">Lock in $49/mo for the first year when you join the waitlist before launch.</p>
+          <ul class="pricing-list">
+            <li><span class="check">✓</span> Unlimited missed-call text-backs</li>
+            <li><span class="check">✓</span> Under-60-second response time</li>
+            <li><span class="check">✓</span> Custom message templates</li>
+            <li><span class="check">✓</span> 24/7 coverage including weekends</li>
+            <li><span class="check">✓</span> Missed call log dashboard</li>
+            <li><span class="check">✓</span> Response tracking &amp; reporting</li>
+            <li><span class="check">✓</span> Email &amp; chat support</li>
+          </ul>
+          <a class="cta" href="#waitlist" style="display:block;text-align:center;">Join the Waitlist →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="waitlist-section" id="waitlist">
+    <div class="container">
+      <h2>Stop losing jobs to a missed ring.</h2>
+      <p>Join the waitlist and we'll reach out when Call Catch is ready for its first customers. No spam — just a heads-up when it launches.</p>
+      <form class="waitlist-form" action="mailto:jacobstarling4313@gmail.com" method="POST" enctype="text/plain">
+        <input type="email" name="email" placeholder="your@email.com" required>
+        <button type="submit">Notify Me</button>
+      </form>
+    </div>
+  </section>
+
   <footer>
     <div class="container footer-inner">
-      <div>&copy; 2026 EchoFrame &mdash; <a href="./" style="color:#888888;">EchoFrame Revenue</a></div>
-      <div class="footer-links"><a href="./">Back to Revenue</a><a href="../">EchoFrame Home</a><a href="../privacy.html">Privacy</a></div>
+      <div>&copy; 2026 EchoFrame &mdash; <a href="index.html" style="color:#888888;">EchoFrame Revenue</a></div>
+      <div class="footer-links">
+        <a href="index.html">Back to Revenue</a>
+        <a href="../">EchoFrame Home</a>
+        <a href="../privacy.html">Privacy</a>
+      </div>
     </div>
   </footer>
+
 </body>
 </html>

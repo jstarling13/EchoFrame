@@ -20,9 +20,9 @@
       label: 'Revenue',
       href: '/revenue/index.html',
       items: [
-        { name: 'Missed-Call Text-Back', href: '/revenue/missedcall.html'                  },
-        { name: 'QuoteRevive',           href: '/revenue/quoterevive.html'                 },
-        { name: 'ClearLedger',           href: '/revenue/clearledger.html'                 },
+        { name: 'Call Catch',            href: '/revenue/missedcall.html'                  },
+        { name: 'Quote Revive',          href: '/revenue/quoterevive.html'                 },
+        { name: 'Clear Ledger',          href: '/revenue/clearledger.html'                 },
       ]
     },
     ops: {
