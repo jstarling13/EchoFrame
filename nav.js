@@ -10,10 +10,10 @@
       href: '/intelligence/index.html',
       items: [
         { name: 'Clarity Report',        href: '/',                            badge: true  },
-        { name: 'Vericount',             href: '/intelligence/vericount.html'              },
-        { name: 'Oryn',                  href: '/intelligence/oryn.html'                   },
-        { name: 'Veris',                 href: '/intelligence/veris.html'                  },
-        { name: 'Strata',                href: '/intelligence/strata.html'                 },
+        { name: 'Auto Ledger',           href: '/intelligence/vericount.html'              },
+        { name: 'Rate Watch',            href: '/intelligence/oryn.html'                   },
+        { name: 'Rival Scan',            href: '/intelligence/veris.html'                  },
+        { name: 'Shift Lens',            href: '/intelligence/strata.html'                 },
       ]
     },
     revenue: {
