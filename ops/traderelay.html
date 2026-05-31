@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TradeRelay — Always-On Voice Dispatcher | EchoFrame Ops</title>
+  <meta name="description" content="TradeRelay is an always-on voice dispatcher that captures every inbound call, qualifies the job, and routes it to the right tech — day or night, no human required.">
+  <link rel="canonical" href="https://echoframe.co/ops/traderelay">
+  <style>
+    :root { --navy: #0A274F; --amber: #C9973D; --amber-soft: #FDF3E3; --ink: #111827; --ink-soft: #4B5563; --ink-faint: #6B7280; --line: #E5E7EB; --bg: #FFFFFF; --bg-soft: #F9FAFB; --bg-deep: #F3F4F6; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: var(--ink); }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    a { color: var(--amber); text-decoration: none; } a:hover { text-decoration: underline; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+    .nav { padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--navy); font-size: 22px; letter-spacing: -0.015em; text-decoration: none; }
+    .brand:hover { text-decoration: none; }
+    .brand-logo { width: 48px; height: 48px; background: var(--navy); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .brand-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .nav-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .btn-link { font-size: 15px; color: var(--navy); font-weight: 500; } .btn-link.active { color: var(--amber); }
+    .breadcrumb { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
+    .breadcrumb a { color: var(--ink-faint); } .breadcrumb a:hover { color: var(--amber); text-decoration: none; } .breadcrumb span { margin: 0 8px; }
+    .product-hero { padding: 80px 0 72px; max-width: 760px; margin: 0 auto; text-align: center; }
+    .eyebrow { display: block; color: var(--amber); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 18px; }
+    .product-hero h1 { font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; color: var(--navy); font-weight: 700; margin-bottom: 24px; }
+    .badge-soon { display: inline-block; background: var(--bg-deep); color: var(--ink-faint); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 12px; border-radius: 6px; margin-bottom: 24px; }
+    .problem-box { padding: 24px 28px; background: rgba(10,39,79,0.05); border-left: 4px solid var(--amber); border-radius: 0 12px 12px 0; margin-bottom: 32px; text-align: left; font-size: 18px; font-weight: 500; font-style: italic; color: var(--ink); line-height: 1.5; }
+    .solution-text { font-size: 20px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 32px; text-align: left; }
+    .roi-strip { display: flex; align-items: flex-start; gap: 16px; padding: 20px 24px; background: white; border: 1px solid var(--line); border-left: 4px solid var(--amber); border-radius: 10px; margin-bottom: 40px; text-align: left; }
+    .roi-label { flex-shrink: 0; padding: 5px 10px; background: var(--amber); color: white; border-radius: 6px; font-weight: 700; font-size: 11px; letter-spacing: 0.06em; margin-top: 2px; white-space: nowrap; }
+    .roi-text { font-size: 16px; color: var(--ink); line-height: 1.55; }
+    .cta { display: inline-block; background: var(--amber); color: white; font-weight: 600; font-size: 16px; padding: 16px 32px; border-radius: 8px; transition: background 0.15s ease; }
+    .cta:hover { background: #A67C2E; text-decoration: none; color: white; }
+    footer { padding: 36px 0; border-top: 1px solid var(--line); font-size: 12px; color: #888888; margin-top: 80px; }
+    .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .footer-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .footer-links a { color: #888888; } .footer-links a:hover { color: var(--amber); }
+    @media (max-width: 760px) { .product-hero h1 { font-size: 34px; } .product-hero { padding: 52px 0 48px; } .solution-text { font-size: 17px; } .problem-box { font-size: 16px; } .footer-inner { flex-direction: column; gap: 8px; text-align: center; } .footer-links { justify-content: center; } .nav-links { gap: 14px; } }
+  </style>
+</head>
+<body>
+  <div id="ef-nav"></div>
+  <script src="../nav.js"></script>
+  <div class="breadcrumb"><div class="container"><a href="../">EchoFrame</a><span>›</span><a href="./">Ops</a><span>›</span>TradeRelay</div></div>
+  <div class="container">
+    <div class="product-hero">
+      <span class="eyebrow">EchoFrame Ops</span>
+      <span class="badge-soon">Coming Soon</span>
+      <h1>TradeRelay</h1>
+      <div class="problem-box">One missed dispatch call means a lost job and a bad review.</div>
+      <p class="solution-text">TradeRelay is an always-on voice dispatcher that captures every inbound call, qualifies the job, and routes it to the right tech — day or night, no human required. Every ring gets answered, every job gets logged, and every customer gets a response before they call your competitor.</p>
+      <div class="roi-strip">
+        <span class="roi-label">ROI</span>
+        <span class="roi-text">Eliminate after-hours dispatch gaps entirely and capture 100% of inbound job requests — including the ones that used to go to voicemail and never call back.</span>
+      </div>
+      <a class="cta" href="mailto:jacobstarling4313@gmail.com?subject=TradeRelay%20Waitlist">Join the Waitlist →</a>
+    </div>
+  </div>
+  <footer>
+    <div class="container footer-inner">
+      <div>&copy; 2026 EchoFrame &mdash; <a href="./" style="color:#888888;">EchoFrame Ops</a></div>
+      <div class="footer-links"><a href="./">Back to Ops</a><a href="../">EchoFrame Home</a><a href="../privacy.html">Privacy</a></div>
+    </div>
+  </footer>
+</body>
+</html>
