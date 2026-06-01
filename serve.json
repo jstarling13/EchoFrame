@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/intelligence", "destination": "/intelligence/index.html" },
+    { "source": "/revenue", "destination": "/revenue/index.html" },
+    { "source": "/ops", "destination": "/ops/index.html" }
+  ]
+}

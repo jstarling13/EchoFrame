@@ -97,7 +97,7 @@
 
   var html = '<style>' + css + '</style>'
     + '<nav class="ef-nav"><div class="ef-nav-inner">'
-    + '<a href="/" class="ef-brand">'
+    + '<a href="/index.html" class="ef-brand">'
     + '<span class="ef-brand-logo"><img src="/echoframe_logo.png" alt="EchoFrame"></span>'
     + 'EchoFrame</a>'
     + '<div class="ef-nav-right">'
