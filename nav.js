@@ -29,11 +29,11 @@
       label: 'Ops',
       href: '/ops/index.html',
       items: [
-        { name: 'TradeRelay',            href: '/ops/traderelay.html'                      },
-        { name: 'PermitWatch',           href: '/ops/permitwatch.html'                     },
-        { name: 'IronHire',              href: '/ops/ironhire.html'                        },
-        { name: 'BaySignal',             href: '/ops/baysignal.html'                       },
-        { name: 'HydroPay',              href: '/ops/hydropay.html'                        },
+        { name: 'Call Router',           href: '/ops/traderelay.html'                      },
+        { name: 'Permit Watch',          href: '/ops/permitwatch.html'                     },
+        { name: 'Crew Hire',             href: '/ops/ironhire.html'                        },
+        { name: 'Bay Coach',             href: '/ops/baysignal.html'                       },
+        { name: 'Drive Pay',             href: '/ops/hydropay.html'                        },
       ]
     }
   };
