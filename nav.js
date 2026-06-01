@@ -9,7 +9,7 @@
       label: 'Intelligence',
       href: '/intelligence/index.html',
       items: [
-        { name: 'Clarity Report',        href: '/',                            badge: true  },
+        { name: 'Clarity Report',        href: '/index.html',                  badge: true  },
         { name: 'Auto Ledger',           href: '/intelligence/vericount.html'              },
         { name: 'Rate Watch',            href: '/intelligence/oryn.html'                   },
         { name: 'Rival Scan',            href: '/intelligence/veris.html'                  },
