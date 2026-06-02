@@ -211,4 +211,27 @@ day 27; switched to absolute "days since sent" milestones for a predictable cade
 the caller to persist (no DB); run once/day via cron; no auth/billing.
 
 ---
+
+## 2026-06-02 — Product MVP #6: Clear Ledger (`clear-ledger/`)  ✅ done
+
+**Page:** `revenue/clearledger.html` · **Core promise:** invoice dunning sequence + AR dashboard +
+human-handoff alerts.
+
+**Built:** `engine.py` (dunning sequence + AR aging, **injected mock sender**) + `api.py` (FastAPI)
++ `demo.py` + 13 tests + README + requirements. No real messages sent.
+- Reminders at days-past-due milestones (1/7/14/30; configurable), escalating tone
+  (gentle → check-in → final notice), human-handoff after the sequence.
+- AR aging summary: open count, total outstanding, buckets (current/1-30/31-60/60+).
+
+**Run:** `cd 01_Code\clear-ledger && pip install -r requirements.txt && python demo.py` ·
+API: `uvicorn api:app --reload --port 8016` · tests: `python -m pytest -q`.
+
+**Test results:** 13 passed (fixed two test-expectation bugs: final notice fires at the 30-day
+milestone; a May-1→Jun-2 invoice is 32 days = 31-60 bucket — engine was correct). Demo: 2 reminders
+sent, 1 handoff, AR aging $7,550 outstanding across buckets.
+
+**Assumptions:** invoices come from the invoicing tool (integration seam); no real sends (inject a
+real Sender to go live, reuse flagship Resend); state returned for caller to persist; no DB/auth.
+
+---
 *(product MVP entries appended below as they are completed)*
