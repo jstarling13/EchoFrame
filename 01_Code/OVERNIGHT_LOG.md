@@ -234,4 +234,27 @@ sent, 1 handoff, AR aging $7,550 outstanding across buckets.
 real Sender to go live, reuse flagship Resend); state returned for caller to persist; no DB/auth.
 
 ---
+
+## 2026-06-02 — Product MVP #7: Call Catch (`call-catch/`)  ✅ done
+
+**Page:** `revenue/missedcall.html` · **Core promise:** missed call → instant auto-text, keep the
+lead warm; after-hours coverage + missed-call log.
+
+**Built:** `engine.py` (`CallCatch` class: hours logic, template selection, dedupe, log) +
+`api.py` (FastAPI, simulates the telephony webhook) + `demo.py` + 13 tests + README + requirements.
+**Injected mock SMS sender — no real texts sent.**
+- Composes + sends synchronously (the "under-60s" promise) and logs each event.
+- Business-hours vs after-hours/weekend template selection (configurable hours + templates).
+- Dedupes repeat callers (logged, not re-texted). Dashboard: totals, texts sent, after-hours, unique.
+
+**Run:** `cd 01_Code\call-catch && pip install -r requirements.txt && python demo.py` ·
+API: `uvicorn api:app --reload --port 8017` · tests: `python -m pytest -q`.
+
+**Test results:** 13 passed. Demo: 4 missed calls → 3 texts (1 deduped), 2 after-hours, business/
+after-hours templates selected correctly (incl. Saturday).
+
+**Assumptions:** missed-call signal comes from a telephony webhook (Twilio/etc. — the seam); no
+real texts (inject a real Sender to go live); in-process state for MVP; default hours Mon–Fri 8–5.
+
+---
 *(product MVP entries appended below as they are completed)*
