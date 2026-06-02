@@ -185,4 +185,30 @@ mileage-based, not an inspection (write-up text says so); month-only intervals s
 review; no auth/billing; informational only.
 
 ---
+
+## 2026-06-02 — Product MVP #5: Quote Revive (`quote-revive/`)  ✅ done
+
+**Page:** `revenue/quoterevive.html` · **Core promise:** auto follow-up sequence on ghosted
+quotes, escalate to a human when exhausted.
+
+**Built:** `engine.py` (sequence engine, **injected sender** defaulting to a mock recorder) +
+`api.py` (FastAPI) + `demo.py` (16-day simulation) + 11 tests + README + requirements.
+- Fires follow-ups at absolute milestones (days since sent: 2/4/7/14; configurable).
+- Context-aware messages (first nudge → softer → graceful final), no double-send/day, stops on
+  accepted/declined, raises a human-handoff after the last step.
+- **No real messages sent** — sender is injected; mock by default. Real SMS/email is the seam.
+
+**Run:** `cd 01_Code\quote-revive && pip install -r requirements.txt && python demo.py` ·
+API: `uvicorn api:app --reload --port 8015` · tests: `python -m pytest -q`.
+
+**Test results:** 11 passed. Demo: 4 follow-ups across 14 days then a day-15 handoff, mock sender
+recorded 4 messages (nothing sent).
+
+**Note/decision:** first design used "days since last contact" (stacking) which pushed step 4 to
+day 27; switched to absolute "days since sent" milestones for a predictable cadence.
+
+**Assumptions:** quotes come from the quoting tool/CRM (integration seam); state is returned for
+the caller to persist (no DB); run once/day via cron; no auth/billing.
+
+---
 *(product MVP entries appended below as they are completed)*
