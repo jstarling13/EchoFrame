@@ -319,3 +319,55 @@ the flagship rescue). **Nothing pushed. `main`/`master` untouched.** The owner's
   (Plaid, scraping infra, a voice provider, live Stripe) — owner decision + keys + budget.
 
 *(see the per-product entries above for exact run commands)*
+
+---
+
+## 2026-06-02 — Continuation session: independent verification + flagship polish
+
+A fresh autonomous session resumed on the same branch (`overnight/products-2026-06-02`).
+The prior run had already reached an end-of-run summary, so this session focused on
+**independently verifying** the claimed state (the brief says to verify, not trust) and on
+one bounded piece of flagship hardening the prior log had flagged as a known TODO.
+
+### Verification (don't trust blindly) — all confirmed
+- **Working tree** is exactly as the prior log described: the only uncommitted changes are the
+  owner's pre-existing `echoframe-site/*` HTML + `nav.js` edits and the untracked
+  `Open EchoFrame Site.bat`. These are **not mine** — left untouched/unstaged.
+- **`.env` still gitignored** (`git check-ignore echoframe-backend/.env` → ignored). No secrets
+  opened, printed, or staged at any point.
+- **Flagship:** `engine.py` imports cleanly; `python -m pytest -q` → **83 passed**. (Direct
+  `import main` correctly raises on missing `ANTHROPIC_API_KEY` — that's the intended env-gate;
+  the suite handles it, which is why it's green.)
+- **All 8 MVP suites** re-run green, matching the prior counts exactly: rate-watch 13, shift-lens
+  15, permit-watch 13, bay-coach 13, quote-revive 11, clear-ledger 13, call-catch 13, crew-hire 12.
+- **Aggregate: 186 tests pass** (83 + 103), all mocked, no network. The prior deliverable is real.
+
+### Flagship hardening (this session)
+- Fixed the known `FutureWarning` TODO in `engine.py`: the two
+  `tbl_el.find(qn("w:tblPr")) or OxmlElement("w:tblPr")` call sites (lines ~1860/1912) now use a
+  new `_get_or_add_tblPr(tbl_el)` helper with an explicit `is None` check.
+- This also fixes a **latent bug** in the dead `or` fallback branch: a freshly-created `tblPr`
+  was never inserted into the table tree. The helper inserts it as the first child of `w:tbl`
+  (OOXML requires tblPr first). Dead in practice today (`add_table` always pre-creates `tblPr`),
+  but now correct and future-proof.
+- Result: **83 passed**, pytest warnings drop **21 → 18** (the two tblPr FutureWarnings gone).
+  Committed as `724e87c` (only `engine.py` staged).
+
+### Decisions / scope
+- Did **not** expand into the 8 external TS/Next.js repos documented in `PORTFOLIO_AUDIT.md`.
+  Unattended `npm install` + edits across other repos is riskier than its marginal value, and the
+  audit already lays out their status and next steps. Left for a supervised session.
+- The **HydroPay committed-secret** finding (`PORTFOLIO_AUDIT.md` §Security) remains the highest
+  real-world priority but **requires the owner**: it needs key rotation + git history scrub
+  (destructive git ops barred for an unattended run) and decisions about repo visibility and the
+  home-dir git repo. Not actioned here by design — flagged again in the morning summary.
+- Remaining pytest warnings (18) are library-level (matplotlib `tight_layout` on the chart axes,
+  a couple of docx internals) and not behavior-affecting; left as-is.
+
+### How to re-verify everything
+```powershell
+cd 01_Code\echoframe-backend; python -m pytest -q      # 83 passed
+cd ..\rate-watch;   python -m pytest -q                 # 13
+# ...repeat for shift-lens, permit-watch, bay-coach, quote-revive,
+#    clear-ledger, call-catch, crew-hire  (15,13,13,11,13,13,12)
+```
