@@ -113,4 +113,29 @@ feed, same pattern as the flagship's industry benchmarks); national bands stand 
 no auth/billing/persistence (flagship Stripe surface fronts it); informational only.
 
 ---
+
+## 2026-06-02 — Product MVP #2: Shift Lens (`shift-lens/`)  ✅ done
+
+**Page:** `intelligence/strata.html` · **Core promise:** per-shift labor-vs-revenue P&L, flag
+underperformers, schedule recommendations.
+
+**Built:** `engine.py` (per-shift P&L + classification + weekly aggregation) + `api.py` (FastAPI)
++ `demo.py` + 15 tests + README + requirements. No external calls.
+- Per shift: labor %, contribution (revenue−labor), status (healthy/watch/underperforming/
+  no_revenue), and a concrete recommendation.
+- Labor accepted as direct `labor_cost` or `labor_hours × avg_wage`.
+- Weekly roll-up: totals, overall labor %, ranked underperformers, best/worst shift.
+- Configurable `target_labor_pct` (default 30%).
+
+**Run:** `cd 01_Code\shift-lens && pip install -r requirements.txt && python demo.py` ·
+API: `uvicorn api:app --reload --port 8012` · tests: `python -m pytest -q`.
+
+**Test results:** 15 passed. Demo: 6 shifts, flagged a money-losing Wed Lunch (140% labor) and a
+65%-labor Tue Lunch; identified Sat Dinner as best.
+
+**Assumptions:** input is already-joined shift rows (POS↔scheduling join is the upstream seam);
+"contribution" = revenue − labor only (shift-level lever, not full profit); default target is a
+restaurant norm; no auth/billing/persistence; informational only.
+
+---
 *(product MVP entries appended below as they are completed)*
