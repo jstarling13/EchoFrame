@@ -138,4 +138,28 @@ API: `uvicorn api:app --reload --port 8012` · tests: `python -m pytest -q`.
 restaurant norm; no auth/billing/persistence; informational only.
 
 ---
+
+## 2026-06-02 — Product MVP #3: Permit Watch (`permit-watch/`)  ✅ done
+
+**Page:** `ops/permitwatch.html` · **Core promise:** one dashboard of licenses/permits with
+30-day expiry alerts + per-vehicle tracking.
+
+**Built:** `engine.py` (expiry status + dashboard + per-entity grouping + alert digest) + `api.py`
+(FastAPI) + `demo.py` + 13 tests + README + requirements. No external calls.
+- Per item: days-to-expiry + status (expired / critical ≤7d / due_soon ≤window / upcoming / ok).
+- Dashboard sorted most-urgent-first, status counts, grouped by entity (per-vehicle).
+- `render_alert_digest`: inbox-ready 30-day heads-up.
+- Replaced a `⚠` glyph with ASCII after it crashed the Windows cp1252 console (portability fix).
+
+**Run:** `cd 01_Code\permit-watch && pip install -r requirements.txt && python demo.py` ·
+API: `uvicorn api:app --reload --port 8013` · tests: `python -m pytest -q`.
+
+**Test results:** 13 passed. Demo: flagged 1 expired (Van 12 registration), 1 critical (Truck 3
+DOT inspection, 5 days), 1 due (business license, 22 days), grouped across 4 entities.
+
+**Assumptions:** items are user-maintained (matches the page's "enter your fleet" step; no DMV
+integration); inbox delivery is a thin daily-cron wrapper over `render_alert_digest` (reuses
+flagship Resend); document storage/history deferred; no auth/billing; informational only.
+
+---
 *(product MVP entries appended below as they are completed)*
