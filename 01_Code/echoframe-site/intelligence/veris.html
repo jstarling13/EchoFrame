@@ -86,6 +86,18 @@
       .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
       .footer-links { justify-content: center; }
     }
+  
+    /* ===== EF navy hero band (matches homepage) ===== */
+    .breadcrumb { background: var(--navy); border-bottom: none; color: #AEBCCF; }
+    .breadcrumb a { color: #C7D2E0; }
+    .breadcrumb a:hover { color: #E0A93F; text-decoration: none; }    .product-hero { background: var(--navy); }
+    .product-hero .eyebrow { color: #E0A93F; }
+    .product-hero h1 { color: #FFFFFF; }
+    .product-hero .subhead { color: #C7D2E0; }
+    .product-hero .badge-soon { background: rgba(255,255,255,0.14); color: #E6EDF5; }
+    .product-hero .cta { background: #E0A93F; color: var(--navy); }
+    .product-hero .cta:hover { background: #D49A2C; color: var(--navy); }
+    /* ===== end EF navy hero band ===== */
   </style>
 </head>
 <body>
@@ -103,11 +115,11 @@
   <section class="product-hero">
     <div class="container">
       <span class="eyebrow">EchoFrame Intelligence</span>
-      <span class="badge-soon">Coming Soon</span>
+      <span class="badge-soon" style="background:#E0A93F;color:var(--navy);">Now Live</span>
       <h1>Rival Scan</h1>
       <p class="subhead">Know what your competitors are doing before your customers bring it up at the door.</p>
       <div class="hero-ctas">
-        <a class="cta" href="#waitlist">Join the Waitlist →</a>
+        <a class="cta" href="https://app.echoframe.co/auth/signin">Get Started →</a>
       </div>
     </div>
   </section>
@@ -202,7 +214,7 @@
             <li><span class="check">✓</span> Weekly competitive digest</li>
             <li><span class="check">✓</span> Email &amp; chat support</li>
           </ul>
-          <a class="cta" href="#waitlist" style="display:block;text-align:center;">Join the Waitlist →</a>
+          <a class="cta" href="https://app.echoframe.co/auth/signin" style="display:block;text-align:center;">Get Started →</a>
         </div>
       </div>
     </div>
@@ -211,11 +223,10 @@
   <section class="waitlist-section" id="waitlist">
     <div class="container">
       <h2>Get ahead of the competition. Literally.</h2>
-      <p>Drop your email and we'll reach out when Rival Scan is ready for its first customers. No spam — just a heads-up.</p>
-      <form class="waitlist-form" action="mailto:jacobstarling4313@gmail.com" method="POST" enctype="text/plain">
-        <input type="email" name="email" placeholder="your@email.com" required>
-        <button type="submit">Notify Me</button>
-      </form>
+      <p>Set up monitoring for your first competitors in minutes. Your first morning alert lands by 8am the next day anything changes.</p>
+      <div class="hero-ctas" style="justify-content:center;">
+        <a class="cta" href="https://app.echoframe.co/auth/signin" style="background:#E0A93F;color:var(--navy);">Get Started →</a>
+      </div>
     </div>
   </section>
 

@@ -1,0 +1,58 @@
+// Dedicated Prisma schema for EchoFrame Rate Watch MVP (SQLite, local dev).
+// Driven explicitly via:  prisma <cmd> --schema=prisma/rate-watch.prisma
+// Kept separate from prisma/schema.prisma so it stays SQLite-compatible.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contracts VendorContract[]
+
+  @@map("users")
+}
+
+model VendorContract {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  vendorName  String
+  category    String // e.g., "Janitorial", "Insurance", "Software", "HVAC"
+  currentRate Float
+  frequency   String // "MONTHLY" or "ANNUAL"
+  renewalDate DateTime
+
+  notes       String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("vendor_contracts")
+}
+
+model MarketBenchmark {
+  id                  String   @id @default(cuid())
+  category            String
+  companySizeBracket  String // "SMALL" (1-10), "MEDIUM" (11-50), "LARGE" (50+)
+  location            String // Default: "Columbus, GA"
+  localAvgRateMonthly Float
+  localAvgRateAnnual  Float?
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([category, companySizeBracket, location])
+  @@map("market_benchmarks")
+}

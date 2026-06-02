@@ -16,5 +16,19 @@
 05_Strategy_and_Docs/Legal/
 __pycache__/
 *.pyc
+
+# Node & Next.js
 node_modules/
+/.next/
+/out/
+/build
+.turbo/
+.next/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.sublime-workspace
+
 .DS_Store

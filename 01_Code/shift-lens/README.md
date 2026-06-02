@@ -1,15 +1,18 @@
-# Shift Lens (MVP)
+# Shift Lens
 
 > *"Some shifts are paying for themselves. Others are quietly bleeding you out.
 > Now you can tell which is which."* — `echoframe-site/intelligence/strata.html`
 
-Shift Lens maps each shift's labor cost against its revenue, computes a shift-by-shift P&L,
-flags the shifts that are underperforming, and gives a concrete recommendation for each.
+Shift Lens is a complete backend for mapping POS revenue and employee time-punch data into 
+shift-by-shift P&L analysis. It ingests raw transaction and labor data, maps them to shift blocks,
+computes financial metrics, and flags underperforming shifts with recommendations.
 
-This is the page's core promise end to end: **map every shift → weekly Shift Report →
-underperformer flags → schedule recommendations.** Pure Python, no external calls.
+This is the page's core promise end to end: **ingest raw data → map every shift → compute P&L →
+weekly Shift Report → underperformer flags → schedule recommendations.** Pure Python, PostgreSQL.
 
-## What it does
+## Features
+
+### MVP (Core P&L Engine)
 - Computes per-shift labor %, contribution (revenue − labor), and a status:
   `healthy` / `watch` / `underperforming` / `no_revenue`.
 - Accepts labor as a direct `labor_cost` **or** `labor_hours × avg_wage`.
@@ -17,38 +20,92 @@ underperformer flags → schedule recommendations.** Pure Python, no external ca
 - Aggregates the week: total revenue/labor, overall labor %, best & worst shift.
 - Configurable target labor % (default 30%, a restaurant norm).
 
+### Extended Backend (v0.2)
+- **Raw data ingestion:** Ingest POS transactions and time-punch data from CSV/API
+- **Shift mapping algorithm:** Assign transactions to nearest shift block
+- **Labor allocation:** Split employee labor costs across overlapping shifts (proration)
+- **Database persistence:** SQLAlchemy + PostgreSQL for transaction history
+- **Historical trending:** Query shift performance over 30+ days
+- **Weekly aggregation:** By-day breakdowns and performance metrics
+
 ## Run it
 
-```powershell
+### Offline Demo (No Database)
+```bash
 cd 01_Code\shift-lens
 pip install -r requirements.txt
-
-python demo.py                         # offline sample weekly report
-python -m pytest -q                    # tests (all pass, no network)
-uvicorn api:app --reload --port 8012   # HTTP API
+python demo_etl.py          # Full ETL pipeline demo
+python demo.py              # Original MVP demo (pre-joined shifts)
 ```
 
-### API
-- `GET  /health`
-- `POST /api/analyze`:
+### Full Backend with Database
+```bash
+# Setup (one-time)
+createdb shift_lens
+cp .env.example .env        # Edit .env with DB credentials
+python -c "from db import init_db; init_db()"
 
-```json
-{
-  "shifts": [
-    {"label": "Sat Dinner", "revenue": 5200, "labor_cost": 1300},
-    {"label": "Tue Lunch", "revenue": 600, "labor_hours": 26, "avg_wage": 15}
-  ],
-  "target_labor_pct": 30
-}
+# Run API
+uvicorn api_extended:app --reload --port 8012
 ```
 
-Returns per-shift results, ranked underperformers, best/worst shift, totals, and `report_text`.
+### MVP API (Original)
+```bash
+uvicorn api:app --reload --port 8012
+POST /api/analyze
+```
 
-## Assumptions / scope
-- **Input is already-joined shift rows** (revenue + labor per shift). The page promises a POS +
-  scheduling integration; that join is the documented seam and happens upstream in production —
-  the P&L math here is what it feeds. Sample/CSV input stands in for the live POS feed.
-- "Contribution" is revenue − labor only (the shift-level lever the product is about); it is not
-  full shift profit (no allocated rent/COGS). This matches the page's labor-vs-revenue framing.
-- Default target labor % is a restaurant norm; pass `target_labor_pct` for other models.
-- No auth/billing/persistence (flagship Stripe surface fronts it). Informational only.
+### Extended API (New)
+```
+GET  /health
+POST /api/ingest/transactions
+POST /api/ingest/time-punches
+POST /api/process-day                          # Full ETL pipeline
+GET  /api/weekly-report/{location_id}
+GET  /api/shift-history/{shift_id}
+GET  /api/weekly-aggregate/{location_id}
+```
+
+## Architecture
+
+**Three execution modes:**
+
+1. **Offline Demo** (`demo.py`, `demo_etl.py`) — No database, sample data
+2. **MVP API** (`api.py`) — Pre-joined shift rows only (original)
+3. **Full Backend** (`api_extended.py`) — Raw data ingestion + database + full ETL
+
+## Testing
+
+```bash
+python -m pytest tests/ -v              # All tests
+python -m pytest tests/test_shift_mapper.py -v      # Specific module
+```
+
+Tests cover:
+- Shift mapping (transaction → nearest shift)
+- Labor allocation (split shifts, wage rates)
+- P&L classification (healthy/watch/underperforming)
+
+## Data Model
+
+**Raw Inputs:**
+- `POSTransaction` — timestamp, amount, order_id
+- `TimePunch` — employee_id, clock_in, clock_out, wage
+
+**Computed:**
+- `ShiftMapping` — transaction/punch ↔ shift + allocation amounts
+- `ShiftPLResult` — aggregated revenue, labor, status per shift per day
+
+**Configuration:**
+- `ShiftDefinition` — shift_name, day_of_week, start_time, end_time
+- `Employee` — id, name, base_wage
+
+## Key Design Decisions
+
+- **Transaction allocation:** Assigned to **nearest shift** (not prorated)
+- **Labor allocation:** **Proportionally split** across overlapping shifts
+- **Persistence:** SQLAlchemy ORM with PostgreSQL
+- **Timezone:** Single configured timezone (configurable in .env)
+- **Target labor %:** Restaurant default 30% (configurable per request)
+
+See [SETUP.md](SETUP.md) for detailed installation and API documentation.

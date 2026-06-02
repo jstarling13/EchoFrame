@@ -1,0 +1,157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  contracts VendorContract[]
+  competitors Competitor[]
+  accounts Account[]
+  sessions Session[]
+
+  @@map("users")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Competitor {
+  id                String     @id @default(cuid())
+  userId            String
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name              String
+  website           String
+  googleBusinessUrl String?
+  yelpUrl           String?
+  status            String     @default("ACTIVE") // ACTIVE, INACTIVE
+
+  snapshots         CompetitorSnapshot[]
+  alerts            Alert[]
+
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  @@map("competitors")
+}
+
+model CompetitorSnapshot {
+  id                String     @id @default(cuid())
+  competitorId      String
+  competitor        Competitor @relation(fields: [competitorId], references: [id], onDelete: Cascade)
+
+  priceRange        String?    // e.g., "$15-$50"
+  reviewCount       Int?
+  averageRating     Float?
+  activePromos      String?    @db.Text
+  scrapedData       String?    @db.Text // JSON string of raw scraped data
+
+  scrapedAt         DateTime   @default(now())
+  createdAt         DateTime   @default(now())
+
+  @@index([competitorId])
+  @@index([scrapedAt])
+  @@map("competitor_snapshots")
+}
+
+model Alert {
+  id                String     @id @default(cuid())
+  competitorId      String
+  competitor        Competitor @relation(fields: [competitorId], references: [id], onDelete: Cascade)
+
+  alertType         String     // PRICE_CHANGE, REVIEW_UPDATE, PROMO_NEW, RATING_CHANGE
+  oldValue          String?
+  newValue          String?
+  severity          String     @default("MEDIUM") // LOW, MEDIUM, HIGH
+  description       String?    @db.Text
+
+  sentAt            DateTime?
+  createdAt         DateTime   @default(now())
+
+  @@index([competitorId])
+  @@index([createdAt])
+  @@map("alerts")
+}
+
+model VendorContract {
+  id            String     @id @default(cuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  vendorName    String
+  category      String     // e.g., "Janitorial", "Insurance", "Software", "HVAC"
+  currentRate   Float
+  frequency     String     // "MONTHLY" or "ANNUAL"
+  renewalDate   DateTime
+
+  notes         String?
+
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@map("vendor_contracts")
+}
+
+model MarketBenchmark {
+  id                    String     @id @default(cuid())
+  category              String
+  companySizeBracket    String     // "SMALL" (1-10), "MEDIUM" (11-50), "LARGE" (50+)
+  location              String     // Default: "Columbus, GA"
+  localAvgRateMonthly   Float
+  localAvgRateAnnual    Float?
+
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+
+  @@unique([category, companySizeBracket, location])
+  @@map("market_benchmarks")
+}

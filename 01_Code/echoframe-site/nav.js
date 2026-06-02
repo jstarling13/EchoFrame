@@ -1,8 +1,26 @@
 (function () {
 
-  var path = window.location.pathname.replace(/\\/g, '/');
-  var parts = path.split('/').filter(Boolean);
-  var activeDivision = parts[0] || '';
+  // Work whether the page is opened directly as a file (file://) or served
+  // by a web server. Under file:// a leading "/" points at the drive root,
+  // which breaks every link, so we build relative paths with a depth-aware
+  // prefix instead of absolute "/..." paths.
+  var rawPath = window.location.pathname.replace(/\\/g, '/');
+  var divisions = ['intelligence', 'revenue', 'ops'];
+  var activeDivision = '';
+  for (var d = 0; d < divisions.length; d++) {
+    if (rawPath.indexOf('/' + divisions[d] + '/') !== -1) {
+      activeDivision = divisions[d];
+      break;
+    }
+  }
+  // Division pages live one folder deep; the homepage/root pages do not.
+  var prefix = activeDivision ? '../' : '';
+
+  // Turn a root-relative "/foo/bar.html" into a path that resolves correctly
+  // from the current page in both file:// and served contexts.
+  function rel(href) {
+    return prefix + href.replace(/^\//, '');
+  }
 
   var menus = {
     intelligence: {
@@ -45,16 +63,16 @@
       var badge = item.badge
         ? ' <span class="ef-active-badge">Active</span>'
         : '';
-      return '<a href="' + item.href + '" class="ef-dd-item">' + item.name + badge + '</a>';
+      return '<a href="' + rel(item.href) + '" class="ef-dd-item">' + item.name + badge + '</a>';
     }).join('');
     return '<div class="ef-dd-wrap">'
-      + '<a href="' + m.href + '" class="ef-dd-trigger' + (active ? ' is-active' : '') + '">'
+      + '<a href="' + rel(m.href) + '" class="ef-dd-trigger' + (active ? ' is-active' : '') + '">'
       + m.label + ' <span class="ef-caret">&#9662;</span>'
       + '</a>'
       + '<div class="ef-dd-panel">'
       + '<div class="ef-dd-head">' + m.label + '</div>'
       + items
-      + '<a href="' + m.href + '" class="ef-dd-all">All ' + m.label + ' products &rarr;</a>'
+      + '<a href="' + rel(m.href) + '" class="ef-dd-all">All ' + m.label + ' products &rarr;</a>'
       + '</div>'
       + '</div>';
   }
@@ -97,8 +115,8 @@
 
   var html = '<style>' + css + '</style>'
     + '<nav class="ef-nav"><div class="ef-nav-inner">'
-    + '<a href="/index.html" class="ef-brand">'
-    + '<span class="ef-brand-logo"><img src="/echoframe_logo.png" alt="EchoFrame"></span>'
+    + '<a href="' + rel('/index.html') + '" class="ef-brand">'
+    + '<span class="ef-brand-logo"><img src="' + rel('/echoframe_logo.png') + '" alt="EchoFrame"></span>'
     + 'EchoFrame</a>'
     + '<div class="ef-nav-right">'
     + buildMenu('intelligence')
