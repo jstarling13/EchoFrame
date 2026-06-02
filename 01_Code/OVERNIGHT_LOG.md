@@ -162,4 +162,27 @@ integration); inbox delivery is a thin daily-cron wrapper over `render_alert_dig
 flagship Resend); document storage/history deferred; no auth/billing; informational only.
 
 ---
+
+## 2026-06-02 — Product MVP #4: Bay Coach (`bay-coach/`)  ✅ done
+
+**Page:** `ops/baysignal.html` · **Core promise:** right service recommendation at write-up from
+vehicle history + mileage.
+
+**Built:** `engine.py` (maintenance-interval rules engine) + `api.py` (FastAPI) + `demo.py` +
+13 tests + README + requirements. No external calls.
+- Compares miles-since-last against a standard interval table (oil, tires, brakes, fluids, plugs).
+- Per service: status (overdue/due/upcoming/ok), miles since/until, advisor-readable reason.
+- Never-recorded service treated as due with a "confirm with customer" note; ranked most-urgent.
+
+**Run:** `cd 01_Code\bay-coach && pip install -r requirements.txt && python demo.py` ·
+API: `uvicorn api:app --reload --port 8014` · tests: `python -m pytest -q`.
+
+**Test results:** 13 passed. Demo (2019 Camry @ 68,400 mi): flagged 7 overdue, 2 upcoming.
+
+**Assumptions:** vehicle+history come from the shop management system (documented integration
+seam); standard passenger-vehicle interval table (per-make tables drop in without engine change);
+mileage-based, not an inspection (write-up text says so); month-only intervals surfaced for manual
+review; no auth/billing; informational only.
+
+---
 *(product MVP entries appended below as they are completed)*
