@@ -89,4 +89,28 @@ python -m pytest -q         # 83 passed
   is the authoritative current guide.
 
 ---
+
+## 2026-06-02 — Product MVP #1: Rate Watch (`rate-watch/`)  ✅ done
+
+**Page:** `intelligence/oryn.html` · **Core promise:** benchmark vendor spend vs market, flag
+overpays, alert before renewals.
+
+**Built:** pure-Python engine (`engine.py`) + FastAPI wrapper (`api.py`) + offline `demo.py` +
+13 tests + README + requirements. No external calls anywhere.
+- Compares each vendor to a curated `(low, typical, high)` market band per category.
+- Classifies over/within/under/no_benchmark, computes overpay $/mo + %, ranks largest gaps,
+  totals monthly & annual savings.
+- Flags renewals due within a window (default 30 days) — the page's renewal-alert promise.
+
+**Run:** `cd 01_Code\rate-watch && pip install -r requirements.txt && python demo.py` ·
+API: `uvicorn api:app --reload --port 8011` · tests: `python -m pytest -q`.
+
+**Test results:** 13 passed. Demo: reviewed 7 vendors, found 4 overpayers, $670/mo
+($8,040/yr) potential savings, 2 renewals flagged.
+
+**Assumptions:** market bands are a curated sample table (documented seam for a real local-market
+feed, same pattern as the flagship's industry benchmarks); national bands stand in for "local";
+no auth/billing/persistence (flagship Stripe surface fronts it); informational only.
+
+---
 *(product MVP entries appended below as they are completed)*
