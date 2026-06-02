@@ -676,6 +676,91 @@ def generate_clarity_report(
     return path
 
 
+# ── Persistence + delivery ────────────────────────────────────────────────────
+# NOTE (overnight reconstruction, 2026-06-02): the original definitions of
+# _save_report and _send_report_email were lost when engine.py was truncated
+# (the file ended mid-_set_cell_bg). They are reconstructed here from their call
+# sites in generate_clarity_report and from the existing on-disk report filenames
+# (e.g. "EchoFrame_reliable_heating_air_20260531_041829.docx"). Behaviour is
+# verified by demo_local.py (offline) and the engine tests (mocked). See
+# OVERNIGHT_LOG.md.
+
+# From address for outbound report emails. Override via env in production.
+EMAIL_FROM = os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>")
+
+
+def _report_slug(business_name: str) -> str:
+    """Filesystem-safe slug from a business name: lowercase, non-alphanumerics → '_'.
+
+    Matches the naming of previously generated reports
+    (e.g. 'Reliable Heating & Air' → 'reliable_heating_air')."""
+    slug = re.sub(r"[^a-z0-9]+", "_", (business_name or "").lower()).strip("_")
+    return slug or "report"
+
+
+def _save_report(customer_email: str, docx_bytes: bytes, meta: dict) -> str:
+    """Persist the generated .docx to REPORTS_DIR and return its absolute path.
+
+    Filename: EchoFrame_<business-slug>_<YYYYMMDD>_<HHMMSS>.docx
+    """
+    REPORTS_DIR.mkdir(exist_ok=True)
+    slug      = _report_slug(meta.get("Business Name", ""))
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    path      = REPORTS_DIR / f"EchoFrame_{slug}_{timestamp}.docx"
+    path.write_bytes(docx_bytes)
+    print(f"[EchoFrame] Report saved -> {path.name}")
+    return str(path)
+
+
+def _send_report_email(
+    customer_email: str,
+    owner_name: str,
+    attachment_bytes: bytes,
+    meta: dict,
+) -> None:
+    """Email the .docx Clarity Report to the customer via Resend (base64 attachment).
+
+    Raises on send failure so the caller can log it; never logs PII.
+    """
+    import base64
+
+    resend.api_key = os.environ.get("RESEND_API_KEY", "")
+
+    month     = meta.get("Month", datetime.utcnow().strftime("%B %Y")).strip()
+    biz       = meta.get("Business Name", "your business").strip() or "your business"
+    greeting  = (owner_name or "").strip() or "there"
+    file_name = f"EchoFrame_Clarity_Report_{month.replace(' ', '_') or 'Report'}.docx"
+    subject   = f"Your {month} Clarity Report — {biz}".strip()
+
+    html = (
+        f"<p>Hi {greeting},</p>"
+        f"<p>Your {month} Monthly Financial Clarity Report for {biz} is attached as a "
+        f"Word document.</p>"
+        f"<p>It walks through your revenue, where your money is going relative to industry "
+        f"benchmarks, the single highest-leverage thing to fix this month, and the next steps "
+        f"to take.</p>"
+        f"<p>Reply to this email with any questions.</p>"
+        f"<p>— EchoFrame<br>"
+        f"<span style=\"color:#6B7280;font-size:12px;\">Business intelligence, not accounting "
+        f"software. Informational only; not accounting, tax, legal, or investment advice.</span></p>"
+    )
+
+    params = {
+        "from":    EMAIL_FROM,
+        "to":      [customer_email],
+        "subject": subject,
+        "html":    html,
+        "attachments": [
+            {
+                "filename": file_name,
+                "content":  base64.b64encode(attachment_bytes).decode("ascii"),
+            }
+        ],
+    }
+    resend.Emails.send(params)
+    print("[EchoFrame] Report email dispatched.")  # no PII in logs
+
+
 # ── Step 1: CSV ingestion ─────────────────────────────────────────────────────
 
 def _load_financials(customer_email: str):
@@ -3092,4 +3177,6 @@ def _set_cell_bg(cell, hex_color: str):
     tcPr = cell._tc.get_or_add_tcPr()
     shd  = OxmlElement("w:shd")
     shd.set(qn("w:val"),   "clear")
-    shd.set(qn("w:color"), "au
+    shd.set(qn("w:color"), "auto")
+    shd.set(qn("w:fill"),  hex_color)
+    tcPr.append(shd)

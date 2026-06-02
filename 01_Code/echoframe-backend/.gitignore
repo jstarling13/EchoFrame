@@ -14,6 +14,9 @@ Claude*.txt
 # Generated files — not needed in repo
 uploads/
 reports/
+demo_output/
+.venv/
+.pytest_cache/
 __pycache__/
 *.pyc
 *.pyo
