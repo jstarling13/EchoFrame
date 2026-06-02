@@ -1,5 +1,13 @@
 # EchoFrame Product Status Audit
 
+> **⚠ CORRECTION (2026-06-02, later same day): this doc's premise was wrong.** The brief said the
+> other 12 products had "no code." In fact 8 real apps exist as separate TS/Next.js GitHub repos in
+> `C:\Users\jacob\OneDrive\Businesses\` (Oryn, Strata, BaySignal, Veris, LeadCatcher, Vericount,
+> HydroPay, FDS). See **[PORTFOLIO_AUDIT.md](PORTFOLIO_AUDIT.md)** for the corrected, consolidated
+> status. The Python MVPs described below are **superseded prototypes** — only the flagship rescue
+> is real, shippable work. The audit below is kept for the record.
+
+
 **Audited:** 2026-06-02 (overnight autonomous engineering run)
 **Auditor:** Claude (Opus 4.8), autonomous overnight engineer
 **Method:** Read every marketing product page (the spec) + the `echoframe-backend` source and tests.
