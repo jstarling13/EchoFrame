@@ -257,4 +257,27 @@ after-hours templates selected correctly (incl. Saturday).
 real texts (inject a real Sender to go live); in-process state for MVP; default hours Mon–Fri 8–5.
 
 ---
+
+## 2026-06-02 — Product MVP #8: Crew Hire (`crew-hire/`)  ✅ done
+
+**Page:** `ops/ironhire.html` · **Core promise:** screen/qualify applicants, book only the
+pre-qualified ones onto your calendar.
+
+**Built:** `engine.py` (knockout + 0–100 scoring + ranking + interview booking with injected mock
+booker) + `api.py` (FastAPI) + `demo.py` + 12 tests + README + requirements. Nothing posted/sent.
+- Hard knockouts (missing required skill/license, unavailable); score = required coverage (50) +
+  experience (30) + preferred skills (20); qualifies at a configurable threshold.
+- Books weekday interview slots (skips weekends) for ranked qualified candidates.
+
+**Run:** `cd 01_Code\crew-hire && pip install -r requirements.txt && python demo.py` ·
+API: `uvicorn api:app --reload --port 8018` · tests: `python -m pytest -q`.
+
+**Test results:** 12 passed. Demo: 5 applicants → 1 qualified + booked; correctly knocked out a
+high-scoring candidate with no license and one who was unavailable.
+
+**Assumptions:** job-board posting + real calendar/SMS confirmation are the mocked seam; applicants
+are provided to the engine (arrive from boards in production); no-show/confirmation layer deferred;
+no auth/billing.
+
+---
 *(product MVP entries appended below as they are completed)*
