@@ -1,8 +1,7 @@
-from datetime import datetime
 from decimal import Decimal
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
-from models.base import Base
+from models.base import Base, utcnow
 
 class TimePunch(Base):
     __tablename__ = "time_punches"
@@ -13,7 +12,7 @@ class TimePunch(Base):
     clock_out = Column(DateTime, nullable=True, index=True)
     location_id = Column(String(100), nullable=False, index=True)
     wage_override = Column(Numeric(8, 2), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utcnow)
 
     employee = relationship("Employee", back_populates="time_punches")
 

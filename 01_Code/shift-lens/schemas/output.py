@@ -1,7 +1,9 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class ShiftResultOutput(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     label: str
     revenue: float
     labor_cost: float
@@ -9,6 +11,3 @@ class ShiftResultOutput(BaseModel):
     contribution: float
     status: str
     recommendation: str
-
-    class Config:
-        from_attributes = True

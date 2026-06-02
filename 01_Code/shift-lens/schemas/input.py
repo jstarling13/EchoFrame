@@ -30,3 +30,24 @@ class ProcessDayRequest(BaseModel):
     transactions: List[TransactionInput]
     time_punches: List[TimePunchInput]
     target_labor_pct: float = Field(30.0, gt=0, le=100)
+
+
+class SyncDayRequest(BaseModel):
+    """Pull a day's data from external connectors and run the full pipeline."""
+    date: str
+    location_id: str = Field(..., max_length=100)
+    pos_source: str = Field("mock", max_length=50)
+    timesheet_source: str = Field("mock", max_length=50)
+    target_labor_pct: float = Field(30.0, gt=0, le=100)
+
+
+class PosWebhookRequest(BaseModel):
+    """A single POS transaction pushed in real time."""
+    transaction: TransactionInput
+    target_labor_pct: float = Field(30.0, gt=0, le=100)
+
+
+class PunchWebhookRequest(BaseModel):
+    """A single completed time punch pushed in real time."""
+    time_punch: TimePunchInput
+    target_labor_pct: float = Field(30.0, gt=0, le=100)

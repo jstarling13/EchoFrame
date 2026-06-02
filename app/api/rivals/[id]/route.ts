@@ -2,17 +2,19 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+// Next.js 15: `params` is a Promise and must be awaited.
+type RouteParams = { params: Promise<{ id: string }> };
+
+export async function GET(request: NextRequest, { params }: RouteParams) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { id } = await params;
+
   const competitor = await db.competitor.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       snapshots: {
         orderBy: { scrapedAt: "desc" },
@@ -32,17 +34,16 @@ export async function GET(
   return NextResponse.json(competitor);
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, { params }: RouteParams) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { id } = await params;
+
   const competitor = await db.competitor.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
 
   if (!competitor || competitor.userId !== session.user.id) {
@@ -53,7 +54,7 @@ export async function PATCH(
     await request.json();
 
   const updated = await db.competitor.update({
-    where: { id: params.id },
+    where: { id },
     data: {
       ...(name && { name }),
       ...(website && { website }),
@@ -66,17 +67,16 @@ export async function PATCH(
   return NextResponse.json(updated);
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { id } = await params;
+
   const competitor = await db.competitor.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
 
   if (!competitor || competitor.userId !== session.user.id) {
@@ -84,7 +84,7 @@ export async function DELETE(
   }
 
   await db.competitor.delete({
-    where: { id: params.id },
+    where: { id },
   });
 
   return NextResponse.json({ success: true });

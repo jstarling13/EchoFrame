@@ -40,14 +40,20 @@ python demo.py              # Original MVP demo (pre-joined shifts)
 
 ### Full Backend with Database
 ```bash
-# Setup (one-time)
-createdb shift_lens
-cp .env.example .env        # Edit .env with DB credentials
-python -c "from db import init_db; init_db()"
+# Zero-config: defaults to a local SQLite file
+pip install -r requirements.txt
+python seed_data.py --reset          # create tables + seed a demo week
+uvicorn api_extended:app --port 8012 # API + live dashboard at http://localhost:8012/
 
-# Run API
-uvicorn api_extended:app --reload --port 8012
+# Production: set DATABASE_URL to PostgreSQL, then run migrations
+cp .env.example .env                 # edit DATABASE_URL + SHIFT_LENS_API_KEY
+alembic upgrade head
+uvicorn api_extended:app --port 8012
 ```
+
+Open **http://localhost:8012/** for the branded live dashboard — pick a date,
+click “Sync & Analyze Day”, and the mock connectors generate a full day of POS +
+labor data that the engine maps into a shift-by-shift P&L.
 
 ### MVP API (Original)
 ```bash
@@ -57,10 +63,14 @@ POST /api/analyze
 
 ### Extended API (New)
 ```
+GET  /                                         # live dashboard (redirect)
+GET  /app/dashboard.html                       # standalone branded UI
 GET  /health
-POST /api/ingest/transactions
-POST /api/ingest/time-punches
-POST /api/process-day                          # Full ETL pipeline
+GET  /api/shifts/{location_id}                 # list configured shift blocks
+POST /api/sync-day                             # pull from connectors + run pipeline
+POST /api/ingest/transactions                  # 🔒 auth when API key set
+POST /api/ingest/time-punches                  # 🔒
+POST /api/process-day                          # 🔒 full ETL from explicit payload
 GET  /api/weekly-report/{location_id}
 GET  /api/shift-history/{shift_id}
 GET  /api/weekly-aggregate/{location_id}
@@ -68,11 +78,20 @@ GET  /api/weekly-aggregate/{location_id}
 
 ## Architecture
 
+**Layers:**
+
+- `connectors/` — pluggable POS + timesheet integrations (mock now, real later)
+- `etl/` — ingestion, shift mapping, labor allocation, persistence
+- `models/` — SQLAlchemy ORM (6 tables); `migrations/` — Alembic
+- `service/` — `ShiftPLService` orchestration + aggregations/trends
+- `api_extended.py` — FastAPI endpoints + auth + `static/` dashboard
+- `engine.py` — original MVP P&L math (reused, unchanged)
+
 **Three execution modes:**
 
 1. **Offline Demo** (`demo.py`, `demo_etl.py`) — No database, sample data
 2. **MVP API** (`api.py`) — Pre-joined shift rows only (original)
-3. **Full Backend** (`api_extended.py`) — Raw data ingestion + database + full ETL
+3. **Full Backend** (`api_extended.py`) — Connectors + raw ingestion + database + dashboard
 
 ## Testing
 

@@ -2,7 +2,12 @@ import { Resend } from "resend";
 import { Alert, Competitor, User } from "@prisma/client";
 import { db } from "../db";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazily construct the Resend client. Instantiating at module load throws when
+// RESEND_API_KEY is unset, which breaks `next build` (route page-data collection)
+// and any deploy where the key isn't present yet.
+function getResend(): Resend {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 export async function sendDailyAlert(
   user: User,
@@ -36,7 +41,7 @@ export async function sendDailyAlert(
   const emailContent = generateDailyAlertEmail(user, alertsByCompetitor);
 
   try {
-    await resend.emails.send({
+    await getResend().emails.send({
       from: "alerts@rivalsan.com",
       to: user.email,
       subject: `🔔 Rival Scan Daily Alert - ${alerts.length} change(s) detected`,
@@ -67,7 +72,7 @@ export async function sendWeeklyDigest(
   const emailContent = generateWeeklyDigestEmail(user, weeklyAlerts);
 
   try {
-    await resend.emails.send({
+    await getResend().emails.send({
       from: "digest@rivalsan.com",
       to: user.email,
       subject: "📊 Rival Scan Weekly Digest - Competitive Intelligence Report",

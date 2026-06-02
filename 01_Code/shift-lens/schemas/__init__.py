@@ -4,6 +4,9 @@ from schemas.input import (
     IngestTransactionsRequest,
     IngestPunchesRequest,
     ProcessDayRequest,
+    SyncDayRequest,
+    PosWebhookRequest,
+    PunchWebhookRequest,
 )
 from schemas.output import ShiftResultOutput
 
@@ -13,5 +16,8 @@ __all__ = [
     "IngestTransactionsRequest",
     "IngestPunchesRequest",
     "ProcessDayRequest",
+    "SyncDayRequest",
+    "PosWebhookRequest",
+    "PunchWebhookRequest",
     "ShiftResultOutput",
 ]

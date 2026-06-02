@@ -1,8 +1,15 @@
+from datetime import datetime, timezone
+
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import declarative_base, sessionmaker
 from config import DATABASE_URL
 
 Base = declarative_base()
+
+
+def utcnow() -> datetime:
+    """Timezone-aware UTC now (replaces deprecated datetime.utcnow)."""
+    return datetime.now(timezone.utc)
 
 
 def make_engine(url: str = DATABASE_URL):

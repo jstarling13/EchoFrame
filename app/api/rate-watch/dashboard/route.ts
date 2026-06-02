@@ -1,59 +1,25 @@
-import { NextResponse } from 'next/server';
-import prisma from '@/lib/db';
-import { benchmarkContract, calculateTotalSavings, calculateTotalSpend } from '@/lib/benchmarking-engine';
-import { getUpcomingRenewals } from '@/lib/renewal-alerts';
+import { NextResponse, NextRequest } from 'next/server';
+import { getCompanyDashboard } from '@/lib/rate-watch-data';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // For demo: use the first user or create one
-    let user = await prisma.user.findFirst();
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          email: 'demo@echoframe.local',
-          name: 'Demo Business',
-        },
-      });
+    const slug = request.nextUrl.searchParams.get('slug');
+    if (!slug) {
+      return NextResponse.json(
+        { error: 'Missing required "slug" query parameter' },
+        { status: 400 }
+      );
     }
 
-    // Fetch all contracts for the user
-    const contracts = await prisma.vendorContract.findMany({
-      where: { userId: user.id },
-    });
-
-    // Fetch market benchmarks
-    const benchmarks = await prisma.marketBenchmark.findMany();
-
-    // Calculate benchmark results
-    const benchmarkResults = contracts.map((contract) => {
-      // Find matching benchmark
-      const benchmark = benchmarks.find(
-        (b) => b.category === contract.category && b.location === 'Columbus, GA'
+    const dashboard = await getCompanyDashboard(slug);
+    if (!dashboard) {
+      return NextResponse.json(
+        { error: `No company found for slug "${slug}"` },
+        { status: 404 }
       );
+    }
 
-      if (!benchmark) {
-        return null;
-      }
-
-      const benchmarkRate =
-        contract.frequency === 'MONTHLY'
-          ? benchmark.localAvgRateMonthly
-          : (benchmark.localAvgRateAnnual || benchmark.localAvgRateMonthly * 12);
-
-      return benchmarkContract(contract, benchmarkRate, contract.frequency);
-    }).filter(Boolean);
-
-    // Calculate metrics
-    const totalSpend = calculateTotalSpend(contracts);
-    const totalSavings = calculateTotalSavings(benchmarkResults as any);
-    const upcomingRenewals = getUpcomingRenewals(contracts).length;
-
-    return NextResponse.json({
-      benchmarkResults,
-      totalSpend,
-      totalSavings,
-      upcomingRenewals,
-    });
+    return NextResponse.json(dashboard);
   } catch (error) {
     console.error('Dashboard error:', error);
     return NextResponse.json(

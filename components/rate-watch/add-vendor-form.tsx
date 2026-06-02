@@ -15,7 +15,12 @@ const CATEGORIES = [
   'HVAC Maintenance',
   'Office Equipment Lease',
   'Phone & Internet',
-  'Other',
+  'Software / SaaS',
+  'Waste Management',
+  'Payroll Services',
+  'Security / Alarm Monitoring',
+  'Medical Waste Disposal',
+  'Uniform / Linen Service',
 ];
 
 interface AddVendorFormProps {

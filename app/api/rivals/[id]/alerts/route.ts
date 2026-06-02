@@ -4,15 +4,17 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { id } = await params;
+
   const competitor = await db.competitor.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
 
   if (!competitor || competitor.userId !== session.user.id) {
@@ -20,7 +22,7 @@ export async function GET(
   }
 
   const alerts = await db.alert.findMany({
-    where: { competitorId: params.id },
+    where: { competitorId: id },
     orderBy: { createdAt: "desc" },
     take: 50,
   });

@@ -4,29 +4,24 @@ import prisma from '@/lib/db';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-
-    const { vendorName, category, currentRate, frequency, renewalDate } = body;
+    const { companySlug, vendorName, category, currentRate, frequency, renewalDate } = body;
 
     // Validation
-    if (!vendorName || !category || !currentRate || !frequency || !renewalDate) {
+    if (!companySlug || !vendorName || !category || !currentRate || !frequency || !renewalDate) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields (companySlug, vendorName, category, currentRate, frequency, renewalDate)' },
         { status: 400 }
       );
     }
 
-    // Get or create demo user
-    let user = await prisma.user.findFirst();
+    const user = await prisma.user.findUnique({ where: { slug: companySlug } });
     if (!user) {
-      user = await prisma.user.create({
-        data: {
-          email: 'demo@echoframe.local',
-          name: 'Demo Business',
-        },
-      });
+      return NextResponse.json(
+        { error: `No company found for slug "${companySlug}"` },
+        { status: 404 }
+      );
     }
 
-    // Create vendor contract
     const contract = await prisma.vendorContract.create({
       data: {
         userId: user.id,
@@ -48,24 +43,28 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // Get or create demo user
-    let user = await prisma.user.findFirst();
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          email: 'demo@echoframe.local',
-          name: 'Demo Business',
-        },
-      });
+    const slug = request.nextUrl.searchParams.get('slug');
+    if (!slug) {
+      return NextResponse.json(
+        { error: 'Missing required "slug" query parameter' },
+        { status: 400 }
+      );
     }
 
-    const contracts = await prisma.vendorContract.findMany({
-      where: { userId: user.id },
+    const user = await prisma.user.findUnique({
+      where: { slug },
+      include: { contracts: true },
     });
+    if (!user) {
+      return NextResponse.json(
+        { error: `No company found for slug "${slug}"` },
+        { status: 404 }
+      );
+    }
 
-    return NextResponse.json(contracts);
+    return NextResponse.json(user.contracts);
   } catch (error) {
     console.error('Contract fetch error:', error);
     return NextResponse.json(

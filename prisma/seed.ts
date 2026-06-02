@@ -2,143 +2,141 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Helper: a date N days from today
+const today = new Date();
+const inDays = (n: number) =>
+  new Date(today.getTime() + n * 24 * 60 * 60 * 1000);
+
+/**
+ * Market benchmark matrix for Columbus, GA.
+ * Rates are average monthly spend by category and company-size bracket.
+ */
+const BENCHMARKS: Array<{
+  category: string;
+  small: number;
+  medium: number;
+}> = [
+  { category: 'Janitorial Services', small: 450, medium: 850 },
+  { category: 'Commercial Insurance', small: 350, medium: 650 },
+  { category: 'IT Support', small: 800, medium: 1500 },
+  { category: 'HVAC Maintenance', small: 300, medium: 550 },
+  { category: 'Office Equipment Lease', small: 200, medium: 380 },
+  { category: 'Phone & Internet', small: 150, medium: 280 },
+  { category: 'Software / SaaS', small: 250, medium: 500 },
+  { category: 'Waste Management', small: 175, medium: 320 },
+  { category: 'Payroll Services', small: 120, medium: 240 },
+  { category: 'Security / Alarm Monitoring', small: 90, medium: 170 },
+  { category: 'Medical Waste Disposal', small: 110, medium: 210 },
+  { category: 'Uniform / Linen Service', small: 140, medium: 260 },
+];
+
+/**
+ * Three realistic Columbus, GA small-business sample tenants.
+ * Each has a distinct vendor portfolio with a deliberate mix of
+ * Overpaying / Fair / Great Deal statuses and varied renewal timing.
+ */
+const COMPANIES = [
+  {
+    email: 'office@riversidefamilydental.com',
+    name: 'Riverside Family Dental',
+    slug: 'riverside-family-dental',
+    industry: 'Dental Practice',
+    companySizeBracket: 'SMALL',
+    contactName: 'Dr. Angela Reyes',
+    vendors: [
+      { vendorName: 'Sparkle Medical Cleaning', category: 'Janitorial Services', currentRate: 620, frequency: 'MONTHLY', renewalDate: inDays(12), notes: 'Daily clinical-grade cleaning, 6 operatories' },
+      { vendorName: 'Georgia Dental Insurance Group', category: 'Commercial Insurance', currentRate: 360, frequency: 'MONTHLY', renewalDate: inDays(90), notes: 'Malpractice + general liability bundle' },
+      { vendorName: 'MediTech IT Partners', category: 'IT Support', currentRate: 1050, frequency: 'MONTHLY', renewalDate: inDays(55), notes: 'HIPAA-compliant managed IT & backups' },
+      { vendorName: 'Coolair HVAC', category: 'HVAC Maintenance', currentRate: 300, frequency: 'MONTHLY', renewalDate: inDays(200), notes: 'Quarterly service + filtration' },
+      { vendorName: 'BioClean Medical Waste', category: 'Medical Waste Disposal', currentRate: 145, frequency: 'MONTHLY', renewalDate: inDays(25), notes: 'Biohazard & sharps pickup, weekly' },
+      { vendorName: 'DentalSoft Practice Mgmt', category: 'Software / SaaS', currentRate: 230, frequency: 'MONTHLY', renewalDate: inDays(150), notes: 'Scheduling, charting & billing suite' },
+    ],
+  },
+  {
+    email: 'hello@chattahoocheecoffee.com',
+    name: 'Chattahoochee Coffee Roasters',
+    slug: 'chattahoochee-coffee-roasters',
+    industry: 'Cafe & Roastery',
+    companySizeBracket: 'SMALL',
+    contactName: 'Marcus Webb',
+    vendors: [
+      { vendorName: 'CleanBrew Janitorial', category: 'Janitorial Services', currentRate: 480, frequency: 'MONTHLY', renewalDate: inDays(40), notes: 'Nightly cafe & restroom cleaning' },
+      { vendorName: 'Brewers Mutual Insurance', category: 'Commercial Insurance', currentRate: 410, frequency: 'MONTHLY', renewalDate: inDays(18), notes: 'Property, liability & food spoilage' },
+      { vendorName: 'POSPro Systems', category: 'Software / SaaS', currentRate: 300, frequency: 'MONTHLY', renewalDate: inDays(60), notes: 'Point-of-sale + loyalty program' },
+      { vendorName: 'Southern Waste Solutions', category: 'Waste Management', currentRate: 175, frequency: 'MONTHLY', renewalDate: inDays(110), notes: 'Trash, recycling & compost pickup' },
+      { vendorName: 'FreshLinen Uniform Co', category: 'Uniform / Linen Service', currentRate: 130, frequency: 'MONTHLY', renewalDate: inDays(75), notes: 'Aprons, towels & barista uniforms' },
+      { vendorName: 'ConnectFast Internet', category: 'Phone & Internet', currentRate: 165, frequency: 'MONTHLY', renewalDate: inDays(5), notes: 'Business fiber + VoIP lines' },
+    ],
+  },
+  {
+    email: 'service@fountaincityauto.com',
+    name: 'Fountain City Auto Repair',
+    slug: 'fountain-city-auto-repair',
+    industry: 'Auto Repair',
+    companySizeBracket: 'MEDIUM',
+    contactName: 'Travis Boone',
+    vendors: [
+      { vendorName: 'Guardian Garage Insurance', category: 'Commercial Insurance', currentRate: 720, frequency: 'MONTHLY', renewalDate: inDays(28), notes: 'Garage liability + garagekeepers' },
+      { vendorName: 'AutoData Software', category: 'Software / SaaS', currentRate: 480, frequency: 'MONTHLY', renewalDate: inDays(95), notes: 'Estimating, parts catalog & invoicing' },
+      { vendorName: 'Heavy Duty Waste & Oil', category: 'Waste Management', currentRate: 410, frequency: 'MONTHLY', renewalDate: inDays(22), notes: 'Used oil, tires & hazardous disposal' },
+      { vendorName: 'ProTech IT Services', category: 'IT Support', currentRate: 1450, frequency: 'MONTHLY', renewalDate: inDays(130), notes: 'Shop network, cameras & POS support' },
+      { vendorName: 'ShopGuard Security', category: 'Security / Alarm Monitoring', currentRate: 230, frequency: 'MONTHLY', renewalDate: inDays(14), notes: '24/7 alarm + camera monitoring' },
+      { vendorName: 'MechWear Uniforms', category: 'Uniform / Linen Service', currentRate: 300, frequency: 'MONTHLY', renewalDate: inDays(65), notes: 'Mechanic uniforms & shop rags, 15 staff' },
+    ],
+  },
+];
+
 async function main() {
-  // Clear existing data
+  // Clear existing data (order matters for FK constraints)
   await prisma.vendorContract.deleteMany();
   await prisma.marketBenchmark.deleteMany();
   await prisma.user.deleteMany();
 
-  // Create a test user
-  const user = await prisma.user.create({
-    data: {
-      email: 'demo@echoframe.local',
-      name: 'Demo Business Owner',
-    },
-  });
-
-  // Create market benchmarks for Columbus, GA area (Small businesses 1-10 employees)
-  const benchmarks = [
-    {
-      category: 'Janitorial Services',
-      companySizeBracket: 'SMALL',
-      location: 'Columbus, GA',
-      localAvgRateMonthly: 450,
-      localAvgRateAnnual: 5400,
-    },
-    {
-      category: 'Commercial Insurance',
-      companySizeBracket: 'SMALL',
-      location: 'Columbus, GA',
-      localAvgRateMonthly: 350,
-      localAvgRateAnnual: 4200,
-    },
-    {
-      category: 'IT Support',
-      companySizeBracket: 'SMALL',
-      location: 'Columbus, GA',
-      localAvgRateMonthly: 800,
-      localAvgRateAnnual: 9600,
-    },
-    {
-      category: 'HVAC Maintenance',
-      companySizeBracket: 'SMALL',
-      location: 'Columbus, GA',
-      localAvgRateMonthly: 300,
-      localAvgRateAnnual: 3600,
-    },
-    {
-      category: 'Office Equipment Lease',
-      companySizeBracket: 'SMALL',
-      location: 'Columbus, GA',
-      localAvgRateMonthly: 200,
-      localAvgRateAnnual: 2400,
-    },
-    {
-      category: 'Phone & Internet',
-      companySizeBracket: 'SMALL',
-      location: 'Columbus, GA',
-      localAvgRateMonthly: 150,
-      localAvgRateAnnual: 1800,
-    },
-  ];
-
-  for (const benchmark of benchmarks) {
+  // Seed market benchmarks for both SMALL and MEDIUM brackets
+  let benchmarkCount = 0;
+  for (const b of BENCHMARKS) {
     await prisma.marketBenchmark.create({
-      data: benchmark,
-    });
-  }
-
-  // Create realistic vendor contracts with mix of overpaying and fair rates
-  const today = new Date();
-  const nextMonth = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
-  const twoMonths = new Date(today.getTime() + 60 * 24 * 60 * 60 * 1000);
-  const fourMonths = new Date(today.getTime() + 120 * 24 * 60 * 60 * 1000);
-  const sixMonths = new Date(today.getTime() + 180 * 24 * 60 * 60 * 1000);
-
-  const contracts = [
-    {
-      vendorName: 'Superior Cleaning Solutions',
-      category: 'Janitorial Services',
-      currentRate: 650, // OVERPAYING (vs $450)
-      frequency: 'MONTHLY',
-      renewalDate: nextMonth,
-      notes: 'Daily office cleaning, M-F',
-    },
-    {
-      vendorName: 'Guardian Business Insurance',
-      category: 'Commercial Insurance',
-      currentRate: 350, // FAIR (vs $350)
-      frequency: 'MONTHLY',
-      renewalDate: twoMonths,
-      notes: 'General liability and property insurance',
-    },
-    {
-      vendorName: 'TechPro IT Solutions',
-      category: 'IT Support',
-      currentRate: 950, // OVERPAYING (vs $800)
-      frequency: 'MONTHLY',
-      renewalDate: fourMonths,
-      notes: 'Managed IT services and helpdesk support',
-    },
-    {
-      vendorName: 'Elite HVAC Services',
-      category: 'HVAC Maintenance',
-      currentRate: 300, // FAIR (vs $300)
-      frequency: 'MONTHLY',
-      renewalDate: sixMonths,
-      notes: 'Quarterly maintenance and emergency service',
-    },
-    {
-      vendorName: 'Global Office Leasing',
-      category: 'Office Equipment Lease',
-      currentRate: 250, // OVERPAYING (vs $200)
-      frequency: 'MONTHLY',
-      renewalDate: new Date(today.getTime() + 45 * 24 * 60 * 60 * 1000),
-      notes: 'Copier and printer lease agreement',
-    },
-    {
-      vendorName: 'ConnectTech Communications',
-      category: 'Phone & Internet',
-      currentRate: 200, // OVERPAYING (vs $150)
-      frequency: 'MONTHLY',
-      renewalDate: new Date(today.getTime() + 15 * 24 * 60 * 60 * 1000),
-      notes: 'Business-grade internet and phone service',
-    },
-  ];
-
-  for (const contract of contracts) {
-    await prisma.vendorContract.create({
       data: {
-        ...contract,
-        userId: user.id,
+        category: b.category,
+        companySizeBracket: 'SMALL',
+        location: 'Columbus, GA',
+        localAvgRateMonthly: b.small,
+        localAvgRateAnnual: b.small * 12,
       },
     });
+    await prisma.marketBenchmark.create({
+      data: {
+        category: b.category,
+        companySizeBracket: 'MEDIUM',
+        location: 'Columbus, GA',
+        localAvgRateMonthly: b.medium,
+        localAvgRateAnnual: b.medium * 12,
+      },
+    });
+    benchmarkCount += 2;
+  }
+
+  // Seed companies and their vendor contracts
+  let vendorCount = 0;
+  for (const company of COMPANIES) {
+    const { vendors, ...companyData } = company;
+    const user = await prisma.user.create({ data: companyData });
+
+    for (const vendor of vendors) {
+      await prisma.vendorContract.create({
+        data: { ...vendor, userId: user.id },
+      });
+      vendorCount++;
+    }
   }
 
   console.log('✅ Database seeded successfully!');
-  console.log(`   • Created user: ${user.email}`);
-  console.log(`   • Created ${benchmarks.length} market benchmarks`);
-  console.log(`   • Created ${contracts.length} vendor contracts`);
+  console.log(`   • ${COMPANIES.length} sample companies`);
+  COMPANIES.forEach((c) =>
+    console.log(`       - ${c.name} (${c.industry}, ${c.companySizeBracket}) → /rate-watch/${c.slug}`)
+  );
+  console.log(`   • ${benchmarkCount} market benchmarks (SMALL + MEDIUM brackets)`);
+  console.log(`   • ${vendorCount} vendor contracts`);
 }
 
 main()

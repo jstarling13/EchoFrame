@@ -12,4 +12,7 @@ export const prisma =
 
 if (process.env.NODE_ENV !== 'production') global.prisma = prisma;
 
+// Alias: Rival Scan code imports `{ db }`; keep `prisma` for existing rate-watch code.
+export const db = prisma;
+
 export default prisma;

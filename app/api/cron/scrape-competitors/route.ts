@@ -47,7 +47,10 @@ export async function POST(request: NextRequest) {
         const parsedData = parseScrapedContent(scrapedContent);
 
         // Scrape Google Business data
-        let googleData = { reviewCount: null, rating: null };
+        let googleData: { reviewCount?: number | null; rating?: number | null } = {
+          reviewCount: null,
+          rating: null,
+        };
         if (competitor.googleBusinessUrl) {
           try {
             googleData = await scrapeGoogleBusiness(

@@ -79,6 +79,67 @@ class ShiftPLService:
         logger.info("process_day done %s @ %s totals=%s", shift_date, location_id, totals)
         return totals
 
+    def recompute_day(
+        self,
+        shift_date: date,
+        location_id: str,
+        target_labor_pct: float = 30.0,
+    ) -> Dict[str, Any]:
+        """
+        Re-map and re-cost a day using the raw transactions/punches already stored
+        in the database (no re-ingestion). This is what webhook events and the
+        auto-sync scheduler call after appending new raw rows. Idempotent: it
+        clears only the derived mappings/results, never the raw data.
+        """
+        txn_df, punch_df = self.persistence.get_raw_for_day(shift_date, location_id)
+
+        txn_mapped = self.mapper.map_transactions_to_shifts(txn_df, shift_date, location_id)
+        labor_mapped = self.allocator.allocate_labor_across_shifts(punch_df, shift_date, location_id)
+        merged = self._merge_revenue_and_labor(txn_mapped, labor_mapped)
+
+        self.persistence.clear_derived_for_day(shift_date, location_id)
+        self.persistence.insert_shift_mappings(merged, shift_date)
+        self.persistence.compute_and_store_pl_results(shift_date, location_id, target_labor_pct)
+
+        totals = {
+            "total_revenue": float(merged["revenue_allocation"].sum() if not merged.empty else 0),
+            "total_labor": float(merged["labor_allocation"].sum() if not merged.empty else 0),
+            "transaction_count": int(len(txn_df)),
+            "punch_count": int(len(punch_df)),
+        }
+        logger.info("recompute_day %s @ %s totals=%s", shift_date, location_id, totals)
+        return totals
+
+    def get_day_report(
+        self,
+        shift_date: date,
+        location_id: str,
+        target_labor_pct: float = 30.0,
+    ) -> Dict[str, Any]:
+        """Read a single day's stored P&L results and render a report."""
+        from models.shift_result import ShiftPLResult  # local import to avoid cycle noise
+
+        results = (
+            self.session.query(ShiftPLResult)
+            .join(ShiftDefinition)
+            .filter(ShiftPLResult.date == shift_date,
+                    ShiftDefinition.location_id == location_id)
+            .all()
+        )
+        shifts = [
+            engine.Shift(label=r.shift_definition.shift_name,
+                         revenue=float(r.total_revenue),
+                         labor_cost=float(r.total_labor_cost))
+            for r in results
+        ]
+        report_dict = engine.analyze_week(shifts, target_labor_pct=target_labor_pct)
+        return {
+            "date": str(shift_date),
+            "results": report_dict["results"],
+            "report_dict": report_dict,
+            "report_text": engine.render_report_text(report_dict),
+        }
+
     def _merge_revenue_and_labor(
         self,
         txn_mapped: pd.DataFrame,
@@ -90,26 +151,24 @@ class ShiftPLService:
                 columns=["shift_definition_id", "revenue_allocation", "labor_allocation"]
             )
 
+        # Keep allocations as floats here so pandas can aggregate them; persistence
+        # converts to Decimal at the DB boundary. (Mixing float + Decimal breaks sum.)
         mappings = []
 
         if not txn_mapped.empty:
             for _, row in txn_mapped.iterrows():
                 mappings.append({
                     "shift_definition_id": row["shift_definition_id"],
-                    "transaction_id": row["transaction_id"],
-                    "time_punch_id": None,
-                    "revenue_allocation": row["amount"] if row["allocation_pct"] > 0 else 0,
-                    "labor_allocation": Decimal(0),
+                    "revenue_allocation": float(row["amount"]) if row["allocation_pct"] > 0 else 0.0,
+                    "labor_allocation": 0.0,
                 })
 
         if not labor_mapped.empty:
             for _, row in labor_mapped.iterrows():
                 mappings.append({
                     "shift_definition_id": row["shift_definition_id"],
-                    "transaction_id": None,
-                    "time_punch_id": row["time_punch_id"],
-                    "revenue_allocation": Decimal(0),
-                    "labor_allocation": Decimal(str(row["labor_cost"])),
+                    "revenue_allocation": 0.0,
+                    "labor_allocation": float(row["labor_cost"]),
                 })
 
         merged = pd.DataFrame(mappings)
@@ -145,25 +204,22 @@ class ShiftPLService:
             .all()
         )
 
-        shift_results = [
-            engine.ShiftResult(
+        # Rebuild raw Shift inputs from the stored P&L and let the MVP engine
+        # produce the canonical report (status, recommendations, ranking, totals).
+        shifts = [
+            engine.Shift(
                 label=r.shift_definition.shift_name,
                 revenue=float(r.total_revenue),
                 labor_cost=float(r.total_labor_cost),
-                labor_pct=float(r.labor_pct) if r.labor_pct is not None else None,
-                contribution=float(r.contribution),
-                status=r.status,
-                recommendation=self._get_recommendation(r),
             )
             for r in results
         ]
 
+        report_dict = engine.analyze_week(shifts, target_labor_pct=target_labor_pct)
         return {
-            "results": shift_results,
-            "report_dict": engine.analyze_week(shift_results, target_labor_pct),
-            "report_text": engine.render_report_text(
-                engine.analyze_week(shift_results, target_labor_pct)
-            ),
+            "results": report_dict["results"],
+            "report_dict": report_dict,
+            "report_text": engine.render_report_text(report_dict),
         }
 
     def _get_recommendation(self, pl_result: ShiftPLResult) -> str:

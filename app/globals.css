@@ -18,3 +18,14 @@ body {
 ::selection {
   @apply bg-slate-900 text-white;
 }
+
+/* Print: preserve background colors and trim margins for clean PDFs */
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @page {
+    margin: 0.5in;
+  }
+}

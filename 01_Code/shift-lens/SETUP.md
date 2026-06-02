@@ -3,56 +3,75 @@
 ## Prerequisites
 
 - Python 3.10+
-- PostgreSQL 12+
 - pip
+- PostgreSQL 12+ *(optional — the engine defaults to SQLite for zero-config local runs)*
 
-## Installation
+## Quick Start (zero-config, SQLite)
 
-1. **Create virtual environment:**
-   ```bash
-   cd shift-lens
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+```bash
+cd shift-lens
+pip install -r requirements.txt
 
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+python seed_data.py --reset            # create tables + seed a week of demo data
+uvicorn api_extended:app --port 8012   # start the API + dashboard
+```
 
-3. **Create PostgreSQL database:**
+Then open **http://localhost:8012/** — the live dashboard. Click
+“Sync & Analyze Day” to pull mock POS + timesheet data and render a shift P&L.
+
+With no `DATABASE_URL` set, the app writes to a local `shift_lens.db` SQLite file.
+
+## Production (PostgreSQL)
+
+1. **Create the database:**
    ```bash
    createdb shift_lens
    ```
 
-4. **Configure environment:**
+2. **Configure environment:**
    ```bash
    cp .env.example .env
    ```
-
-   Edit `.env` with your database credentials:
+   Edit `.env`:
    ```
    DATABASE_URL=postgresql://user:password@localhost:5432/shift_lens
    TIMEZONE=US/Eastern
    DEFAULT_TARGET_LABOR_PCT=30.0
+   SHIFT_LENS_API_KEY=choose-a-strong-key     # enables auth on mutating endpoints
    ```
 
-5. **Initialize database tables:**
+3. **Run migrations (Alembic):**
    ```bash
-   python -c "from db import init_db; init_db()"
+   alembic upgrade head
    ```
 
-## Running the Application
+4. **Run the API:**
+   ```bash
+   uvicorn api_extended:app --port 8012
+   ```
 
-### Full API with Database
+> The ORM, ETL, connectors, and service layers are database-agnostic — the only
+> difference between local and production is the `DATABASE_URL`.
+
+## Database Migrations (Alembic)
+
 ```bash
-uvicorn api_extended:app --reload --port 8012
+alembic upgrade head                          # apply all migrations
+alembic revision --autogenerate -m "message"  # generate a new migration after model changes
+alembic current                               # show current revision
+alembic downgrade -1                          # roll back one revision
 ```
 
-Then test with:
-```bash
-curl http://localhost:8012/health
-```
+The initial migration under `migrations/versions/` mirrors all six models.
+`migrations/env.py` reads `DATABASE_URL` from `config.py`, so migrations always
+target the same database as the app.
+
+## Authentication
+
+Mutating endpoints (`/api/ingest/*`, `/api/process-day`, `/api/sync-day`,
+`/api/initialize-db`) require the header `X-API-Key` to match `SHIFT_LENS_API_KEY`
+when that env var is set. If it is unset (local dev), auth is disabled. Read-only
+report endpoints are always open.
 
 ### Offline Demo (No Database Required)
 ```bash
@@ -84,23 +103,32 @@ The following tables are created automatically:
 
 ## API Endpoints
 
-### Health Check
+### Dashboard
 ```
-GET /health
+GET /                          # redirects to the live dashboard
+GET /app/dashboard.html        # standalone branded UI (calls the API)
 ```
 
-### Data Ingestion
+### Health & Config
+```
+GET /health
+GET /api/shifts/{location_id}  # list configured shift blocks
+```
+
+### Connector Sync (production integration seam)
+```
+POST /api/sync-day             # pull a day from POS + timesheet connectors, then run the pipeline
+```
+Body: `{date, location_id, pos_source, timesheet_source, target_labor_pct}`.
+`pos_source`/`timesheet_source` default to `"mock"`; swap for real connectors
+(implement the `POSConnector` / `TimesheetConnector` interface in `connectors/`).
+
+### Data Ingestion (explicit payloads) 🔒
 ```
 POST /api/ingest/transactions
 POST /api/ingest/time-punches
+POST /api/process-day          # full ETL from an explicit payload
 ```
-
-### Process Day
-```
-POST /api/process-day
-```
-
-Trigger full ETL pipeline for a day (ingest → map → allocate → persist → compute P&L).
 
 ### Reports
 ```
@@ -109,10 +137,17 @@ GET /api/shift-history/{shift_id}?location_id=columbus-main&days=30
 GET /api/weekly-aggregate/{location_id}?week_start=2024-01-15
 ```
 
-### Database Management
+### Admin 🔒
 ```
 POST /api/initialize-db
 ```
+
+🔒 = requires `X-API-Key` when `SHIFT_LENS_API_KEY` is set.
+
+### Idempotency
+
+`/api/process-day` and `/api/sync-day` clear any existing data for the
+`(date, location)` before reprocessing, so re-running a day never double-counts.
 
 ## Testing
 
