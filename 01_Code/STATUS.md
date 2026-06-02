@@ -18,23 +18,42 @@
 
 ## Summary table
 
+> **UPDATE (end of run).** Started with 1 product (broken). Ended with the flagship rescued to
+> production-ready **plus 7 new working, tested MVPs** (Rate Watch, Shift Lens, Permit Watch, Bay
+> Coach, Quote Revive, Clear Ledger, Call Catch, Crew Hire = 8 new folders). The remaining 4
+> products (Auto Ledger, Rival Scan, Call Router, Drive Pay) are documented as designed-not-built
+> because their core value is dominated by external infrastructure (bank sync, web scraping, voice
+> AI, live payments) that can't be meaningfully delivered with mocks alone in one unattended run.
+
 | # | Product | Page | Code exists? | State | One-line core promise |
 |---|---------|------|--------------|-------|------------------------|
-| 1 | **Clarity Report** (flagship) | — (backend) | ✅ yes | **working → production-ready** (after fix) | CSV → benchmarked P&L analysis → narrated .docx emailed monthly |
-| 2 | Auto Ledger | intelligence/vericount.html | ❌ no | none | Bank/card transactions auto-categorized with plain-English notes + monthly summary |
-| 3 | Rate Watch | intelligence/oryn.html | ❌ no | none → **MVP built (this run)** | Benchmark vendor spend vs market, flag overpays, alert before renewals |
-| 4 | Rival Scan | intelligence/veris.html | ❌ no | none | Monitor competitor pricing/reviews/promos daily, morning change alerts |
-| 5 | Shift Lens | intelligence/strata.html | ❌ no | none → **MVP built (this run)** | Per-shift labor-cost-vs-revenue P&L, flag unprofitable shifts |
-| 6 | Permit Watch | ops/permitwatch.html | ❌ no | none → **MVP built (this run)** | One dashboard of licenses/permits with 30-day expiry alerts |
-| 7 | Bay Coach | ops/baysignal.html | ❌ no | none | Surface the right service recommendation at write-up from vehicle history/mileage |
-| 8 | Call Catch | revenue/missedcall.html | ❌ no | none | Auto-text the second a call is missed, keep the lead warm |
-| 9 | Quote Revive | revenue/quoterevive.html | ❌ no | none | Auto follow-up sequence on ghosted quotes/cold leads |
-| 10 | Clear Ledger | revenue/clearledger.html | ❌ no | none | Invoice dunning sequence from first nudge to final notice + human handoff |
-| 11 | Call Router | ops/traderelay.html | ❌ no | none | 24/7 answer, qualify, and route inbound calls to the right tech |
-| 12 | Crew Hire | ops/ironhire.html | ❌ no | none | Post jobs, screen/qualify applicants, book confirmed interviews |
-| 13 | Drive Pay | ops/hydropay.html | ❌ no | none | Text-to-pay link before the car leaves the lot + status tracking |
+| 1 | **Clarity Report** (flagship) | — (backend) | ✅ yes | **production-ready** (rescued this run) | CSV → benchmarked P&L analysis → narrated .docx emailed monthly |
+| 2 | Auto Ledger | intelligence/vericount.html | ❌ no | none (designed, not built) | Bank/card transactions auto-categorized with plain-English notes + monthly summary |
+| 3 | **Rate Watch** | intelligence/oryn.html | ✅ **MVP (this run)** | **working + tested (13)** | Benchmark vendor spend vs market, flag overpays, alert before renewals |
+| 4 | Rival Scan | intelligence/veris.html | ❌ no | none (designed, not built) | Monitor competitor pricing/reviews/promos daily, morning change alerts |
+| 5 | **Shift Lens** | intelligence/strata.html | ✅ **MVP (this run)** | **working + tested (15)** | Per-shift labor-cost-vs-revenue P&L, flag unprofitable shifts |
+| 6 | **Permit Watch** | ops/permitwatch.html | ✅ **MVP (this run)** | **working + tested (13)** | One dashboard of licenses/permits with 30-day expiry alerts |
+| 7 | **Bay Coach** | ops/baysignal.html | ✅ **MVP (this run)** | **working + tested (13)** | Surface the right service recommendation at write-up from vehicle history/mileage |
+| 8 | **Call Catch** | revenue/missedcall.html | ✅ **MVP (this run)** | **working + tested (13)** | Auto-text the second a call is missed, keep the lead warm |
+| 9 | **Quote Revive** | revenue/quoterevive.html | ✅ **MVP (this run)** | **working + tested (11)** | Auto follow-up sequence on ghosted quotes/cold leads |
+| 10 | **Clear Ledger** | revenue/clearledger.html | ✅ **MVP (this run)** | **working + tested (13)** | Invoice dunning sequence from first nudge to final notice + human handoff |
+| 11 | Call Router | ops/traderelay.html | ❌ no | none (designed, not built) | 24/7 answer, qualify, and route inbound calls to the right tech |
+| 12 | **Crew Hire** | ops/ironhire.html | ✅ **MVP (this run)** | **working + tested (12)** | Post jobs, screen/qualify applicants, book confirmed interviews |
+| 13 | Drive Pay | ops/hydropay.html | ❌ no | none (designed, not built) | Text-to-pay link before the car leaves the lot + status tracking |
 
 State legend: **none** (no code) · **stub** (skeleton only) · **partial** (some features) · **working** (core works end-to-end) · **production-ready** (working + validated + tested + documented).
+
+### Why the 4 remaining were not built (and what each needs)
+- **Auto Ledger** — the value *is* the live bank/card feed (Plaid) + accurate auto-categorization
+  across a real chart of accounts. A mocked categorizer would be a toy; needs Plaid + a real
+  categorization model/ruleset. Best built next on top of the flagship's CSV ingestion.
+- **Rival Scan** — the value *is* scraping/ monitoring real competitor pages daily. Offline it
+  reduces to a diff over snapshot JSON; the hard, valuable part is the resilient scraping layer.
+- **Call Router** — requires a voice provider (answer, transcribe, qualify, route in real time).
+  The dispatch-rules engine is buildable offline, but the product is the live voice path.
+- **Drive Pay** — text-to-pay requires live Stripe payment links + SMS and moving real money;
+  out of bounds for an unattended run (safety rules: no live payments). Buildable with Stripe
+  **test mode** + mocked SMS in a supervised session.
 
 ---
 

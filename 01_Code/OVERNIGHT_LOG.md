@@ -280,4 +280,42 @@ are provided to the engine (arrive from boards in production); no-show/confirmat
 no auth/billing.
 
 ---
-*(product MVP entries appended below as they are completed)*
+
+## 2026-06-02 — End-of-run summary
+
+**Shipped:** flagship rescued to production-ready + **8 new working, tested MVPs**.
+
+**Aggregate test sweep (all suites, all mocked, no network):**
+
+| Project | Tests |
+|---|---|
+| echoframe-backend (flagship) | 83 |
+| rate-watch | 13 |
+| shift-lens | 15 |
+| permit-watch | 13 |
+| bay-coach | 13 |
+| quote-revive | 11 |
+| clear-ledger | 13 |
+| call-catch | 13 |
+| crew-hire | 12 |
+| **TOTAL** | **186** |
+
+**Not built (documented in STATUS.md with rationale):** Auto Ledger, Rival Scan, Call Router,
+Drive Pay — each is dominated by external infra (Plaid bank sync / live scraping / voice AI /
+live payments) that can't be meaningfully delivered with mocks alone in an unattended run.
+
+**Git:** branch `overnight/products-2026-06-02`, committed incrementally (one commit per product +
+the flagship rescue). **Nothing pushed. `main`/`master` untouched.** The owner's pre-existing
+`echoframe-site` edits were left unstaged/untouched throughout.
+
+**Needs the owner (keys / decisions / money):**
+- Flagship live run needs real `.env` keys (Stripe/Anthropic/Resend). The offline demo + tests
+  need none.
+- Reconstructed `_send_report_email`'s live Resend payload + `from` address should be eyeballed
+  once against a real send (never exercised live here; mocked in all tests/demo).
+- Each MVP's "real" integration (Twilio/CRM/POS/invoicing/job boards) and a real benchmark/market
+  data feed are the documented seams — wiring them needs the owner's accounts.
+- Building Auto Ledger / Rival Scan / Call Router / Drive Pay needs paid external services
+  (Plaid, scraping infra, a voice provider, live Stripe) — owner decision + keys + budget.
+
+*(see the per-product entries above for exact run commands)*
