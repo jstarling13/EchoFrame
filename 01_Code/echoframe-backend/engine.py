@@ -1850,6 +1850,22 @@ def _build_docx(meta: dict, metrics: dict, leaks: list, prose: dict) -> bytes:
     return buf.getvalue()
 
 
+def _get_or_add_tblPr(tbl_el):
+    """Return the table's <w:tblPr>, creating and correctly inserting it if absent.
+
+    Uses an explicit ``is None`` check rather than ``find(...) or OxmlElement(...)``:
+    an lxml element with no children is falsy, so the ``or`` form (a) emits a
+    FutureWarning and (b) would silently discard a freshly created tblPr because it
+    was never inserted into the tree. Per the OOXML schema tblPr must be the first
+    child of w:tbl.
+    """
+    tblPr = tbl_el.find(qn("w:tblPr"))
+    if tblPr is None:
+        tblPr = OxmlElement("w:tblPr")
+        tbl_el.insert(0, tblPr)
+    return tblPr
+
+
 def _dark_section_bar(doc, title: str) -> None:
     """Full-width navy bar with white bold text — AGP-style section divider."""
     from docx.oxml import OxmlElement as _el
@@ -1857,7 +1873,7 @@ def _dark_section_bar(doc, title: str) -> None:
     tbl.allow_autofit = False
     _hide_table_borders(tbl)
     tbl_el = tbl._tbl
-    tblPr  = tbl_el.find(qn("w:tblPr")) or _el("w:tblPr")
+    tblPr  = _get_or_add_tblPr(tbl_el)
     tblW   = _el("w:tblW")
     tblW.set(qn("w:w"), str(int(7.4 * 1440)))
     tblW.set(qn("w:type"), "dxa")
@@ -1909,7 +1925,7 @@ def _build_dashboard_header(doc, meta: dict, month: str) -> None:
     tbl.allow_autofit = False
     _hide_table_borders(tbl)
     tbl_el = tbl._tbl
-    tblPr  = tbl_el.find(qn("w:tblPr")) or _el("w:tblPr")
+    tblPr  = _get_or_add_tblPr(tbl_el)
     tblW   = _el("w:tblW")
     tblW.set(qn("w:w"), str(int(7.4 * 1440)))
     tblW.set(qn("w:type"), "dxa")
