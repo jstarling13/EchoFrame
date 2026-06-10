@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-primary); background: transparent; }
+  .api-bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); margin-bottom: 12px; }
+  .api-label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); white-space: nowrap; }
+  .api-input { flex: 1; font-size: 12px; font-family: var(--font-mono); background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 6px 10px; color: var(--color-text-primary); }
+  .api-input:focus { outline: none; border-color: #D97706; }
+  .api-status { font-size: 11px; white-space: nowrap; }
+  .api-status.ok { color: #16a34a; }
+  .api-status.empty { color: var(--color-text-secondary); }
+  .api-link { font-size: 11px; color: #D97706; text-decoration: none; white-space: nowrap; }
+  .shell { display: flex; min-height: 560px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; }
+  .sidebar { width: 210px; flex-shrink: 0; background: var(--color-background-secondary); border-right: 0.5px solid var(--color-border-tertiary); padding: 16px 0; }
+  .sidebar-header { padding: 0 16px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); margin-bottom: 8px; }
+  .sidebar-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-secondary); }
+  .agent-btn { width: 100%; text-align: left; padding: 10px 16px; border: none; background: transparent; cursor: pointer; color: var(--color-text-primary); }
+  .agent-btn:hover { background: var(--color-background-primary); }
+  .agent-btn.active { background: var(--color-background-primary); border-left: 2px solid #D97706; }
+  .agent-btn-name { font-size: 13px; font-weight: 500; display: block; margin-bottom: 2px; }
+  .agent-btn-price { font-size: 11px; color: var(--color-text-secondary); }
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .main-header { padding: 18px 24px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .main-title { font-size: 16px; font-weight: 500; margin-bottom: 3px; }
+  .main-tagline { font-size: 13px; color: var(--color-text-secondary); }
+  .main-body { flex: 1; padding: 18px 24px; overflow-y: auto; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+  .field-full { grid-column: 1 / -1; }
+  .field-label { display: block; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 4px; }
+  input[type="text"], input[type="password"], textarea { width: 100%; font-size: 13px; font-family: var(--font-sans); background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 7px 10px; color: var(--color-text-primary); resize: vertical; }
+  input[type="text"]:focus, input[type="password"]:focus, textarea:focus { outline: none; border-color: #D97706; }
+  .generate-btn { width: 100%; padding: 10px; background: #D97706; color: #fff; border: none; border-radius: var(--border-radius-md); font-size: 14px; font-weight: 500; cursor: pointer; margin-bottom: 18px; }
+  .generate-btn:hover { background: #B45309; }
+  .generate-btn:disabled { background: var(--color-background-secondary); color: var(--color-text-secondary); cursor: not-allowed; border: 0.5px solid var(--color-border-tertiary); }
+  .output-area { border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); overflow: hidden; }
+  .output-header { display: flex; justify-content: space-between; align-items: center; padding: 9px 14px; background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .output-label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
+  .copy-btn { font-size: 12px; padding: 4px 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-primary); cursor: pointer; }
+  .copy-btn:hover { background: var(--color-background-secondary); }
+  .next-step { font-size: 12px; color: var(--color-text-secondary); background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 9px 12px; margin-bottom: 8px; border-left: 2px solid #D97706; }
+  .output-text { padding: 14px; font-size: 12px; line-height: 1.75; white-space: pre-wrap; font-family: var(--font-mono); color: var(--color-text-primary); max-height: 380px; overflow-y: auto; background: var(--color-background-primary); }
+  .error-text { padding: 14px; font-size: 13px; color: #dc2626; font-family: var(--font-mono); background: var(--color-background-primary); }
+  .loading-dots { display: flex; gap: 5px; align-items: center; justify-content: center; padding: 28px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #D97706; animation: pulse 1.2s ease-in-out infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
+</style>
+</head>
+<body>
+<h2 style="position:absolute;left:-9999px">Revenue Engine — AI Agent Dashboard</h2>
+
+<div class="api-bar">
+  <span class="api-label">Anthropic API key</span>
+  <input class="api-input" type="password" id="api-key-input" placeholder="sk-ant-..." oninput="updateKeyStatus()" />
+  <span class="api-status empty" id="key-status">not set</span>
+  <a class="api-link" href="https://console.anthropic.com/settings/keys" target="_blank">Get a key ↗</a>
+</div>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar-header"><span class="sidebar-title">Revenue Engine</span></div>
+    <div id="agent-list"></div>
+  </aside>
+  <main class="main">
+    <div class="main-header">
+      <div class="main-title" id="agent-title"></div>
+      <div class="main-tagline" id="agent-tagline"></div>
+    </div>
+    <div class="main-body">
+      <div class="form-grid" id="form-fields"></div>
+      <button class="generate-btn" id="gen-btn" onclick="generate()">Generate deliverable</button>
+      <div id="output-section" style="display:none">
+        <div class="next-step" id="next-step-text"></div>
+        <div class="output-area">
+          <div class="output-header">
+            <span class="output-label">Generated content — copy and use in a new chat</span>
+            <button class="copy-btn" id="copy-btn" onclick="copyOutput()">Copy</button>
+          </div>
+          <div id="output-body"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const AGENTS = [
+  {
+    name:'Monthly Clarity Report', price:'$150/mo',
+    tagline:'A 5 minute read that tells the owner exactly where the money is going',
+    nextStep:'<strong>Next step:</strong> Copy → new chat → paste and say: "Turn this into a formatted Word document with section headings and a cover page"',
+    fields:[
+      {key:'businessName',label:'Business name',full:false,placeholder:"e.g. Mike's HVAC Services",rows:0},
+      {key:'industry',label:'Industry / type',full:false,placeholder:'e.g. HVAC contractor, salon',rows:0},
+      {key:'reportMonth',label:'Report month',full:false,placeholder:'e.g. April 2025',rows:0},
+      {key:'revenue',label:'Total revenue this month ($)',full:false,placeholder:'e.g. 48,200',rows:0},
+      {key:'expenses',label:'Total expenses this month ($)',full:false,placeholder:'e.g. 31,400',rows:0},
+      {key:'priorRevenue',label:'Prior month revenue ($)',full:false,placeholder:'e.g. 42,500',rows:0},
+      {key:'topExpenses',label:'Expense categories and amounts',full:true,placeholder:'e.g. Payroll: $18,000 | Materials: $7,200 | Rent: $3,500 | Fuel: $1,800',rows:2},
+      {key:'concerns',label:'Owner concerns or questions',full:true,placeholder:"e.g. Cash is tight at month end, not sure where the money goes",rows:2},
+    ],
+    systemPrompt:`You are a senior financial analyst producing a plain English Monthly Financial Narrative Report for a small business owner in Columbus, GA or the surrounding Chattahoochee Valley.\n\nOBJECTIVE\nA 5 minute read that identifies at least one specific expense leak and one specific growth move, both tied to exact dollar amounts.\n\nWRITING RULES\nPlain English, junior analyst voice. Never use "leverage," "streamline," "synergy," "robust," "comprehensive," or "cutting edge."\nContractions over formal constructions.\nEvery claim backed by an exact dollar amount, not a range.\nNo hedging. "You are overspending on payroll by $1,400" beats "you may be overspending."\nMinimize hyphens in prose; rephrase when possible.\n\nSTRUCTURE\n\nLOCAL CONTEXT\nOne short paragraph naming a Columbus or Chattahoochee Valley benchmark relevant to this business type (labor costs for HVAC, local food supply trends for restaurants, lease rates for salons, etc.). Skip this section entirely if you have no real local benchmark to cite. Do not pad.\n\nTHE BOTTOM LINE\nFirst two sentences. State net income for the month and a health rating: Healthy, Needs Attention, or Critical. Then the single most important thing the owner needs to know.\n\nREVENUE ANALYSIS\nThis month vs prior month, percent change, what likely drove it. Note local seasonality where relevant (spring ramp for HVAC and landscaping, summer slowdown for indoor service businesses, holiday lift for restaurants and salons).\n\nEXPENSE LEAK DETECTION\nTop 3 leaks. For each: the exact dollar overspend versus the industry benchmark, the specific category, one concrete action to fix it. Use direct language: "You are overspending on [Category] by $[Amount] versus businesses of your size."\n\nTHE ONE GROWTH MOVE\nOne specific thing this owner should do in the next 30 days to add revenue or margin. Tied to their actual numbers, not a generic suggestion.\n\nTHE $150 ROI\nFinal section. State exactly: "This month's report identified $[Amount] in potential savings or new revenue. That is a [X]x return on your $150 subscription."\n\nLENGTH: 900 to 1,200 words. Concise. Specific. Numbers throughout.`
+  },
+  {
+    name:'Business Audit Package', price:'$499 one-time',
+    tagline:'A $3k consulting engagement delivered in 48 hours — front door product',
+    nextStep:'<strong>Next step:</strong> Copy → new chat → paste and say: "Turn this into a professional PDF audit report with a cover page and section dividers"',
+    fields:[
+      {key:'businessName',label:'Business name',full:false,placeholder:'e.g. Bright Smiles Dental',rows:0},
+      {key:'industry',label:'Industry',full:false,placeholder:'e.g. Dental practice, gym',rows:0},
+      {key:'location',label:'City and state',full:false,placeholder:'e.g. Birmingham, AL',rows:0},
+      {key:'years',label:'Years in business',full:false,placeholder:'e.g. 7',rows:0},
+      {key:'employees',label:'Number of employees',full:false,placeholder:'e.g. 12',rows:0},
+      {key:'revenue',label:'Approx monthly revenue ($)',full:false,placeholder:'e.g. 85,000',rows:0},
+      {key:'financials',label:'Last 3 months — revenue and expenses',full:true,placeholder:'e.g. Jan: $82k rev, $65k exp | Feb: $79k rev, $67k exp | Mar: $88k rev, $63k exp',rows:2},
+      {key:'competitors',label:'Top 3 local competitors',full:true,placeholder:'e.g. Downtown Smiles (15 yrs, high ratings), Family First Dental (newer, heavy marketing)',rows:2},
+      {key:'challenge',label:'Main challenge the owner faces',full:true,placeholder:'e.g. Revenue flat for 18 months, losing patients to the new place down the street',rows:2},
+    ],
+    systemPrompt:`You are a senior business consultant producing a Business Audit Package. Write with authority, specificity, and directness. Use numbers.\n\nBUSINESS HEALTH SCORE\nOverall score out of 100 with letter grade. Subscores (0-25 each): Financial Health, Market Position, Operational Efficiency, Growth Potential. One sentence defending each.\n\nFINANCIAL HEALTH ANALYSIS\nRevenue trend. Average monthly profit and margin. 3 biggest financial risks with specific numbers.\n\nMARKET POSITION ANALYSIS\nWhere this business sits vs. competitors. Estimated local market share. Specifically where they're winning and losing.\n\nOPERATIONAL EFFICIENCY\n3 strengths, 3 gaps costing money, dollar estimate of biggest inefficiency.\n\nTOP 3 RECOMMENDATIONS RANKED BY ROI\nFor each: specific action, why it matters with numbers, 3-step plan, expected impact, time to implement.\n\nQUICK WINS (30 days, low cost)\n5 specific things to do immediately. One sentence each: action and expected benefit.\n\n900-1,100 words. Name specific problems. Numbers throughout.`
+  },
+  {
+    name:'SOP & Employee Handbook', price:'$399 one-time',
+    tagline:"The document they've needed for 2 years, done in 48 hours",
+    nextStep:'<strong>Next step:</strong> Copy → new chat → paste and say: "Turn this into a formatted Word document with a table of contents and professional styling"',
+    fields:[
+      {key:'businessName',label:'Business name',full:false,placeholder:"e.g. Clean Cut Barbershop",rows:0},
+      {key:'industry',label:'Business type',full:false,placeholder:'e.g. Barbershop, restaurant, gym',rows:0},
+      {key:'ownerName',label:"Owner's first name",full:false,placeholder:'e.g. Marcus',rows:0},
+      {key:'employees',label:'Number of employees',full:false,placeholder:'e.g. 6',rows:0},
+      {key:'roles',label:'Main roles to write SOPs for',full:true,placeholder:'e.g. Barber/Stylist, Front Desk, Shop Manager',rows:2},
+      {key:'processes',label:'Key processes needing procedures',full:true,placeholder:'e.g. Opening, booking appointments, handling walk-ins, closing cash, complaints',rows:2},
+      {key:'problems',label:'Most common employee mistakes',full:true,placeholder:'e.g. Forgetting to confirm appointments, phones on the floor, not cleaning stations',rows:2},
+      {key:'values',label:"Culture in owner's own words",full:true,placeholder:"e.g. We treat every client like family. Quality over speed. No drama.",rows:2},
+    ],
+    systemPrompt:`You are an operations consultant creating a complete SOP and Employee Handbook. 8th grade reading level. Extremely specific — a new hire with zero experience must follow this on day one.\n\nWELCOME FROM THE OWNER\n2 paragraphs first person from the owner. Genuine to this specific business.\n\nWHAT WE BELIEVE IN\n5 core values. Each: 2-4 word name + one specific sentence on what it means in practice.\n\n30-DAY ONBOARDING PLAN\nDay 1: 8-10 specific tasks. Week 1: 5 things to do independently. 30-day milestone: what mastery looks like.\n\nROLE-SPECIFIC SOPs\nFor each role: 2-sentence overview, daily checklist (morning/during/closing), step-by-step procedure for most critical task (8-12 numbered steps), top 3 mistakes to never make.\n\nCUSTOMER SERVICE STANDARDS\nExact greeting words. 5-step numbered complaint process with exact language. 3 things we never say with what to say instead.\n\nOPENING CHECKLIST — 10-12 numbered steps\nCLOSING CHECKLIST — 10-12 numbered steps\n\nBASIC POLICIES\nAttendance, phone use, dress code, confidentiality. One paragraph each.\n\nNumbered lists and checkboxes. 1,000-1,300 words.`
+  },
+  {
+    name:'Custom Excel Dashboard', price:'$899 one-time',
+    tagline:'A CFO grade tracker built for someone who barely knows Excel — premium anchor',
+    nextStep:'<strong>Next step:</strong> Copy → new chat → paste and say: "Build this as an actual Excel workbook using the xlsx skill"',
+    fields:[
+      {key:'businessName',label:'Business name',full:false,placeholder:'e.g. River City Landscaping',rows:0},
+      {key:'industry',label:'Business type',full:false,placeholder:'e.g. Landscaping, retail, restaurant',rows:0},
+      {key:'techLevel',label:'Owner Excel comfort level',full:false,placeholder:'e.g. Very basic — can type numbers only',rows:0},
+      {key:'currentTracking',label:'How they track finances now',full:false,placeholder:'e.g. Nothing / paper / basic Excel',rows:0},
+      {key:'revenueStreams',label:'How they make money',full:true,placeholder:'e.g. Weekly maintenance contracts, one-time projects, materials sales',rows:2},
+      {key:'expenses',label:'Main expense categories',full:true,placeholder:'e.g. Labor, fuel, equipment maintenance, materials, insurance',rows:2},
+      {key:'goal',label:'What the owner most wants to understand',full:true,placeholder:'e.g. Which jobs are profitable, whether we hit monthly goals, where money disappears',rows:2},
+    ],
+    systemPrompt:`You are a financial systems consultant designing a custom Excel dashboard specification. Output used to build the actual workbook. Write exact Excel formulas, exact column headers, exact tab names.\n\nWORKBOOK OVERVIEW\nFile name. All 4-5 tabs. What owner enters daily vs. weekly vs. monthly. 2 sentences on impact.\n\nTAB SPECIFICATIONS\nFor each tab: name, purpose, exact column headers in order, data type for each, manual vs. auto-calculated, key formulas in exact Excel syntax, formatting rules, conditional formatting thresholds.\n\nRequired tabs: Revenue Tracker, Expense Tracker (budget vs. actual), Cash Flow (auto-pulls from other tabs), Dashboard Summary (6-8 metric boxes with green/yellow/red status).\n\nKEY FORMULAS REFERENCE\nEvery formula: exact Excel syntax, plain-English explanation, which cell.\n\nCOLOR CODING THRESHOLDS\nExactly what triggers green, yellow, red for this business.\n\nOWNER QUICK-START GUIDE\n5 steps for day 1. Written for someone who barely knows Excel. Common mistakes to avoid.`
+  },
+  {
+    name:'Competitor Intelligence Report', price:'$299 one-time',
+    tagline:"The local edge — what the shop across town is doing and how to beat it",
+    nextStep:'<strong>Next step:</strong> Copy → new chat → paste and say: "Turn this into a formatted PDF competitor report with a cover page"',
+    fields:[
+      {key:'businessName',label:'Business name',full:false,placeholder:'e.g. Apex Fitness Studio',rows:0},
+      {key:'industry',label:'Business type',full:false,placeholder:'e.g. Boutique gym, law firm, salon',rows:0},
+      {key:'location',label:'City and state',full:false,placeholder:'e.g. Chattanooga, TN',rows:0},
+      {key:'goal',label:'What the client wants to achieve',full:false,placeholder:'e.g. Grow from 200 to 350 members',rows:0},
+      {key:'competitors',label:'Top 3-5 competitors (name and describe each)',full:true,placeholder:'1. Iron Works Gym — big box, 5,000 members\n2. CrossFit Riverside — 3 yrs old, strong Instagram\n3. Planet Fitness — $10/month model',rows:4},
+      {key:'strengths',label:'What the client does better than anyone',full:true,placeholder:'e.g. Personal attention, never crowded, trainers who remember your name',rows:2},
+      {key:'weaknesses',label:'Where the client knows they fall short',full:true,placeholder:'e.g. No booking app, weak social media, no childcare',rows:2},
+    ],
+    systemPrompt:`You are a market intelligence analyst producing a Competitor Intelligence Report. Write with confidence and specificity. Be direct about where the client is losing.\n\nCOMPETITIVE LANDSCAPE OVERVIEW\nCompetitive environment. Number of competitors. Intensity: Low/Medium/High. Where this client sits in the hierarchy.\n\nCOMPETITOR PROFILES\nFor each: overview, estimated strengths, weaknesses, pricing position (Budget/Mid-Market/Premium), online presence strength, one thing our client should notice, where they're vulnerable.\n\nCOMPETITIVE SCORECARD\nText-format table. Rate client AND each competitor on: Price | Location | Online presence | Customer experience | Quality | Specialization | Growth momentum. Score 1-5.\n\nWHERE OUR CLIENT IS WINNING\n3-5 advantages. For each: the advantage, why customers value it, how to protect and amplify.\n\nWHERE OUR CLIENT IS LOSING\n3-5 gaps. For each: the gap, which competitor exploits it, estimated monthly impact, what to do.\n\nTHE 3 THINGS TO STEAL\nEach: what competitor does, why it works, how to implement step by step, expected impact.\n\n90-DAY COMPETITIVE ACTION PLAN\nMonth 1: 3 quick moves. Month 2: 2 positioning plays. Month 3: 1 long-term differentiator.\n\n1,000-1,200 words. Name competitors by name. Numbers throughout.`
+  }
+];
+
+let activeAgent=0, formData={}, outputText='';
+
+function updateKeyStatus() {
+  const val = document.getElementById('api-key-input').value.trim();
+  const st = document.getElementById('key-status');
+  if (val.startsWith('sk-ant-') && val.length > 20) { st.textContent='key set ✓'; st.className='api-status ok'; }
+  else if (val.length > 0) { st.textContent='check format'; st.className='api-status empty'; }
+  else { st.textContent='not set'; st.className='api-status empty'; }
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function render() {
+  document.getElementById('agent-list').innerHTML = AGENTS.map((a,i)=>`
+    <button class="agent-btn ${i===activeAgent?'active':''}" onclick="switchAgent(${i})">
+      <span class="agent-btn-name">${a.name}</span>
+      <span class="agent-btn-price">${a.price}</span>
+    </button>`).join('');
+  const ag=AGENTS[activeAgent];
+  document.getElementById('agent-title').textContent=ag.name;
+  document.getElementById('agent-tagline').textContent=ag.tagline;
+  document.getElementById('form-fields').innerHTML=ag.fields.map(f=>`
+    <div class="${f.full?'field-full':''}">
+      <label class="field-label">${f.label}</label>
+      ${f.rows>0
+        ?`<textarea rows="${f.rows}" placeholder="${f.placeholder}" oninput="setField('${f.key}',this.value)">${formData[f.key]||''}</textarea>`
+        :`<input type="text" placeholder="${f.placeholder}" value="${(formData[f.key]||'').replace(/"/g,'&quot;')}" oninput="setField('${f.key}',this.value)">`}
+    </div>`).join('');
+  const sec=document.getElementById('output-section');
+  if (outputText) {
+    sec.style.display='block';
+    document.getElementById('next-step-text').innerHTML=ag.nextStep;
+    document.getElementById('output-body').innerHTML=`<div class="output-text">${esc(outputText)}</div>`;
+  } else { sec.style.display='none'; }
+}
+
+function switchAgent(i){activeAgent=i;formData={};outputText='';render();}
+function setField(k,v){formData[k]=v;}
+
+async function generate(){
+  const apiKey=document.getElementById('api-key-input').value.trim();
+  if(!apiKey){alert('Please enter your Anthropic API key at the top first.');return;}
+  const ag=AGENTS[activeAgent];
+  const btn=document.getElementById('gen-btn');
+  btn.disabled=true;btn.textContent='Generating...';
+  const sec=document.getElementById('output-section');
+  sec.style.display='block';
+  document.getElementById('next-step-text').innerHTML=ag.nextStep;
+  document.getElementById('output-body').innerHTML=`<div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  sec.scrollIntoView({behavior:'smooth'});
+  const lines=ag.fields.map(f=>`${f.label}: ${formData[f.key]||'(not provided)'}`);
+  const userMsg=`Produce a complete ${ag.name} for this business:\n\n${lines.join('\n\n')}`;
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1500,
+        system:ag.systemPrompt,
+        messages:[{role:'user',content:userMsg}]
+      })
+    });
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`HTTP ${res.status}`);}
+    const data=await res.json();
+    outputText=data.content?.map(b=>b.text||'').join('')||'No content returned.';
+    document.getElementById('output-body').innerHTML=`<div class="output-text">${esc(outputText)}</div>`;
+  } catch(e){
+    document.getElementById('output-body').innerHTML=`<div class="error-text">Error: ${e.message}</div>`;
+  }
+  btn.disabled=false;btn.textContent='Generate deliverable';
+}
+
+function copyOutput(){
+  if(!outputText)return;
+  navigator.clipboard.writeText(outputText).then(()=>{
+    const b=document.getElementById('copy-btn');
+    b.textContent='Copied';setTimeout(()=>{b.textContent='Copy';},2000);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

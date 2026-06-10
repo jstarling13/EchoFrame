@@ -1,0 +1,248 @@
+<!--
+  JACOB — READ BEFORE LAUNCH. This is a hardened template, not legal advice. Action items to make it actually binding:
+  1) FORM THE LLC. The shield below ("EchoFrame and its members") only works if "EchoFrame LLC" is actually filed with the Georgia Secretary of State. Until then YOU are personally liable. Keep the filed name identical to the name used here.
+  2) GATE ASSENT. These Terms only bind a customer who affirmatively agreed. (a) The free-sample form in index.html now has a required "I agree" checkbox + links — keep it. (b) In Stripe Checkout, turn ON "Terms of service" consent (Settings → Checkout/Payment Links → require ToS acceptance) and point it at this page.
+  3) VERIFY VENDOR TERMS. Confirm you are on Anthropic's COMMERCIAL API (not consumer) with a DPA / zero-training terms, and that Stripe/Resend/Formspree DPAs are in place — the Privacy Policy now states this as fact.
+  4) ENABLE SELF-SERVICE CANCEL. Turn on the Stripe Billing customer portal so subscribers can cancel without emailing you; §6 now references it.
+  5) Update "Last updated" whenever you edit. Have a licensed Georgia attorney review the arbitration, liability-cap, and indemnification sections before you rely on them.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Terms of Service — EchoFrame</title>
+  <meta name="description" content="EchoFrame's Terms of Service. Plain English, like everything else we do.">
+  <meta name="robots" content="index, follow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/echoframe_logo.png">
+  <link rel="apple-touch-icon" href="/echoframe_logo.png">
+  <style>
+    :root {
+      --navy: #0A274F;
+      --amber: #94681C;
+      --amber-soft: #FDF3E3;
+      --ink: #111827;
+      --ink-soft: #4B5563;
+      --ink-faint: #6B7280;
+      --line: #E5E7EB;
+      --bg: #FFFFFF;
+      --bg-soft: #F9FAFB;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: var(--ink); }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+    .nav { padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--navy); font-size: 22px; letter-spacing: -0.015em; text-decoration: none; }
+    .brand:hover { text-decoration: none; }
+    .brand-logo { width: 48px; height: 48px; background: var(--navy); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .brand-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .nav a.btn-link { font-size: 15px; color: var(--navy); font-weight: 500; }
+    .back-link { display: block; padding: 14px 0 0; font-size: 13px; font-weight: 600; color: var(--amber); letter-spacing: 0.02em; }
+    .back-link:hover { text-decoration: underline; }
+    .hero { padding: 64px 0 56px; border-bottom: 1px solid var(--line); }
+    .section-eyebrow { color: var(--amber); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; display: block; }
+    .hero h1 { font-size: 48px; line-height: 1.08; letter-spacing: -0.025em; color: var(--navy); font-weight: 700; margin-bottom: 14px; }
+    .hero-sub { font-size: 19px; color: var(--ink-soft); margin-bottom: 10px; }
+    .hero-date { font-size: 13px; color: var(--ink-faint); font-style: italic; }
+    .policy-section { padding: 56px 0; border-bottom: 1px solid var(--line); max-width: 760px; }
+    .policy-section h2 { font-size: 26px; color: var(--navy); font-weight: 700; letter-spacing: -0.015em; margin-bottom: 20px; line-height: 1.2; }
+    .policy-body { color: var(--ink-soft); font-size: 16px; line-height: 1.7; }
+    .policy-body p { margin-bottom: 16px; }
+    .policy-body p:last-child { margin-bottom: 0; }
+    .policy-body ul { margin: 16px 0 16px 0; padding-left: 0; list-style: none; }
+    .policy-body ul li { padding: 10px 0 10px 20px; border-bottom: 1px solid var(--line); position: relative; color: var(--ink-soft); font-size: 16px; line-height: 1.6; }
+    .policy-body ul li:first-child { border-top: 1px solid var(--line); }
+    .policy-body ul li::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; background: var(--amber); border-radius: 50%; }
+    .callout { margin: 20px 0; padding: 22px 26px; background: var(--amber-soft); border-left: 3px solid var(--amber); border-radius: 0 8px 8px 0; font-size: 15.5px; color: var(--ink); line-height: 1.7; }
+    .callout strong { color: var(--navy); }
+    .legal-caps { text-transform: uppercase; letter-spacing: 0.01em; font-size: 14.5px; }
+    .contact-block { margin-top: 20px; padding: 24px 28px; background: var(--bg-soft); border-left: 3px solid var(--amber); border-radius: 0 8px 8px 0; font-size: 15px; color: var(--ink-soft); line-height: 1.8; }
+    .contact-block strong { color: var(--navy); }
+    footer { padding: 36px 0; border-top: 1px solid var(--line); font-size: 12px; color: #6B7280; }
+    .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .footer-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .footer-links a { color: #6B7280; }
+    .footer-links a:hover { color: var(--amber); }
+    .footer-disclaimer { margin-top: 14px; font-size: 11.5px; color: #6B7280; line-height: 1.6; max-width: 1080px; }
+    @media (max-width: 760px) {
+      .hero h1 { font-size: 32px; }
+      .hero { padding: 40px 0 36px; }
+      .policy-section { padding: 40px 0; }
+      .policy-section h2 { font-size: 22px; }
+      .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="echoframe_logo.png" alt="EchoFrame logo" /></span>
+        EchoFrame
+      </a>
+      <a class="btn-link" href="mailto:jacobstarling4313@gmail.com">jacobstarling4313@gmail.com</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a class="back-link" href="index.html">← Back to home</a>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <span class="section-eyebrow">Legal</span>
+      <h1>Terms of Service</h1>
+      <p class="hero-sub">The agreement between you and EchoFrame. Plain English, like everything else we do.</p>
+      <p class="hero-date">Last updated: June 2026</p>
+    </div>
+  </section>
+
+  <div class="container">
+
+    <!-- 1. Acceptance -->
+    <div class="policy-section">
+      <span class="section-eyebrow">1 · The basics</span>
+      <h2>Agreeing to these terms.</h2>
+      <div class="policy-body">
+        <p>These Terms of Service ("Terms") are a binding agreement between you ("you," "your," or "Client") and EchoFrame LLC, a Georgia limited liability company with its principal place of business in Columbus, Georgia ("EchoFrame," "we," "us," or "our"). They govern your use of our website and our services, including the Monthly Clarity Report, the Business Review, the Competitor Report, and any other product we provide (together, the "Services").</p>
+        <p><strong>How you accept these Terms.</strong> You accept these Terms and our <a href="privacy.html">Privacy Policy</a> by taking an affirmative action that shows your agreement — for example, by checking the box that references these Terms when you request a free sample, by checking the acceptance box at checkout when you purchase or subscribe, or by clicking a button labeled to indicate acceptance. If you do not agree, do not request a sample, purchase, subscribe, or otherwise use the Services. If you are accepting on behalf of a business, you represent that you are authorized to bind that business, and "you" includes that business.</p>
+        <p>We keep a record of your acceptance (including the date and the version of these Terms you agreed to). The version that applied when you accepted governs your purchase, except as described in Section 13 (Changes).</p>
+      </div>
+    </div>
+
+    <!-- 2. What EchoFrame is / is NOT -->
+    <div class="policy-section">
+      <span class="section-eyebrow">2 · What EchoFrame is — and is not</span>
+      <h2>Business intelligence, not professional advice.</h2>
+      <div class="policy-body">
+        <p>EchoFrame provides business intelligence and informational analysis to help you understand your own numbers and operations. We translate the financial information you give us into plain-English benchmarks, observations, and operational suggestions.</p>
+        <div class="callout">
+          <strong>Please read this carefully.</strong> EchoFrame is <strong>not</strong> a certified public accounting (CPA) firm, an accounting or bookkeeping firm, a registered investment adviser, a broker-dealer, a tax preparer, or a law firm, and we do <strong>not</strong> provide accounting, audit, attest, tax, legal, or investment advice. Our reports are <strong>informational only</strong>. They are not an audit, review, compilation, attestation, financial statement, tax filing, or investment recommendation, and they should not be relied upon as a substitute for advice from a licensed professional.
+        </div>
+        <p>Any figures, benchmarks, projections, or recommendations in a report are estimates and general information based on the data you provide and on third-party benchmark sources. You are solely responsible for the business and financial decisions you make. Before acting on anything in a report, you should consult a qualified CPA, attorney, tax professional, or financial adviser as appropriate to your situation.</p>
+        <p>References on our website to "CFO-grade analysis," consultants, or similar phrases describe our <em>style and rigor</em> — they are not a claim that EchoFrame or any individual is acting as your CFO, accountant, or licensed adviser.</p>
+      </div>
+    </div>
+
+    <!-- 3. Your responsibilities -->
+    <div class="policy-section">
+      <span class="section-eyebrow">3 · Your responsibilities</span>
+      <h2>What we need from you.</h2>
+      <div class="policy-body">
+        <p>You are responsible for:</p>
+        <ul>
+          <li>The accuracy and completeness of the financial and business information you send us. Our analysis is only as good as the data you provide, and we do not independently audit or verify it.</li>
+          <li>Having the right to share any information you send us, and for any confidential or third-party data it may contain.</li>
+          <li>Your own decisions and actions, including any decision to act — or not act — on anything in a report.</li>
+          <li>Complying with the laws that apply to your business.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 4. Subscriptions & billing -->
+    <div class="policy-section">
+      <span class="section-eyebrow">4 · Subscriptions, billing &amp; auto-renewal</span>
+      <h2>How payment works.</h2>
+      <div class="policy-body">
+        <p>Some Services are sold as recurring subscriptions and others as one-time purchases. Prices are shown on our website at the time of purchase. Payments are processed by Stripe; by purchasing, you also agree to Stripe's terms.</p>
+        <p><strong>Automatic renewal — please read.</strong> If you buy a subscription (for example, the Monthly Clarity Report at $150 per month), you authorize EchoFrame to charge your payment method on a recurring basis — monthly, in advance — until you cancel. <strong>Your subscription renews automatically each billing period at the then-current price, and your payment method will be charged automatically, with no further action by you, until you cancel.</strong> Before you subscribe we clearly disclose the price, the billing frequency, the automatic-renewal nature of the plan, and how to cancel, and you affirmatively consent to those terms at checkout.</p>
+        <p><strong>Cancel any time, easily.</strong> You may cancel at any time as described in Section 6, including through self-service (no need to call or wait). Cancellation is effective at the end of the current paid period.</p>
+        <p><strong>Price changes.</strong> If we change the recurring price, we will notify you by email at least <strong>fourteen (14) days</strong> before the new price takes effect. The new price applies only to billing periods after that notice, and you may cancel before it takes effect. If you do not cancel, the new price applies to your next renewal.</p>
+      </div>
+    </div>
+
+    <!-- 5. Free sample guarantee -->
+    <div class="policy-section">
+      <span class="section-eyebrow">5 · Free sample &amp; guarantee</span>
+      <h2>Your first report, and the guarantee.</h2>
+      <div class="policy-body">
+        <p><strong>The free sample is always free.</strong> The sample report we prepare before you subscribe carries no payment, no card on file, and no obligation. You will never be charged for it.</p>
+        <p><strong>The first-report guarantee.</strong> This is the guarantee stated on our website: <strong>if your first paid report does not identify at least one actionable item tied to a real dollar amount, you do not pay for that first report.</strong> To claim it, email us at the address below within <strong>thirty (30) days</strong> of receiving that report; we will not charge you, or will refund that one charge in full. We do not require you to justify the request — your good-faith claim that the report fell short is enough.</p>
+        <p>The guarantee applies once, to your first paid report. It does not, by itself, cancel an ongoing subscription; to stop future renewals, cancel as described in Section 6.</p>
+      </div>
+    </div>
+
+    <!-- 6. Cancellation & refunds -->
+    <div class="policy-section">
+      <span class="section-eyebrow">6 · Cancellation &amp; refunds</span>
+      <h2>Cancel any time — here's how.</h2>
+      <div class="policy-body">
+        <p><strong>How to cancel.</strong> You can cancel a subscription at any time, by any of these methods, whichever is easiest for you:</p>
+        <ul>
+          <li><strong>Self-service</strong> — through the billing/account portal link included in your report emails and on your receipts, where you can cancel in a few clicks without contacting us.</li>
+          <li><strong>Cancellation link</strong> — by clicking the cancellation link in any subscription or report email we send you.</li>
+          <li><strong>Email</strong> — by emailing <a href="mailto:jacobstarling4313@gmail.com">jacobstarling4313@gmail.com</a> with the word "cancel" and the email on your account.</li>
+        </ul>
+        <p>We will confirm your cancellation by email. We will never require you to call, sit through a retention offer, or take any step harder than the step you took to subscribe.</p>
+        <p><strong>When cancellation takes effect.</strong> Cancellation stops future renewals. It takes effect at the end of the current paid billing period — you keep access through the period you have already paid for, and you will not be charged again after that.</p>
+        <p><strong>Refunds.</strong> Except for the first-report guarantee in Section 5, subscription fees and one-time fees are non-refundable once the corresponding report has been delivered, and we do not provide prorated refunds for partial billing periods. If you cancel before a report for the new period has been delivered, you will not be charged for that period. If you believe you were charged in error or were billed after cancelling, contact us and we will refund any incorrect charge. Nothing in this section limits any refund right you have under applicable consumer-protection law.</p>
+      </div>
+    </div>
+
+    <!-- 7. Data -->
+    <div class="policy-section">
+      <span class="section-eyebrow">7 · Your data</span>
+      <h2>How we handle your information.</h2>
+      <div class="policy-body">
+        <p>Our collection and use of your information is described in our <a href="privacy.html">Privacy Policy</a>, which is part of these Terms. As explained there, we use a small set of trusted service providers — including Anthropic (AI processing), Stripe (payments), Resend (email), and Formspree (forms) — to operate the Services. By using the Services you consent to that processing.</p>
+      </div>
+    </div>
+
+    <!-- 8. Intellectual property -->
+    <div class="policy-section">
+      <span class="section-eyebrow">8 · Intellectual property</span>
+      <h2>Who owns what.</h2>
+      <div class="policy-body">
+        <p>You own the underlying business data you send us. We own the EchoFrame name, logo, website, software, templates, and report formats. When we deliver a report to you, we grant you a non-exclusive license to use it for your own internal business purposes. Please don't resell, republish, or redistribute our reports or templates as your own product without our written permission.</p>
+      </div>
+    </div>
+
+    <!-- 9. Disclaimer of warranties -->
+    <div class="policy-section">
+      <span class="section-eyebrow">9 · Disclaimer of warranties</span>
+      <h2>Provided "as is."</h2>
+      <div class="policy-body">
+        <p class="legal-caps">The Services and all reports are provided "as is" and "as available," without warranties of any kind, whether express or implied. To the fullest extent permitted by law, EchoFrame disclaims all implied warranties, including merchantability, fitness for a particular purpose, accuracy, and non-infringement. We do not warrant that any report is error-free, that benchmarks are exact, or that acting on a report will produce any particular financial result.</p>
+      </div>
+    </div>
+
+    <!-- 10. Limitation of liability -->
+    <div class="policy-section">
+      <span class="section-eyebrow">10 · Limitation of liability</span>
+      <h2>The limit on our liability.</h2>
+      <div class="policy-body">
+        <p class="legal-caps">To the fullest extent permitted by law, EchoFrame and its owners, members, and personnel will not be liable for any indirect, incidental, special, consequential, exemplary, or punitive damages, or for any lost profits, lost revenue, lost savings, or business interruption, arising out of or relating to the Services or any report, even if we have been advised of the possibility of such damages.</p>
+        <p class="legal-caps">In all cases, EchoFrame's total cumulative liability arising out of or relating to the Services or these Terms will not exceed the greater of (a) the total fees you actually paid to EchoFrame in the twelve (12) months immediately before the event giving rise to the claim, or (b) one hundred U.S. dollars ($100).</p>
+        <p class="legal-caps">The limitations in this section do not apply to, and do not cap, liability arising from EchoFrame's gross negligence, willful misconduct, or fraud, from EchoFrame's breach of its data-security and confidentiality obligations in the Privacy Policy, or from any other liability that cannot be limited or excluded under applicable law.</p>
+        <p>Some jurisdictions do not allow certain limitations, so parts of this section may not apply to you. Nothing in these Terms limits liability that cannot be limited by law.</p>
+      </div>
+    </div>
+
+    <!-- 11. Indemnification -->
+    <div class="policy-section">
+      <span class="section-eyebrow">11 · Indemnification</span>
+      <h2>Covering claims from your use.</h2>
+      <div class="policy-body">
+        <p>You agree to indemnify and hold harmless EchoFrame and its owners, members, and personnel from any <strong>third-party</strong> claim, and from the resulting losses and reasonable costs (including reasonable attorneys' fees), to the extent the claim arises out of (a) the data you provide to us, including any confidential or third-party information in it, (b) decisions or actions you take based on a report, (c) your violation of these Terms, or (d) your violation of applicable law or the rights of a third party.</p>
+        <p>This obligation does not apply to, and you are not responsible for, any claim to the extent it arises from EchoFrame's own negligence, gross negligence, willful misconduct, or breach of these Terms. This section applies only to claims brought by third parties; it does not require you to pay EchoFrame's costs in a dispute between you and EchoFrame.</p>
+      </div>
+    </div>
+
+    <!-- 12. Arbitration -->
+    <div class="policy-section">
+      <span class="section-eyebrow">12 · Dispute resolution &amp; ar

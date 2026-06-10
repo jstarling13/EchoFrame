@@ -1,0 +1,10 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+SQLAlchemy==2.0.36
+pydantic==2.10.4
+pydantic-settings==2.7.0
+python-multipart==0.0.20
+# Postgres driver (production). Not needed when running against SQLite for local dev.
+psycopg2-binary==2.9.10
+# Telephony. Imported lazily — only required when CALLCATCH_USE_MOCK_SMS=false.
+twilio==9.4.1

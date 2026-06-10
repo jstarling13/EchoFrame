@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EchoFrame — Site Map (Open Any Page)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="echoframe_logo.png">
+  <style>
+    :root{ --navy:#0A274F; --amber:#94681C; --amber-soft:#FDF3E3; --ink:#111827; --ink-soft:#4B5563; --ink-faint:#6B7280; --line:#E5E7EB; --bg:#FFFFFF; --bg-soft:#F9FAFB; }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{ font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:var(--ink); background:var(--bg-soft); line-height:1.6; -webkit-font-smoothing:antialiased; }
+    .wrap{ max-width:920px; margin:0 auto; padding:0 24px; }
+    header{ background:var(--navy); color:#fff; padding:40px 0 36px; }
+    .brand{ display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+    .brand-logo{ width:44px; height:44px; border-radius:9px; overflow:hidden; background:#fff; flex-shrink:0; }
+    .brand-logo img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .brand-name{ font-weight:700; font-size:20px; letter-spacing:-0.015em; }
+    header h1{ font-size:30px; line-height:1.15; letter-spacing:-0.02em; font-weight:700; margin-bottom:8px; }
+    header p{ color:#C7D2E0; font-size:16px; max-width:640px; }
+    main{ padding:36px 0 56px; }
+    .sec{ margin-bottom:32px; }
+    .sec-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:14px; }
+    .sec-eyebrow{ color:var(--amber); font-weight:700; font-size:12px; letter-spacing:.08em; text-transform:uppercase; }
+    .sec-note{ color:var(--ink-faint); font-size:13px; }
+    .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+    a.card{ display:block; background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px 18px; text-decoration:none; transition:border-color .15s ease, transform .15s ease; }
+    a.card:hover{ border-color:var(--amber); transform:translateY(-2px); }
+    .card-name{ color:var(--navy); font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .card-sub{ color:var(--ink-soft); font-size:13px; margin-top:4px; }
+    .badge{ background:var(--amber); color:#fff; font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:2px 7px; border-radius:5px; }
+    .home-card{ background:var(--amber-soft); border-color:var(--amber); }
+    footer{ border-top:1px solid var(--line); padding:20px 0 40px; color:var(--ink-faint); font-size:12.5px; }
+    @media(max-width:560px){ header h1{ font-size:24px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="brand">
+        <span class="brand-logo"><img src="echoframe_logo.png" alt="EchoFrame"></span>
+        <span class="brand-name">EchoFrame</span>
+      </div>
+      <h1>Site map &mdash; open any page</h1>
+      <p>Every page of the site, in one place. Click any card to open it. All links work locally, so you can browse the whole site just by double-clicking this file.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="sec">
+      <div class="sec-head"><span class="sec-eyebrow">Main</span></div>
+      <div class="grid">
+        <a class="card home-card" href="index.html"><div class="card-name">Homepage <span class="badge">Live</span></div><div class="card-sub">The Clarity Report landing page</div></a>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head"><span class="sec-eyebrow">Intelligence</span><span class="sec-note">Financial clarity tools</span></div>
+      <div class="grid">
+        <a class="card" href="intelligence/index.html"><div class="card-name">Intelligence &mdash; Overview</div><div class="card-sub">Division landing page</div></a>
+        <a class="card" href="index.html"><div class="card-name">Clarity Report <span class="badge">Active</span></div><div class="card-sub">The flagship monthly report</div></a>
+        <a class="card" href="intelligence/vericount.html"><div class="card-name">Auto Ledger</div><div class="card-sub">vericount.html</div></a>
+        <a class="card" href="intelligence/oryn.html"><div class="card-name">Rate Watch</div><div class="card-sub">oryn.html</div></a>
+        <a class="card" href="intelligence/veris.html"><div class="card-name">Rival Scan</div><div class="card-sub">veris.html</div></a>
+        <a class="card" href="intelligence/strata.html"><div class="card-name">Shift Lens</div><div class="card-sub">strata.html</div></a>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head"><span class="sec-eyebrow">Revenue</span><span class="sec-note">Capture more of what you earn</span></div>
+      <div class="grid">
+        <a class="card" href="revenue/index.html"><div class="card-name">Revenue &mdash; Overview</div><div class="card-sub">Division landing page</div></a>
+        <a class="card" href="revenue/missedcall.html"><div class="card-name">Call Catch</div><div class="card-sub">missedcall.html</div></a>
+        <a class="card" href="revenue/quoterevive.html"><div class="card-name">Quote Revive</div><div class="card-sub">quoterevive.html</div></a>
+        <a class="card" href="revenue/clearledger.html"><div class="card-name">Clear Ledger</div><div class="card-sub">clearledger.html</div></a>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head"><span class="sec-eyebrow">Ops</span><span class="sec-note">Run the day-to-day</span></div>
+      <div class="grid">
+        <a class="card" href="ops/index.html"><div class="card-name">Ops &mdash; Overview</div><div class="card-sub">Division landing page</div></a>
+        <a class="card" href="ops/traderelay.html"><div class="card-name">Call Router</div><div class="card-sub">traderelay.html</div></a>
+        <a class="card" href="ops/permitwatch.html"><div class="card-name">Permit Watch</div><div class="card-sub">permitwatch.html</div></a>
+        <a class="card" href="ops/ironhire.html"><div class="card-name">Crew Hire</div><div class="card-sub">ironhire.html</div></a>
+        <a class="card" href="ops/baysignal.html"><div class="card-name">Bay Coach</div><div class="card-sub">baysignal.html</div></a>
+        <a class="card" href="ops/hydropay.html"><div class="card-name">Drive Pay</div><div class="card-sub">hydropay.html</div></a>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head"><span class="sec-eyebrow">Legal</span></div>
+      <div class="grid">
+        <a class="card" href="privacy.html"><div class="card-name">Privacy Policy</div><div class="card-sub">privacy.html</div></a>
+        <a class="card" href="terms.html"><div class="card-name">Terms of Service</div><div class="card-sub">terms.html</div></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">EchoFrame &mdash; local preview copy. This folder mirrors the live site; edits here do not change what's published.</div>
+  </footer>
+</body>
+</html>

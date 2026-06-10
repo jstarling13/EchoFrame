@@ -1,0 +1,28 @@
+# Secrets — never commit these
+.env
+*.env
+*API key*.txt
+*api key*.txt
+*API KEY*.txt
+RESEND*.txt
+STRIPEAPI.txt
+WEBHOOK*.txt
+*API KEYS*.txt
+Claude*.txt
+*claude*.txt
+
+# Generated files — not needed in repo
+uploads/
+reports/
+demo_output/
+.venv/
+.pytest_cache/
+__pycache__/
+*.pyc
+*.pyo
+
+# Local tools
+node_modules/
+.DS_Store
+start_echoframe.bat
+install_startup.bat
