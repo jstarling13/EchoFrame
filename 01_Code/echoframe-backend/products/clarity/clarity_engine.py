@@ -37,17 +37,10 @@ import json
 import resend
 import anthropic
 import pandas as pd
-# matplotlib is optional: it's only used to render the Clarity charts. On size-
-# constrained hosts (e.g. Vercel's 250 MB serverless bundle) it can be omitted —
-# the report still generates with its tables and prose, just without chart images.
-try:
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    import matplotlib.patches as mpatches
-    _HAS_MPL = True
-except Exception:  # pragma: no cover - exercised only where matplotlib is absent
-    _HAS_MPL = False
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 from pathlib import Path
 from datetime import datetime, date, timedelta
 from docx import Document
@@ -1791,9 +1784,9 @@ def _build_docx(meta: dict, metrics: dict, leaks: list, prose: dict) -> bytes:
     _build_kpi_row(doc, metrics, health_score, health_grade)
 
     _dark_section_bar(doc, "FINANCIAL OVERVIEW")
-    rev_chart_bytes   = _chart_revenue_trend(metrics)              if _HAS_MPL else b""
-    exp_bar_bytes     = _chart_expense_bar(metrics)               if _HAS_MPL else b""  # horizontal bar replaces donut
-    gauge_bytes       = _chart_health_gauge(health_score, health_grade) if _HAS_MPL else b""
+    rev_chart_bytes   = _chart_revenue_trend(metrics)
+    exp_bar_bytes     = _chart_expense_bar(metrics)        # horizontal bar replaces donut
+    gauge_bytes       = _chart_health_gauge(health_score, health_grade)
     # Health score key rendered as caption inside the gauge cell
     _build_three_charts_row(doc, rev_chart_bytes, exp_bar_bytes, gauge_bytes,
                             labels=("Month-over-Month Revenue", "Expense Mix", "Health Score"),
@@ -1811,7 +1804,7 @@ def _build_docx(meta: dict, metrics: dict, leaks: list, prose: dict) -> bytes:
 
     bench_src = _benchmark_source(industry)
     _dark_section_bar(doc, f"EXPENSE vs BENCHMARK  ·  Source: {bench_src}")
-    exp_chart_bytes = _chart_expense_breakdown(metrics) if _HAS_MPL else b""
+    exp_chart_bytes = _chart_expense_breakdown(metrics)
     p_ec = doc.add_paragraph()
     p_ec.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p_ec.paragraph_format.space_before = Pt(4)
@@ -2914,8 +2907,7 @@ def _build_health_dashboard(doc, metrics: dict, health_score: int,
     p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p_img.paragraph_format.space_before = Pt(8)
     p_img.paragraph_format.space_after  = Pt(4)
-    if gauge_bytes:
-        p_img.add_run().add_picture(io.BytesIO(gauge_bytes), width=Inches(2.4))
+    p_img.add_run().add_picture(io.BytesIO(gauge_bytes), width=Inches(2.4))
 
     # Score + grade line centered below gauge
     p_score = doc.add_paragraph()
