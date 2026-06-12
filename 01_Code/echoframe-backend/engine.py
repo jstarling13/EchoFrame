@@ -37,14 +37,10 @@ import json
 import resend
 import anthropic
 import pandas as pd
-try:
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    import matplotlib.patches as mpatches
-    _HAS_MPL = True
-except Exception:  # matplotlib optional (omitted on size-constrained hosts)
-    _HAS_MPL = False
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 from pathlib import Path
 from datetime import datetime, date, timedelta
 from docx import Document
