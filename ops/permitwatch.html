@@ -6,9 +6,14 @@
   <title>Permit Watch — Never Miss a Fleet Compliance Deadline Again | EchoFrame Ops</title>
   <meta name="description" content="Permit Watch puts every registration, license, and permit on one dashboard and alerts you 30 days before anything expires — so compliance is never a scramble.">
   <link rel="canonical" href="https://echoframe.co/ops/permitwatch.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/echoframe_logo.png">
+  <link rel="apple-touch-icon" href="/echoframe_logo.png">
   <style>
     :root {
-      --navy: #0A274F; --amber: #C9973D; --amber-soft: #FDF3E3;
+      --navy: #0A274F; --amber: #94681C; --amber-soft: #FDF3E3;
       --ink: #111827; --ink-soft: #4B5563; --ink-faint: #6B7280;
       --line: #E5E7EB; --bg: #FFFFFF; --bg-soft: #F9FAFB; --bg-deep: #F3F4F6;
     }
@@ -29,7 +34,7 @@
     .product-hero .subhead { font-size: 21px; color: var(--ink-soft); line-height: 1.55; margin-bottom: 36px; max-width: 600px; margin-left: auto; margin-right: auto; }
     .hero-ctas { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; }
     .cta { display: inline-block; background: var(--amber); color: white; font-weight: 600; font-size: 16px; padding: 16px 32px; border-radius: 8px; transition: background 0.15s; }
-    .cta:hover { background: #A67C2E; text-decoration: none; color: white; }
+    .cta:hover { background: #7E5616; text-decoration: none; color: white; }
     .problem-strip { background: rgba(10,39,79,0.04); border-left: 4px solid var(--amber); border-radius: 0 12px 12px 0; padding: 24px 28px; max-width: 720px; margin: 0 auto; font-size: 18px; font-weight: 500; font-style: italic; color: var(--ink); line-height: 1.55; }
     .section { padding: 72px 0; border-top: 1px solid var(--line); }
     .section-header { margin-bottom: 48px; }
@@ -65,11 +70,11 @@
     .waitlist-form { display: flex; gap: 10px; max-width: 460px; margin: 0 auto; }
     .waitlist-form input[type="email"] { flex: 1; padding: 14px 18px; border: none; border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; }
     .waitlist-form button { background: var(--amber); color: white; font-weight: 600; font-size: 15px; padding: 14px 22px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; transition: background 0.15s; }
-    .waitlist-form button:hover { background: #A67C2E; }
-    footer { padding: 36px 0; border-top: 1px solid var(--line); font-size: 12px; color: #888888; }
+    .waitlist-form button:hover { background: #7E5616; }
+    footer { padding: 36px 0; border-top: 1px solid var(--line); font-size: 12px; color: #6B7280; }
     .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; align-items: center; }
     .footer-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-    .footer-links a { color: #888888; }
+    .footer-links a { color: #6B7280; }
     .footer-links a:hover { color: var(--amber); }
     @media (max-width: 760px) {
       .product-hero h1 { font-size: 34px; } .product-hero .subhead { font-size: 18px; } .product-hero { padding: 52px 0 40px; }
@@ -79,6 +84,18 @@
       .waitlist-section h2 { font-size: 26px; } .waitlist-form { flex-direction: column; }
       .footer-inner { flex-direction: column; gap: 8px; text-align: center; } .footer-links { justify-content: center; }
     }
+  
+    /* ===== EF navy hero band (matches homepage) ===== */
+    .breadcrumb { background: var(--navy); border-bottom: none; color: #AEBCCF; }
+    .breadcrumb a { color: #C7D2E0; }
+    .breadcrumb a:hover { color: #E0A93F; text-decoration: none; }    .product-hero { background: var(--navy); }
+    .product-hero .eyebrow { color: #E0A93F; }
+    .product-hero h1 { color: #FFFFFF; }
+    .product-hero .subhead { color: #C7D2E0; }
+    .product-hero .badge-soon { background: rgba(255,255,255,0.14); color: #E6EDF5; }
+    .product-hero .cta { background: #E0A93F; color: var(--navy); }
+    .product-hero .cta:hover { background: #D49A2C; color: var(--navy); }
+    /* ===== end EF navy hero band ===== */
   </style>
 </head>
 <body>
@@ -96,12 +113,13 @@
   <section class="product-hero">
     <div class="container">
       <span class="eyebrow">EchoFrame Ops</span>
-      <span class="badge-soon">Coming Soon</span>
+      <span class="badge-soon" style="background:#E0A93F;color:var(--navy);">Now Live</span>
       <h1>Permit Watch</h1>
       <p class="subhead">Every license, registration, and permit on one dashboard — with a heads-up 30 days before anything expires.</p>
       <div class="hero-ctas">
-        <a class="cta" href="#waitlist">Join the Waitlist →</a>
+        <a class="cta" href="https://buy.stripe.com/5kQaEZdvHe6R2frbE3cwg0f">Subscribe →</a>
       </div>
+      <p style="margin-top:14px;font-size:14px;color:#C7D2E0;">About 20 minutes to set up · cancel anytime</p>
     </div>
   </section>
 
@@ -171,21 +189,37 @@
     </div>
   </section>
 
+  <!-- See it before you buy it -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header" style="text-align:center;">
+        <span class="section-eyebrow">See it before you buy it</span>
+        <h2 class="section-title">This is what your Permit Watch report looks like.</h2>
+        <p class="section-sub" style="margin-left:auto;margin-right:auto;">Every registration, license, and permit on one dashboard, with what's expiring next. Here's a redacted sample.</p>
+      </div>
+      <div style="max-width:420px;margin:0 auto 28px;border-radius:8px;overflow:hidden;box-shadow:0 8px 32px rgba(10,39,79,0.13);border:1px solid #E5E7EB;">
+        <img src="../assets/permit-watch-sample.png" alt="Sample EchoFrame Permit Watch report for a Columbus small business" style="width:100%;height:auto;display:block;" />
+      </div>
+      <div style="text-align:center;">
+        <a class="cta" href="../get-a-sample.html?product=Permit+Watch">Get your free Permit Watch sample &rarr;</a>
+      </div>
+    </div>
+  </section>
+
   <section class="section">
     <div class="container">
       <div class="section-header">
         <span class="section-eyebrow">Pricing</span>
         <h2 class="section-title">Cheaper than one compliance fine. Cheaper than one stopped job.</h2>
-        <p class="section-sub">Waitlist members lock in the early bird rate for the first year.</p>
+        <p class="section-sub">One flat rate. No setup fee, no per-vehicle charge, cancel anytime.</p>
       </div>
       <div class="pricing-wrap">
         <div class="pricing-card">
           <div class="pricing-top">
             <div class="pricing-name">Permit Watch</div>
-            <div class="pricing-badge">Early Bird</div>
           </div>
           <div class="pricing-price"><sup>$</sup>89<sub>/mo</sub></div>
-          <p class="pricing-note">Lock in $59/mo for the first year when you join the waitlist before launch.</p>
+          <p class="pricing-note">Everything below, for your whole fleet. No long-term contract.</p>
           <ul class="pricing-list">
             <li><span class="check">✓</span> Unlimited vehicle &amp; equipment tracking</li>
             <li><span class="check">✓</span> Business licenses &amp; certifications</li>
@@ -195,32 +229,25 @@
             <li><span class="check">✓</span> Compliance history log</li>
             <li><span class="check">✓</span> Email &amp; chat support</li>
           </ul>
-          <a class="cta" href="#waitlist" style="display:block;text-align:center;">Join the Waitlist →</a>
+          <a class="cta" href="https://buy.stripe.com/5kQaEZdvHe6R2frbE3cwg0f" style="display:block;text-align:center;">Subscribe →</a>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="waitlist-section" id="waitlist">
+  <section class="waitlist-section" id="get-started">
     <div class="container">
       <h2>Get ahead of your next compliance deadline.</h2>
-      <p>Join the waitlist and we'll reach out when Permit Watch is ready for its first customers. No spam — just a heads-up when it launches.</p>
-      <form class="waitlist-form" action="mailto:jacobstarling4313@gmail.com" method="POST" enctype="text/plain">
-        <input type="email" name="email" placeholder="your@email.com" required>
-        <button type="submit">Notify Me</button>
-      </form>
+      <p>See exactly what Permit Watch tracks for a fleet like yours. We'll send a redacted sample report and get you set up.</p>
+      <div style="text-align:center;">
+        <a class="cta" href="../get-a-sample.html?product=Permit+Watch" style="background:#E0A93F;color:var(--navy);">Get your free Permit Watch sample →</a>
+      </div>
     </div>
   </section>
 
   <footer>
     <div class="container footer-inner">
-      <div>&copy; 2026 EchoFrame &mdash; <a href="index.html" style="color:#888888;">EchoFrame Ops</a></div>
+      <div>&copy; 2026 EchoFrame &mdash; <a href="index.html" style="color:#6B7280;">EchoFrame Ops</a></div>
       <div class="footer-links">
         <a href="index.html">Back to Ops</a>
-        <a href="../index.html">EchoFrame Home</a>
-        <a href="../privacy.html">Privacy</a>
-      </div>
-    </div>
-  </footer>
-</body>
-</html>
+        <a href
