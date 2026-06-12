@@ -1,6 +1,6 @@
 """Offline demo for Permit Watch. python demo_permit_watch.py"""
 from pathlib import Path
-from permit_watch_engine import render_from_csv
+from products.permit_watch.permit_watch_engine import render_from_csv
 
 CSV = Path(__file__).resolve().parent / "demo_output" / "permit_watch_sample_input.csv"
 

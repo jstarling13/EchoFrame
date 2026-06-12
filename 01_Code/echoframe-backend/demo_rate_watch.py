@@ -14,7 +14,7 @@ Jinja2 path but sources actions/prose from Claude tool_use.
 """
 
 from pathlib import Path
-from rate_watch_engine import render_from_csv
+from products.rate_watch.rate_watch_engine import render_from_csv
 
 CSV = Path(__file__).resolve().parent / "demo_output" / "rate_watch_sample_input.csv"
 

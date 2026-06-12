@@ -13,7 +13,7 @@ exact same pandas + Jinja2 path but sources categories/prose from Claude tool_us
 """
 
 from pathlib import Path
-from auto_ledger_engine import render_from_csv
+from products.auto_ledger.auto_ledger_engine import render_from_csv
 
 CSV = Path(__file__).resolve().parent / "demo_output" / "auto_ledger_sample_input.csv"
 

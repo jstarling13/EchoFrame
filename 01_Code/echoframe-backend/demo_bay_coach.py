@@ -1,6 +1,6 @@
 """Offline demo for Bay Coach. python demo_bay_coach.py"""
 from pathlib import Path
-from bay_coach_engine import render_from_csv
+from products.bay_coach.bay_coach_engine import render_from_csv
 
 CSV = Path(__file__).resolve().parent / "demo_output" / "bay_coach_sample_input.csv"
 

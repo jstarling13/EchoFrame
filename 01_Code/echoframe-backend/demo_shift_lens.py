@@ -13,7 +13,7 @@ Jinja2 path but sources the prose from Claude tool_use.
 """
 
 from pathlib import Path
-from shift_lens_engine import render_from_csv
+from products.shift_lens.shift_lens_engine import render_from_csv
 
 CSV = Path(__file__).resolve().parent / "demo_output" / "shift_lens_sample_input.csv"
 

@@ -1,6 +1,6 @@
 """Offline demo for Clear Ledger (both tiers). python demo_clear_ledger.py"""
 from pathlib import Path
-from clear_ledger_engine import render_from_csv
+from products.clear_ledger.clear_ledger_engine import render_from_csv
 
 CSV = Path(__file__).resolve().parent / "demo_output" / "clear_ledger_sample_input.csv"
 

@@ -15,7 +15,7 @@ Run:  pytest tests/test_engine_pipeline.py -v
 import base64
 from unittest.mock import patch, MagicMock
 
-import engine
+from products.clarity import clarity_engine as engine
 
 
 # ── _report_slug / _save_report naming ────────────────────────────────────────
@@ -57,7 +57,7 @@ class TestSaveReport:
 class TestSendReportEmail:
     def test_send_builds_base64_attachment_and_calls_resend(self):
         attachment = b"\x50\x4b\x03\x04 real-looking docx"
-        with patch("engine.resend.Emails.send") as mock_send:
+        with patch("products.clarity.clarity_engine.resend.Emails.send") as mock_send:
             engine._send_report_email(
                 "client@example.com", "Shane", attachment,
                 {"Business Name": "Reliable Heating & Air", "Month": "May 2026"},
@@ -71,7 +71,7 @@ class TestSendReportEmail:
         assert decoded == attachment, "attachment must round-trip through base64"
 
     def test_send_failure_propagates(self):
-        with patch("engine.resend.Emails.send", side_effect=RuntimeError("resend down")):
+        with patch("products.clarity.clarity_engine.resend.Emails.send", side_effect=RuntimeError("resend down")):
             try:
                 engine._send_report_email(
                     "c@example.com", "X", b"x", {"Business Name": "Y", "Month": "May 2026"}
@@ -134,8 +134,8 @@ class TestFullPipelineMocked:
             safe = engine._safe_email("e2e@example.com")
             (tmp_path / f"{safe}.csv").write_text(_SAMPLE_CSV, encoding="utf-8")
 
-            with patch("engine._generate_narrative", return_value=dict(_CANNED_PROSE)), \
-                 patch("engine.resend.Emails.send") as mock_send:
+            with patch("products.clarity.clarity_engine._generate_narrative", return_value=dict(_CANNED_PROSE)), \
+                 patch("products.clarity.clarity_engine.resend.Emails.send") as mock_send:
                 path = engine.generate_clarity_report(
                     "e2e@example.com", "Shane", "HVAC", "Columbus GA"
                 )
@@ -156,8 +156,8 @@ class TestFullPipelineMocked:
             (tmp_path / f"{safe}.csv").write_text(
                 "_Business Name,Zero Co,\nRevenue,0,0\nLabor Cost,100,100\n", encoding="utf-8"
             )
-            with patch("engine._generate_narrative", return_value=dict(_CANNED_PROSE)), \
-                 patch("engine.resend.Emails.send"):
+            with patch("products.clarity.clarity_engine._generate_narrative", return_value=dict(_CANNED_PROSE)), \
+                 patch("products.clarity.clarity_engine.resend.Emails.send"):
                 try:
                     engine.generate_clarity_report("zero@example.com", "Z", "HVAC", "GA")
                     assert False, "zero revenue must raise"

@@ -1,6 +1,6 @@
 """Offline demo for Drive Pay. python demo_drive_pay.py"""
 from pathlib import Path
-from drive_pay_engine import render_from_csv
+from products.drive_pay.drive_pay_engine import render_from_csv
 
 CSV = Path(__file__).resolve().parent / "demo_output" / "drive_pay_sample_input.csv"
 

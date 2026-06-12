@@ -1,7 +1,7 @@
 """Offline demo for the Revenue Suite (combines the three product sample CSVs).
 python demo_revenue_suite.py"""
 from pathlib import Path
-from revenue_suite_engine import render_from_csvs
+from products.revenue_suite.revenue_suite_engine import render_from_csvs
 
 OUT = Path(__file__).resolve().parent / "demo_output"
 CC = OUT / "call_catch_sample_input.csv"

@@ -91,6 +91,8 @@
       <div id="form-wrap">
         <form id="upload-form" enctype="multipart/form-data">
           <input type="hidden" name="email" id="email-input">
+          <input type="hidden" name="session_id" id="session-input">
+          <input type="hidden" name="token" id="token-input">
           <input type="hidden" name="product" value="{{ slug }}">
           <input type="hidden" name="tier" value="{{ tier }}">
 
@@ -150,6 +152,8 @@
     const email  = params.get('email') || '';
     document.getElementById('email-display').textContent = email || '(no email provided)';
     document.getElementById('email-input').value = email;
+    document.getElementById('session-input').value = params.get('session_id') || '';
+    document.getElementById('token-input').value = params.get('token') || '';
 
     const fileInput  = document.getElementById('file-input');
     const dropZone   = document.getElementById('drop-zone');

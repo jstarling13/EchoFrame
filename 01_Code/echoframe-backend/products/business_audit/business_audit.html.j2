@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EchoFrame - Business Audit - {{ biz_name }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy:#012A4A; --navy-2:#013a66; --amber:#C8972A; --green:#059669;
+    --red:#DC2626; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --slate:#f1f5f9;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { background:#525659; font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .page { width:8.5in; margin:24px auto; background:#fff; box-shadow:0 6px 30px rgba(0,0,0,.35); display:flex; flex-direction:column; }
+  .body { padding:22px 44px 0; flex:1; }
+  .header { background:var(--navy); color:#fff; padding:22px 44px; display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid var(--amber); }
+  .header .biz { font-size:22px; font-weight:800; letter-spacing:-.2px; }
+  .header .sub { font-size:9.5px; color:#9CA3AF; margin-top:3px; letter-spacing:.2px; }
+  .brand { text-align:right; }
+  .brand .pre { font-size:7px; font-weight:700; letter-spacing:1.5px; color:#fff; }
+  .brand .mark { font-size:27px; font-weight:800; color:var(--amber); line-height:1; margin:1px 0; }
+  .brand .tag { font-size:8px; font-style:italic; color:#cbd5e1; }
+  .sample-banner { margin-top:16px; font-size:9px; color:var(--muted); line-height:1.4; border-bottom:1px solid var(--line); padding-bottom:12px; }
+  .sample-banner b { color:var(--amber); font-weight:700; letter-spacing:.5px; }
+  /* health score hero */
+  .hero { display:grid; grid-template-columns:170px 1fr; gap:20px; margin-top:18px; background:var(--navy); border-radius:10px; padding:18px 20px; color:#fff; }
+  .hero .scorebox { text-align:center; border-right:1px solid rgba(255,255,255,.15); padding-right:18px; }
+  .hero .scorebox .lbl { font-size:8px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#9CA3AF; }
+  .hero .scorebox .num { font-size:58px; font-weight:800; color:#fff; line-height:1; margin-top:4px; }
+  .hero .scorebox .num small { font-size:20px; color:#9CA3AF; }
+  .hero .scorebox .grade { display:inline-block; margin-top:8px; background:var(--amber); color:var(--navy); font-weight:800; font-size:14px; border-radius:6px; padding:3px 12px; }
+  .subs { display:flex; flex-direction:column; gap:9px; justify-content:center; }
+  .sub-item .top { display:flex; justify-content:space-between; font-size:9px; font-weight:700; }
+  .sub-item .top .v { color:var(--amber); }
+  .sub-item .bar { height:6px; background:rgba(255,255,255,.14); border-radius:4px; margin-top:3px; overflow:hidden; }
+  .sub-item .bar i { display:block; height:100%; background:var(--amber); border-radius:4px; }
+  .sub-item .note { font-size:8px; color:#cbd5e1; margin-top:3px; line-height:1.35; }
+  .secbar { background:var(--navy); color:#fff; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:8px 13px; border-radius:4px; margin:24px 0 0; border-left:4px solid var(--amber); }
+  .kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px; }
+  .kpi { background:#eef2f7; border-radius:8px; padding:13px 16px 14px; }
+  .kpi .label { font-size:8px; font-weight:700; color:#9aa6b2; text-transform:uppercase; letter-spacing:.8px; }
+  .kpi .value { font-size:30px; font-weight:800; color:var(--navy); margin:4px 0 6px; letter-spacing:-.5px; line-height:1; }
+  .kpi .value.txt { font-size:24px; }
+  .kpi .sub { font-size:9px; font-weight:600; color:var(--ink); border-top:1px solid #dde3ea; padding-top:7px; }
+  .kpi .sub.up { color:var(--red); } .kpi .sub.down { color:var(--green); } .kpi .sub.flat { color:var(--muted); }
+  p.para { font-size:10px; line-height:1.65; color:#374151; margin-top:11px; }
+  p.para b { color:var(--navy); }
+  .twocol { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:6px; }
+  .colh { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin:12px 0 4px; }
+  ul.dl { list-style:none; } ul.dl li { font-size:9.5px; line-height:1.5; color:#374151; padding-left:13px; position:relative; margin-bottom:4px; }
+  ul.dl li:before { content:""; position:absolute; left:0; top:5px; width:5px; height:5px; border-radius:50%; background:var(--navy); }
+  ul.dl.win li:before { background:var(--green); } ul.dl.lose li:before { background:var(--red); }
+  .risk { padding:10px 0; border-bottom:1px solid var(--line); }
+  .risk .rh { font-size:10.5px; font-weight:800; color:var(--navy); }
+  .risk p { font-size:9.5px; line-height:1.55; color:#374151; margin-top:4px; }
+  .gap { display:flex; justify-content:space-between; align-items:baseline; padding:7px 0; border-bottom:1px solid var(--line); font-size:9.5px; }
+  .gap .g { color:#374151; } .gap .c { color:var(--red); font-weight:700; white-space:nowrap; padding-left:12px; }
+  .biggest { margin-top:10px; font-size:9.5px; line-height:1.55; color:#374151; background:#fff6f6; border-left:4px solid var(--red); border-radius:0 6px 6px 0; padding:10px 13px; }
+  /* recommendations */
+  .rec { border-left:4px solid var(--amber); background:#fffdf6; border-radius:0 8px 8px 0; padding:13px 16px; margin-top:13px; }
+  .rec .rank { font-size:8.5px; color:var(--amber); font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+  .rec .ra { font-size:12px; font-weight:800; color:var(--navy); margin-top:1px; }
+  .rec p { font-size:9.5px; line-height:1.55; color:#374151; margin-top:6px; }
+  .rec ol { margin:8px 0 8px 18px; } .rec ol li { font-size:9.5px; line-height:1.5; color:#374151; margin-bottom:2px; }
+  .rec .foot { font-size:9px; margin-top:7px; display:flex; gap:16px; }
+  .rec .foot .imp { color:var(--green); font-weight:700; } .rec .foot .tm { color:var(--muted); font-weight:600; }
+  .qw { list-style:none; margin-top:10px; counter-reset:qw; }
+  .qw li { font-size:9.5px; line-height:1.55; color:#374151; padding:7px 0 7px 26px; border-bottom:1px solid var(--line); position:relative; counter-increment:qw; }
+  .qw li:before { content:counter(qw); position:absolute; left:0; top:7px; width:18px; height:18px; background:var(--navy); color:#fff; border-radius:50%; font-size:9px; font-weight:700; text-align:center; line-height:18px; }
+  .onemove { margin-top:14px; background:var(--navy); color:#fff; border-radius:8px; padding:16px 18px; }
+  .onemove h3 { font-size:13px; font-weight:800; color:var(--amber); margin-bottom:7px; }
+  .onemove p { font-size:10px; line-height:1.6; color:#e5edf5; }
+  .footer { margin-top:24px; border-top:1px solid var(--line); padding:12px 44px; text-align:center; font-size:8px; color:var(--muted); letter-spacing:.3px; }
+  .footer .ef { font-weight:800; color:var(--navy); }
+  @media print { html, body { background:#fff; } .page { margin:0; box-shadow:none; width:auto; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div>
+      <div class="biz">{{ biz_name }}</div>
+      <div class="sub">{{ product_name }} &middot; {{ product_tagline }} &middot; {{ month }}{% if location %} &middot; {{ location }}{% endif %}</div>
+    </div>
+    <div class="brand">
+      <div class="pre">POWERED BY</div>
+      <div class="mark">EchoFrame</div>
+      <div class="tag">Business intelligence, not accounting.</div>
+    </div>
+  </div>
+
+  <div class="body">
+    {% if is_sample %}
+    <div class="sample-banner"><b>REDACTED SAMPLE</b> - Fictional business. Figures are illustrative only and do not reflect any real establishment.</div>
+    {% endif %}
+
+    <div class="hero">
+      <div class="scorebox">
+        <div class="lbl">Business Health</div>
+        <div class="num">{{ overall_score }}<small>/100</small></div>
+        <div class="grade">{{ grade }}</div>
+      </div>
+      <div class="subs">
+        {% for s in subscores %}
+        <div class="sub-item">
+          <div class="top"><span>{{ s.label }}</span><span class="v">{{ s.value }}/25</span></div>
+          <div class="bar"><i style="width:{{ (s.value / 25 * 100) | round(0, 'floor') }}%"></i></div>
+          <div class="note">{{ s.note }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="kpis">
+      {% for k in kpis %}
+      <div class="kpi">
+        <div class="label">{{ k.label }}</div>
+        <div class="value{% if k.is_text %} txt{% endif %}">{{ k.value }}</div>
+        <div class="sub {{ k.sub_class }}">{{ k.sub }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="secbar">Executive Summary</div>
+    {% for p in executive_summary %}<p class="para">{{ p }}</p>{% endfor %}
+
+    <div class="secbar">Financial Health Analysis</div>
+    <p class="para">{{ financial_health.revenue_trend }}</p>
+    <p class="para">{{ financial_health.profit_margin }}</p>
+    <div class="colh">The 3 Biggest Financial Risks</div>
+    {% for r in financial_health.risks %}
+    <div class="risk"><div class="rh">{{ r.risk }}</div><p>{{ r.detail }}</p></div>
+    {% endfor %}
+
+    <div class="secbar">Market Position Analysis</div>
+    <p class="para">{{ market_position.standing }}</p>
+    <p class="para"><b>Estimated local market share:</b> {{ market_position.market_share_estimate }}</p>
+    <div class="twocol">
+      <div><div class="colh">Where You Are Winning</div><ul class="dl win">{% for w in market_position.winning %}<li>{{ w }}</li>{% endfor %}</ul></div>
+      <div><div class="colh">Where You Are Losing</div><ul class="dl lose">{% for w in market_position.losing %}<li>{{ w }}</li>{% endfor %}</ul></div>
+    </div>
+
+    <div class="secbar">Operational Efficiency</div>
+    <div class="colh">Strengths</div>
+    <ul class="dl">{% for s in operational_efficiency.strengths %}<li>{{ s }}</li>{% endfor %}</ul>
+    <div class="colh">Gaps Costing Money</div>
+    {% for g in operational_efficiency.gaps %}
+    <div class="gap"><span class="g">{{ g.gap }}</span><span class="c">{{ g.cost }}</span></div>
+    {% endfor %}
+    <div class="biggest"><b>Biggest inefficiency:</b> {{ operational_efficiency.biggest_inefficiency }}</div>
+
+    <div class="secbar">Top 3 Recommendations <span style="color:#9CA3AF;font-weight:600;">&middot; ranked by ROI</span></div>
+    {% for r in recommendations %}
+    <div class="rec">
+      <div class="rank">Priority {{ loop.index }}</div>
+      <div class="ra">{{ r.action }}</div>
+      <p>{{ r.why }}</p>
+      <ol>{% for step in r.plan %}<li>{{ step }}</li>{% endfor %}</ol>
+      <div class="foot"><span class="imp">Impact: {{ r.expected_impact }}</span><span class="tm">Time: {{ r.time_to_implement }}</span></div>
+    </div>
+    {% endfor %}
+
+    <div class="secbar">Quick Wins <span style="color:#9CA3AF;font-weight:600;">&middot; 30 days, low cost</span></div>
+    <ol class="qw">{% for q in quick_wins %}<li>{{ q }}</li>{% endfor %}</ol>
+
+    <div class="onemove">
+      <h3>{{ the_one_move.title }}</h3>
+      <p>{{ the_one_move.body }}</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="ef">EchoFrame</span> &nbsp;|&nbsp; {{ product_name }} &nbsp;&middot;&nbsp; {{ month }} &nbsp;&middot;&nbsp; Confidential. Business intelligence and informational analysis only - not accounting, tax, or legal advice.
+  </div>
+</div>
+</body>
+</html>

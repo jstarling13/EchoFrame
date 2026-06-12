@@ -304,6 +304,47 @@ INTAKE_SPECS: dict[str, dict] = {
         "file_hint": "or click to browse  -  .csv files only",
         "button": "Generate my Crew Hire report",
     },
+    "competitor-landscape": {
+        "report_name": "Competitor & Market Landscape Report",
+        "headline": "Tell us who you're up against.",
+        "sub": "List the competitors you want sized up and a few facts about your own business, then "
+               "drop the file below. Your Competitor & Market Landscape Report will be in your inbox shortly.",
+        "fields": [F_BUSINESS, F_INDUSTRY, F_CITY],
+        "requirements_title": "Your file should include your business profile and a competitor list, with:",
+        "requirements": [
+            "Your business, industry, location, and the goal you want to achieve",
+            "What you do better than anyone (your real strengths)",
+            "Where you know you fall short (be honest - it sharpens the report)",
+            "3-5 competitors, each with a short description",
+            "For each competitor: pricing position (budget/mid/premium) and online-presence notes",
+        ],
+        "where": "List your competitors and what you know about them in a simple spreadsheet alongside "
+                 "your own business facts, then export to CSV.",
+        "file_accept": ".csv",
+        "file_label": "Drop your competitor list here",
+        "file_hint": "or click to browse  -  .csv files only",
+        "button": "Generate my Competitor Report",
+    },
+    "business-audit": {
+        "report_name": "Business Audit Report",
+        "headline": "Upload your numbers and your challenge.",
+        "sub": "Share your last few months of revenue and expenses plus a little context, then drop the "
+               "file below. Your Business Audit Report will be in your inbox shortly.",
+        "fields": [F_BUSINESS, F_INDUSTRY, F_CITY],
+        "requirements_title": "Your file should include your business context and recent financials, with:",
+        "requirements": [
+            "Years in business and number of employees",
+            "The last 3 months of revenue and expenses (one row per month)",
+            "Your top 3 local competitors",
+            "The main challenge you're facing right now",
+        ],
+        "where": "Pull your monthly revenue and expense totals from your accounting tool (QuickBooks, "
+                 "Xero, Wave), add your context rows, then export to CSV.",
+        "file_accept": ".csv",
+        "file_label": "Drop your financials & context file here",
+        "file_hint": "or click to browse  -  .csv files only",
+        "button": "Generate my Business Audit",
+    },
 }
 
 

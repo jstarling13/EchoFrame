@@ -16,7 +16,7 @@ Jinja2 path but sources the prose from Claude tool_use.
 """
 
 from pathlib import Path
-from rival_scan_engine import render_from_csv
+from products.rival_scan.rival_scan_engine import render_from_csv
 
 CSV = Path(__file__).resolve().parent / "demo_output" / "rival_scan_sample_input.csv"
 

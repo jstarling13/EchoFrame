@@ -118,8 +118,8 @@ from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
 BASE_DIR    = Path(__file__).resolve().parent
-UPLOADS_DIR = BASE_DIR / "uploads"
-REPORTS_DIR = BASE_DIR / "reports"
+UPLOADS_DIR = Path(os.environ.get("ECHOFRAME_UPLOADS_DIR") or BASE_DIR / "uploads")
+REPORTS_DIR = Path(os.environ.get("ECHOFRAME_REPORTS_DIR") or BASE_DIR / "reports")
 LOGO_PATH   = BASE_DIR / "echoframe_logo.png"
 if not LOGO_PATH.exists():
     LOGO_PATH = BASE_DIR.parent / "EchoFrame Navy Background.png"

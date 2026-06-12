@@ -81,6 +81,7 @@
         <form id="upload-form" enctype="multipart/form-data">
           <input type="hidden" name="email" id="email-input">
           <input type="hidden" name="session_id" id="session-input">
+          <input type="hidden" name="token" id="token-input">
 
           <div class="field-row">
             <div class="field-group">
@@ -149,6 +150,7 @@
     document.getElementById('email-display').textContent = email || '(no email provided)';
     document.getElementById('email-input').value = email;
     document.getElementById('session-input').value = sessionId;
+    document.getElementById('token-input').value = params.get('token') || '';
 
     const submitBtn = document.getElementById('submit-btn');
     const slots = Array.from(document.querySelectorAll('.slot'));

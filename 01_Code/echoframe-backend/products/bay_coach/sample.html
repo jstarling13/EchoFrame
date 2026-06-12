@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EchoFrame — Bay Coach Sample · Riverside Auto &amp; Tire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy:   #012A4A;
+    --navy-2: #013a66;
+    --amber:  #C8972A;
+    --green:  #059669;
+    --red:    #DC2626;
+    --ink:    #1f2937;
+    --muted:  #6b7280;
+    --line:   #e5e7eb;
+    --slate:  #f1f5f9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #525659;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    margin: 24px auto;
+    background: #fff;
+    box-shadow: 0 6px 30px rgba(0,0,0,.35);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .body { padding: 16px 40px 0; flex: 1; }
+
+  /* ── Header band ───────────────────────────── */
+  .header {
+    background: var(--navy);
+    color: #fff;
+    padding: 14px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--amber);
+  }
+  .header .biz { font-size: 21px; font-weight: 800; letter-spacing: -.2px; }
+  .header .sub { font-size: 9.5px; color: #9CA3AF; margin-top: 3px; letter-spacing: .2px; }
+  .brand { text-align: right; }
+  .brand .pre { font-size: 7px; font-weight: 700; letter-spacing: 1.5px; color: #fff; }
+  .brand .mark { font-size: 27px; font-weight: 800; color: var(--amber); line-height: 1; margin: 1px 0; }
+  .brand .tag { font-size: 8px; font-style: italic; color: #cbd5e1; }
+
+  /* ── Sample banner ─────────────────────────── */
+  .sample-banner {
+    background: #FEF3C7;
+    border: 1px solid var(--amber);
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin-top: 9px;
+    font-size: 9.5px;
+    color: #7c5e10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sample-banner b { color: #5c4708; }
+  .chip {
+    background: var(--amber); color: #fff; font-weight: 700;
+    font-size: 8px; letter-spacing: 1px; padding: 2px 7px; border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  /* ── Section headers ───────────────────────── */
+  .sec {
+    display: flex; align-items: center; gap: 8px;
+    margin: 11px 0 6px;
+  }
+  .sec .bar { width: 4px; height: 15px; background: var(--amber); border-radius: 2px; }
+  .sec h2 {
+    font-size: 11px; font-weight: 700; color: var(--navy);
+    text-transform: uppercase; letter-spacing: .8px;
+  }
+  .sec .hint { font-size: 9px; color: var(--muted); font-weight: 500; margin-left: auto; }
+
+  /* ── KPI cards ─────────────────────────────── */
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
+  .kpi {
+    background: var(--slate);
+    border-radius: 8px;
+    padding: 10px 15px;
+    border-top: 3px solid var(--amber);
+  }
+  .kpi .label { font-size: 8.5px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .6px; }
+  .kpi .value { font-size: 22px; font-weight: 800; color: var(--navy); margin: 4px 0 2px; letter-spacing: -.5px; }
+  .kpi .value small { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0; }
+  .kpi .delta { font-size: 9px; font-weight: 600; }
+  .kpi .delta.up { color: var(--green); }
+  .kpi .delta.down { color: var(--red); }
+  .kpi .delta.flat { color: var(--muted); }
+
+  /* ── Vehicle write-up sheet ────────────────── */
+  .vehcard {
+    border: 1px solid var(--line); border-radius: 8px;
+    margin-top: 10px; overflow: hidden;
+  }
+  .vehcard .vhead {
+    background: var(--slate); padding: 9px 15px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    border-bottom: 1px solid var(--line);
+  }
+  .vehcard .vname { font-size: 13px; font-weight: 800; color: var(--navy); letter-spacing: -.2px; }
+  .vehcard .vmeta { font-size: 8.5px; color: var(--muted); margin-top: 2px; }
+  .vehcard .vmile { text-align: right; }
+  .vehcard .vmile .n { font-size: 18px; font-weight: 800; color: var(--navy); line-height: 1; }
+  .vehcard .vmile .l { font-size: 7.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
+  .vbody { display: grid; grid-template-columns: 1fr 1fr; }
+  .vcol { padding: 9px 15px; }
+  .vcol + .vcol { border-left: 1px solid var(--line); }
+  .vcol .ttl { font-size: 8px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 7px; }
+  .hist { list-style: none; }
+  .hist li { font-size: 9px; color: #374151; padding: 2px 0; border-bottom: 1px dotted var(--line); display: flex; justify-content: space-between; gap: 10px; }
+  .hist li:last-child { border-bottom: 0; }
+  .hist li .d { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .vstat { font-size: 9px; color: #374151; line-height: 1.5; }
+  .vstat b { color: var(--ink); }
+
+  /* ── Recommendations table ─────────────────── */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: var(--navy); color: #fff;
+    font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+    text-align: left; padding: 7px 9px;
+  }
+  thead th.r { text-align: right; }
+  tbody td { padding: 5px 9px; font-size: 9.5px; vertical-align: top; border-bottom: 1px solid var(--line); }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  tbody tr.top td { background: #FEF3C7; }
+  tbody tr.top td:first-child { box-shadow: inset 3px 0 0 var(--amber); }
+  td.r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .svc { font-weight: 700; color: var(--navy); }
+  .why { color: var(--muted); font-size: 8.5px; display: block; margin-top: 2px; line-height: 1.4; }
+  .pill {
+    display: inline-block; font-size: 8.5px; font-weight: 700;
+    padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .pill.due  { background: #FDECEC; color: var(--red); }
+  .pill.soon { background: #FEF3C7; color: #946200; }
+  .pill.ok   { background: #E7F6EF; color: var(--green); }
+  tfoot td { padding: 7px 9px; font-size: 9.5px; font-weight: 800; color: var(--navy); border-top: 2px solid var(--navy); }
+  tfoot td.r { text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* ── Method note ───────────────────────────── */
+  .card { border: 1px solid var(--line); border-radius: 8px; padding: 10px 15px; margin-top: 7px; }
+  .card .ttl { font-size: 9px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; }
+  .card p { font-size: 9px; line-height: 1.5; color: #374151; }
+  .card .src { font-size: 8px; color: var(--muted); margin-top: 7px; }
+  .card b { color: var(--ink); font-weight: 600; }
+
+  /* ── The One Thing ─────────────────────────── */
+  .onething {
+    background: var(--navy); color: #fff; border-radius: 10px;
+    padding: 13px 20px; margin: 9px 0 4px;
+    display: flex; gap: 16px; align-items: center;
+  }
+  .onething .badge {
+    background: var(--amber); color: var(--navy); font-weight: 800;
+    font-size: 8px; letter-spacing: 1px; padding: 4px 9px; border-radius: 5px;
+    text-transform: uppercase; white-space: nowrap; align-self: flex-start;
+  }
+  .onething h3 { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: #fff; }
+  .onething p { font-size: 9.5px; line-height: 1.5; color: #cbd5e1; }
+  .onething .dollar { color: var(--amber); font-weight: 800; }
+
+  /* ── Footer ────────────────────────────────── */
+  .footer {
+    margin-top: 6px;
+    border-top: 1px solid var(--line);
+    padding: 9px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8px; color: var(--muted); letter-spacing: .3px;
+  }
+  .footer .ef { font-weight: 800; color: var(--navy); }
+
+  @media print {
+    html, body { background: #fff; }
+    .page { margin: 0; box-shadow: none; width: auto; min-height: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="biz">Riverside Auto &amp; Tire, LLC</div>
+      <div class="sub">Bay Coach · Maintenance recommendations at write-up · June 2026 · Columbus, GA</div>
+    </div>
+    <div class="brand">
+      <div class="pre">POWERED BY</div>
+      <div class="mark">EchoFrame</div>
+      <div class="tag">Business intelligence, not accounting.</div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- Redacted sample banner -->
+    <div class="sample-banner">
+      <span class="chip">REDACTED SAMPLE</span>
+      <span><b>This is an anonymized demonstration report.</b> Shop name, customer vehicle, mileage, and dollar amounts are fictional and do not represent a real client. Figures are illustrative of an independent Columbus, GA repair shop and one representative write-up.</span>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="sec">
+      <span class="bar"></span><h2>Shop Performance at a Glance</h2>
+      <span class="hint">trailing 30 days · 412 write-ups</span>
+    </div>
+    <div class="kpis">
+      <div class="kpi">
+        <div class="label">Avg Recommended Ticket</div>
+        <div class="value">$486</div>
+        <div class="delta up">▲ +$173 vs. write-ups without Bay Coach</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Acceptance Rate</div>
+        <div class="value">61%</div>
+        <div class="delta up">▲ customers approve 6 of every 10 flagged services</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Added Revenue / Month</div>
+        <div class="value">$14,200</div>
+        <div class="delta up">▲ incremental, from history-matched recommendations</div>
+      </div>
+    </div>
+
+    <!-- Vehicle write-up sheet -->
+    <div class="sec">
+      <span class="bar"></span><h2>Vehicle Write-Up Sheet</h2>
+      <span class="hint">RO #20614 · oil change appointment</span>
+    </div>
+    <div class="vehcard">
+      <div class="vhead">
+        <div>
+          <div class="vname">2018 Toyota Camry SE</div>
+          <div class="vmeta">2.5L 4-cyl · VIN ••••••••••••4471 · last visit 11 months ago · 3rd visit on file</div>
+        </div>
+        <div class="vmile">
+          <div class="n">92,460</div>
+          <div class="l">odometer (mi)</div>
+        </div>
+      </div>
+      <div class="vbody">
+        <div class="vcol">
+          <div class="ttl">Service History on File</div>
+          <ul class="hist">
+            <li><span>Oil &amp; filter, tire rotation</span><span class="d">Jul 2025 · 79,210</span></li>
+            <li><span>Oil &amp; filter, multi-point inspection</span><span class="d">Dec 2024 · 71,940</span></li>
+            <li><span>Front brake pads &amp; rotors</span><span class="d">Mar 2024 · 64,300</span></li>
+            <li><span>Battery replaced (OE flooded)</span><span class="d">Jun 2021 · 38,120</span></li>
+          </ul>
+        </div>
+        <div class="vcol">
+          <div class="ttl">What Bay Coach Reads From This</div>
+          <p class="vstat">No record of <b>brake fluid</b>, <b>coolant</b>, <b>spark plugs</b>, or <b>transmission service</b> in 92K miles. Battery is <b>5 yrs old</b>. Customer averages <b>~13,200 mi/yr</b> — so the next visit is likely <b>11–12 months out</b>. That makes today the right write-up to surface the 90K-mile interval items rather than wait.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendations table -->
+    <div class="sec">
+      <span class="bar"></span><h2>Recommended Services — With Reasons</h2>
+      <span class="hint">matched to manufacturer interval &amp; this vehicle's history</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Service &amp; why now</th>
+          <th class="r" style="width:74px">Interval</th>
+          <th style="width:78px">Status</th>
+          <th class="r" style="width:70px">Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="top">
+          <td>
+            <span class="svc">Spark plug replacement (4)</span>
+            <span class="why"><b>Why now:</b> Toyota specifies iridium plugs at 90K–100K mi and none are on file. At 92K the car is in-window; replacing now heads off the misfire that takes out an ignition coil.</span>
+          </td>
+          <td class="r">90K mi</td>
+          <td><span class="pill due">Overdue</span></td>
+          <td class="r">$289</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="svc">Brake fluid flush</span>
+            <span class="why"><b>Why now:</b> No fluid service in 92K mi on record, last brake job 2+ yrs ago. Brake fluid absorbs moisture, lowering boil point and corroding ABS parts. Due every 3 yrs / 30K mi.</span>
+          </td>
+          <td class="r">30K mi</td>
+          <td><span class="pill due">Overdue</span></td>
+          <td class="r">$129</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="svc">Coolant exchange</span>
+            <span class="why"><b>Why now:</b> Factory long-life coolant is rated to ~100K mi / 10 yrs and has never been serviced. At 92K it's near end of life — refreshing now protects the water pump ahead of summer heat.</span>
+          </td>
+          <td class="r">100K mi</td>
+          <td><span class="pill soon">Due soon</span></td>
+          <td class="r">$149</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="svc">Battery test &amp; replace</span>
+            <span class="why"><b>Why now:</b> Battery installed Jun 2021 — 5 yrs old, past the 4–5 yr Georgia-heat lifespan. Replacing on this visit beats a no-start call in July; confirm with a load test first.</span>
+          </td>
+          <td class="r">4–5 yr</td>
+          <td><span class="pill soon">At risk</span></td>
+          <td class="r">$215</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="svc">Engine air &amp; cabin filters</span>
+            <span class="why"><b>Why now:</b> Not in the history on file; both are 30K-mi items, so each is ~3 intervals overdue. Low-cost add-on the customer can see and approve on the spot.</span>
+          </td>
+          <td class="r">30K mi</td>
+          <td><span class="pill soon">Due soon</span></td>
+          <td class="r">$78</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>Total recommended this write-up</td>
+          <td class="r"></td>
+          <td></td>
+          <td class="r">$860</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <!-- Method note -->
+    <div class="card">
+      <div class="ttl">How Bay Coach Built This</div>
+      <p>Bay Coach reads the vehicle's <b>year/make/model, current odometer, and every service on this shop's own history</b>, compares them to the manufacturer's schedule, and surfaces only what's <b>actually due for this car</b> — not a generic upsell list — with a plain-language "why now" the advisor can read at the counter.</p>
+      <p class="src">Method: Toyota factory maintenance intervals cross-referenced against on-file repair-order history and regional climate factors (Columbus, GA). Pricing reflects shop's posted labor rate and parts matrix. EchoFrame Bay Coach index, Q2 2026.</p>
+    </div>
+
+    <!-- The One Thing -->
+    <div class="onething">
+      <span class="badge">The One Thing</span>
+      <div>
+        <h3>Lead with the spark plugs — it's the one item that's clearly overdue and easiest to say yes to.</h3>
+        <p>Of everything flagged, the <span class="dollar">$289 spark plug replacement</span> is the highest-value, most defensible recommendation: it's <span class="dollar">2,000+ miles into the factory window</span> with no record of ever being done, and the failure it prevents — a misfire that takes out an ignition coil — costs the customer far more later. Present it first, in plain terms ("your plugs are due and we're already in here"), and pair it with the <span class="dollar">$129 brake fluid flush</span> as a natural add-on. At this shop's <span class="dollar">61% acceptance rate</span>, leading with these two adds roughly <span class="dollar">$255 to this single ticket</span>.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; Bay Coach</span>
+    <span>Page 1 of 1 · Confidential</span>
+  </div>
+
+</div>
+</body>
+</html>

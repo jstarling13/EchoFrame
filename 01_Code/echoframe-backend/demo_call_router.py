@@ -1,6 +1,6 @@
 """Offline demo for Call Router. python demo_call_router.py"""
 from pathlib import Path
-from call_router_engine import render_from_csv
+from products.call_router.call_router_engine import render_from_csv
 
 CSV = Path(__file__).resolve().parent / "demo_output" / "call_router_sample_input.csv"
 

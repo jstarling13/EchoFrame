@@ -1,6 +1,6 @@
 """Offline demo for Crew Hire. python demo_crew_hire.py"""
 from pathlib import Path
-from crew_hire_engine import render_from_csv
+from products.crew_hire.crew_hire_engine import render_from_csv
 
 CSV = Path(__file__).resolve().parent / "demo_output" / "crew_hire_sample_input.csv"
 

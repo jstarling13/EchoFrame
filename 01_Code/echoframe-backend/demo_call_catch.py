@@ -1,6 +1,6 @@
 """Offline demo for Call Catch. python demo_call_catch.py"""
 from pathlib import Path
-from call_catch_engine import render_from_csv
+from products.call_catch.call_catch_engine import render_from_csv
 
 CSV = Path(__file__).resolve().parent / "demo_output" / "call_catch_sample_input.csv"
 

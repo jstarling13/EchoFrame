@@ -14,8 +14,8 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
-import engine as E
-from engine import (
+from products.clarity import clarity_engine as E
+from products.clarity.clarity_engine import (
     NAVY, AMBER, WHITE, RED, GREEN, GRAY,
     NAVY_HEX, AMBER_HEX, LTBLUE_HEX,
     _set_doc_defaults, _hide_table_borders, _get_or_add_tblPr,

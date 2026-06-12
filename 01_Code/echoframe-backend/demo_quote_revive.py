@@ -1,6 +1,6 @@
 """Offline demo for Quote Revive. python demo_quote_revive.py"""
 from pathlib import Path
-from quote_revive_engine import render_from_csv
+from products.quote_revive.quote_revive_engine import render_from_csv
 
 CSV = Path(__file__).resolve().parent / "demo_output" / "quote_revive_sample_input.csv"
 
