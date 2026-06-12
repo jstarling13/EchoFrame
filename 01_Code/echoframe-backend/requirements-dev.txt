@@ -1,0 +1,5 @@
+# Local development + test dependencies (NOT installed on Vercel).
+# Install alongside prod deps:  pip install -r requirements.txt -r requirements-dev.txt
+matplotlib==3.10.3     # Clarity chart rendering (optional; omitted on Vercel for size)
+pytest==8.3.4
+pytest-asyncio==0.25.3

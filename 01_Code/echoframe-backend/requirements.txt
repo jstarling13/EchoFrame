@@ -1,3 +1,9 @@
+# Production / Vercel runtime dependencies.
+# matplotlib, pytest, pytest-asyncio live in requirements-dev.txt — they are NOT
+# installed on Vercel: matplotlib+pandas+numpy together exceed Vercel's 250 MB
+# serverless function limit, and the Clarity engine degrades gracefully without
+# matplotlib (report still generates, just without chart images). For local dev
+# with charts + tests:  pip install -r requirements.txt -r requirements-dev.txt
 fastapi==0.136.1
 uvicorn==0.46.0
 python-multipart==0.0.27
@@ -9,8 +15,5 @@ python-docx==1.2.0
 python-dotenv==1.2.2
 jinja2==3.1.6
 aiofiles==24.1.0
-matplotlib==3.10.3
 slowapi==0.1.9
-pytest==8.3.4
-pytest-asyncio==0.25.3
 httpx==0.28.1
