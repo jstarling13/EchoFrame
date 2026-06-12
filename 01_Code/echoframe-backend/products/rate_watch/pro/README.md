@@ -1,0 +1,3 @@
+# Rate Watch - pro tier
+
+Same engine and template as the parent product; the `pro` tier is selected at runtime via the `tier` field. Drop this tier's sample report here as `sample.html`.

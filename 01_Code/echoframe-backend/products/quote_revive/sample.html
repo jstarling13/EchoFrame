@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EchoFrame — Quote Revive Sample · Chattahoochee Ridge Roofing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy:   #012A4A;
+    --navy-2: #013a66;
+    --amber:  #C8972A;
+    --green:  #059669;
+    --red:    #DC2626;
+    --ink:    #1f2937;
+    --muted:  #6b7280;
+    --line:   #e5e7eb;
+    --slate:  #f1f5f9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #525659;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    margin: 24px auto;
+    background: #fff;
+    box-shadow: 0 6px 30px rgba(0,0,0,.35);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .body { padding: 22px 40px 0; flex: 1; }
+
+  /* ── Header band ───────────────────────────── */
+  .header {
+    background: var(--navy);
+    color: #fff;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--amber);
+  }
+  .header .biz { font-size: 21px; font-weight: 800; letter-spacing: -.2px; }
+  .header .sub { font-size: 9.5px; color: #9CA3AF; margin-top: 3px; letter-spacing: .2px; }
+  .brand { text-align: right; }
+  .brand .pre { font-size: 7px; font-weight: 700; letter-spacing: 1.5px; color: #fff; }
+  .brand .mark { font-size: 27px; font-weight: 800; color: var(--amber); line-height: 1; margin: 1px 0; }
+  .brand .tag { font-size: 8px; font-style: italic; color: #cbd5e1; }
+
+  /* ── Sample banner ─────────────────────────── */
+  .sample-banner {
+    background: #FEF3C7;
+    border: 1px solid var(--amber);
+    border-radius: 6px;
+    padding: 7px 12px;
+    margin-top: 18px;
+    font-size: 9.5px;
+    color: #7c5e10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sample-banner b { color: #5c4708; }
+  .chip {
+    background: var(--amber); color: #fff; font-weight: 700;
+    font-size: 8px; letter-spacing: 1px; padding: 2px 7px; border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  /* ── Section headers ───────────────────────── */
+  .sec {
+    display: flex; align-items: center; gap: 8px;
+    margin: 20px 0 9px;
+  }
+  .sec .bar { width: 4px; height: 15px; background: var(--amber); border-radius: 2px; }
+  .sec h2 {
+    font-size: 11px; font-weight: 700; color: var(--navy);
+    text-transform: uppercase; letter-spacing: .8px;
+  }
+  .sec .hint { font-size: 9px; color: var(--muted); font-weight: 500; margin-left: auto; }
+
+  /* ── KPI cards ─────────────────────────────── */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 11px; margin-top: 14px; }
+  .kpi {
+    background: var(--slate);
+    border-radius: 8px;
+    padding: 12px 13px;
+    border-top: 3px solid var(--amber);
+  }
+  .kpi .label { font-size: 8px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .5px; }
+  .kpi .value { font-size: 22px; font-weight: 800; color: var(--navy); margin: 5px 0 2px; letter-spacing: -.5px; }
+  .kpi .value small { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0; }
+  .kpi .delta { font-size: 8.5px; font-weight: 600; line-height: 1.35; }
+  .kpi .delta.up { color: var(--green); }
+  .kpi .delta.down { color: var(--red); }
+  .kpi .delta.flat { color: var(--muted); }
+
+  /* ── Follow-up sequence ────────────────────── */
+  .seq { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+  .step {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .step .cap {
+    background: var(--navy); color: #fff;
+    padding: 7px 12px;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .step .cap .day { font-size: 10px; font-weight: 800; letter-spacing: .3px; }
+  .step .cap .chan { font-size: 7.5px; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: .8px; }
+  .step .msg { padding: 10px 12px; font-size: 9px; line-height: 1.5; color: #374151; flex: 1; }
+  .step .msg .q { color: var(--navy); font-weight: 600; }
+  .step .why { padding: 7px 12px; background: #fafbfc; border-top: 1px solid var(--line); font-size: 8px; color: var(--muted); }
+  .step .why b { color: var(--ink); font-weight: 700; }
+
+  /* ── Aged-quote table ──────────────────────── */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: var(--navy); color: #fff;
+    font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+    text-align: left; padding: 7px 9px;
+  }
+  thead th.r { text-align: right; }
+  thead th.c { text-align: center; }
+  tbody td { padding: 7px 9px; font-size: 9.5px; vertical-align: middle; border-bottom: 1px solid var(--line); }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  tbody tr.top td { background: #FEF3C7; }
+  tbody tr.top td:first-child { box-shadow: inset 3px 0 0 var(--amber); }
+  td.r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.c { text-align: center; font-variant-numeric: tabular-nums; }
+  .quote { font-weight: 700; color: var(--navy); }
+  .quote small { display: block; font-weight: 500; color: var(--muted); font-size: 8px; letter-spacing: .2px; margin-top: 1px; }
+  .pill {
+    display: inline-block; font-size: 8.5px; font-weight: 700;
+    padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .pill.won   { background: #E7F6EF; color: var(--green); }
+  .pill.warm  { background: #FEF3C7; color: #7c5e10; }
+  .pill.active{ background: #E8F0FE; color: var(--navy-2); }
+  .pill.dead  { background: #FDECEC; color: var(--red); }
+  tfoot td { padding: 7px 9px; font-size: 9.5px; font-weight: 800; color: var(--navy); border-top: 2px solid var(--navy); }
+  tfoot td.r { text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* ── How it works note ─────────────────────── */
+  .card { border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; margin-top: 14px; }
+  .card .ttl { font-size: 9px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; }
+  .card p { font-size: 9.5px; line-height: 1.5; color: #374151; }
+  .card p + p { margin-top: 6px; }
+  .card .src { font-size: 8px; color: var(--muted); margin-top: 7px; }
+  .card b { color: var(--ink); font-weight: 600; }
+
+  /* ── The One Thing ─────────────────────────── */
+  .onething {
+    background: var(--navy); color: #fff; border-radius: 10px;
+    padding: 16px 20px; margin: 22px 0 4px;
+    display: flex; gap: 16px; align-items: center;
+  }
+  .onething .badge {
+    background: var(--amber); color: var(--navy); font-weight: 800;
+    font-size: 8px; letter-spacing: 1px; padding: 4px 9px; border-radius: 5px;
+    text-transform: uppercase; white-space: nowrap; align-self: flex-start;
+  }
+  .onething h3 { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: #fff; }
+  .onething p { font-size: 9.5px; line-height: 1.5; color: #cbd5e1; }
+  .onething .dollar { color: var(--amber); font-weight: 800; }
+
+  /* ── Footer ────────────────────────────────── */
+  .footer {
+    margin-top: 18px;
+    border-top: 1px solid var(--line);
+    padding: 11px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8px; color: var(--muted); letter-spacing: .3px;
+  }
+  .footer .ef { font-weight: 800; color: var(--navy); }
+
+  @media print {
+    html, body { background: #fff; }
+    .page { margin: 0; box-shadow: none; width: auto; min-height: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="biz">Chattahoochee Ridge Roofing, LLC</div>
+      <div class="sub">Quote Revive · Automated follow-up on ghosted quotes &amp; cold leads · June 2026 · Columbus, GA</div>
+    </div>
+    <div class="brand">
+      <div class="pre">POWERED BY</div>
+      <div class="mark">EchoFrame</div>
+      <div class="tag">Business intelligence, not accounting.</div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- Redacted sample banner -->
+    <div class="sample-banner">
+      <span class="chip">REDACTED SAMPLE</span>
+      <span><b>This is an anonymized demonstration report.</b> Business name, customers, and dollar figures are fictional and do not represent a real client. Quote values are illustrative of the Columbus, GA residential roofing market.</span>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="sec">
+      <span class="bar"></span><h2>Reactivation at a Glance</h2>
+      <span class="hint">trailing 30 days · 14 aged quotes worked</span>
+    </div>
+    <div class="kpis">
+      <div class="kpi">
+        <div class="label">Open Quote Value</div>
+        <div class="value">$118,400</div>
+        <div class="delta flat">14 quotes 30+ days cold at month start</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Quotes Revived</div>
+        <div class="value">6<small> /14</small></div>
+        <div class="delta up">▲ 43% replied after follow-up</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Jobs Closed</div>
+        <div class="value">3</div>
+        <div class="delta up">▲ $41,900 in signed work</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Revenue Reactivated</div>
+        <div class="value">$41,900</div>
+        <div class="delta up">▲ 35% of cold pipeline recovered</div>
+      </div>
+    </div>
+
+    <!-- Follow-up sequence -->
+    <div class="sec">
+      <span class="bar"></span><h2>The Follow-Up Sequence</h2>
+      <span class="hint">sent automatically when a quote goes quiet</span>
+    </div>
+    <div class="seq">
+      <div class="step">
+        <div class="cap"><span class="day">Day 2</span><span class="chan">Text</span></div>
+        <div class="msg">Hi Dana, it's the team at Chattahoochee Ridge Roofing. Just making sure the estimate for your <span class="q">architectural shingle re-roof ($14,800)</span> landed okay. Happy to walk through any line item — want me to hold your spot on next month's schedule?</div>
+        <div class="why"><b>Goal:</b> confirm receipt, stay warm, low pressure.</div>
+      </div>
+      <div class="step">
+        <div class="cap"><span class="day">Day 7</span><span class="chan">Email</span></div>
+        <div class="msg">A quick nudge on your roof estimate. A few neighbors on the same street booked ahead of storm season, so material lead times are tightening. Your <span class="q">quoted price is locked for 30 days</span> — reply here and I'll get you on the calendar before rates move.</div>
+        <div class="why"><b>Goal:</b> add urgency &amp; social proof, reassure on price.</div>
+      </div>
+      <div class="step">
+        <div class="cap"><span class="day">Day 14</span><span class="chan">Text + Email</span></div>
+        <div class="msg">Last check-in, Dana — I don't want to keep crowding your inbox. If the timing isn't right, no problem at all; just reply <span class="q">"later"</span> and I'll close the file. If you're still considering it, I can offer a <span class="q">free re-inspection</span> before the quote expires Friday.</div>
+        <div class="why"><b>Goal:</b> the "breakup" — forces a yes / no / later.</div>
+      </div>
+    </div>
+
+    <!-- Aged-quote table -->
+    <div class="sec">
+      <span class="bar"></span><h2>Aged-Quote Worklist</h2>
+      <span class="hint">every cold quote, oldest first</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Quote</th>
+          <th class="r" style="width:78px">Value</th>
+          <th class="c" style="width:74px">Days Cold</th>
+          <th class="c" style="width:92px">Follow-ups Sent</th>
+          <th style="width:96px">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="top">
+          <td><span class="quote">Q-1047 · Full tear-off &amp; re-roof<small>2-story, Green Island Hills</small></span></td>
+          <td class="r">$23,600</td>
+          <td class="c">41</td>
+          <td class="c">3 of 3</td>
+          <td><span class="pill warm">Replied — warm</span></td>
+        </tr>
+        <tr>
+          <td><span class="quote">Q-1051 · Architectural shingle re-roof<small>ranch, Midtown</small></span></td>
+          <td class="r">$14,800</td>
+          <td class="c">38</td>
+          <td class="c">3 of 3</td>
+          <td><span class="pill won">Job closed</span></td>
+        </tr>
+        <tr>
+          <td><span class="quote">Q-1053 · Metal roof — standing seam<small>new build, Harris County</small></span></td>
+          <td class="r">$31,200</td>
+          <td class="c">35</td>
+          <td class="c">2 of 3</td>
+          <td><span class="pill active">In sequence</span></td>
+        </tr>
+        <tr>
+          <td><span class="quote">Q-1058 · Storm damage repair + gutters<small>insurance claim, North Columbus</small></span></td>
+          <td class="r">$9,400</td>
+          <td class="c">31</td>
+          <td class="c">3 of 3</td>
+          <td><span class="pill won">Job closed</span></td>
+        </tr>
+        <tr>
+          <td><span class="quote">Q-1061 · Flat roof recoat — TPO<small>commercial, Victory Dr.</small></span></td>
+          <td class="r">$12,700</td>
+          <td class="c">28</td>
+          <td class="c">3 of 3</td>
+          <td><span class="pill warm">Replied — warm</span></td>
+        </tr>
+        <tr>
+          <td><span class="quote">Q-1064 · Partial re-roof + decking<small>bungalow, Wynnton</small></span></td>
+          <td class="r">$8,900</td>
+          <td class="c">24</td>
+          <td class="c">3 of 3</td>
+          <td><span class="pill won">Job closed</span></td>
+        </tr>
+        <tr>
+          <td><span class="quote">Q-1069 · Shingle replacement<small>townhome, Phenix City</small></span></td>
+          <td class="r">$7,600</td>
+          <td class="c">19</td>
+          <td class="c">2 of 3</td>
+          <td><span class="pill active">In sequence</span></td>
+        </tr>
+        <tr>
+          <td><span class="quote">Q-1072 · Skylight + leak repair<small>cottage, Lakebottom</small></span></td>
+          <td class="r">$4,300</td>
+          <td class="c">12</td>
+          <td class="c">1 of 3</td>
+          <td><span class="pill active">In sequence</span></td>
+        </tr>
+        <tr>
+          <td><span class="quote">Q-1031 · Re-roof — owner went silent<small>duplex, South Columbus</small></span></td>
+          <td class="r">$5,900</td>
+          <td class="c">52</td>
+          <td class="c">3 of 3</td>
+          <td><span class="pill dead">Closed — no</span></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>9 of 14 shown · $118,400 open at month start</td>
+          <td class="r">$41,900</td>
+          <td class="c" colspan="2">won this cycle</td>
+          <td><span class="pill won">35% recovered</span></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <!-- How it works note -->
+    <div class="card">
+      <div class="ttl">How Quote Revive Works</div>
+      <p>When a quote you've sent goes quiet, Quote Revive starts a <b>three-touch sequence on its own</b> — a friendly Day 2 text, a Day 7 email with light urgency, and a Day 14 "breakup" that forces a clean yes, no, or later. Replies route straight back to you; quotes that say no are closed so you stop chasing them. <b>Days Cold</b> counts from the date the quote was sent, and the price stays locked through the sequence so the customer never feels penalized for taking their time.</p>
+      <p class="src">Sources: Chattahoochee Ridge quote log (CSV export) · EchoFrame follow-up engine · Columbus, GA residential roofing quote-value ranges (Q2 2026). Illustrative figures.</p>
+    </div>
+
+    <!-- The One Thing -->
+    <div class="onething">
+      <span class="badge">The One Thing</span>
+      <div>
+        <h3>Call Q-1053 — the $31,200 standing-seam metal roof — personally this week.</h3>
+        <p>It's the single largest live opportunity on the board: a <span class="dollar">$31,200</span> new-build job in Harris County that has <span class="dollar">opened both follow-ups</span> but hasn't replied, and it's 35 days cold with one touch left before the sequence ends. A quote that size and that engaged is past what automation should carry alone — a two-minute personal call from the owner, before the Day 14 breakup goes out, is worth more than ten more texts. Reactivating this one quote would more than double the revenue recovered this cycle.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; Quote Revive</span>
+    <span>Page 1 of 1 · Confidential</span>
+  </div>
+
+</div>
+</body>
+</html>

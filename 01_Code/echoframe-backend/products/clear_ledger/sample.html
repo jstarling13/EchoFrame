@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EchoFrame — Clear Ledger Sample · Brightwell Commercial Cleaning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy:   #012A4A;
+    --navy-2: #013a66;
+    --amber:  #C8972A;
+    --green:  #059669;
+    --red:    #DC2626;
+    --ink:    #1f2937;
+    --muted:  #6b7280;
+    --line:   #e5e7eb;
+    --slate:  #f1f5f9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #525659;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    margin: 24px auto;
+    background: #fff;
+    box-shadow: 0 6px 30px rgba(0,0,0,.35);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .body { padding: 14px 40px 0; flex: 1; }
+
+  /* ── Header band ───────────────────────────── */
+  .header {
+    background: var(--navy);
+    color: #fff;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--amber);
+  }
+  .header .biz { font-size: 21px; font-weight: 800; letter-spacing: -.2px; }
+  .header .sub { font-size: 9.5px; color: #9CA3AF; margin-top: 3px; letter-spacing: .2px; }
+  .brand { text-align: right; }
+  .brand .pre { font-size: 7px; font-weight: 700; letter-spacing: 1.5px; color: #fff; }
+  .brand .mark { font-size: 27px; font-weight: 800; color: var(--amber); line-height: 1; margin: 1px 0; }
+  .brand .tag { font-size: 8px; font-style: italic; color: #cbd5e1; }
+
+  /* ── Sample banner ─────────────────────────── */
+  .sample-banner {
+    background: #FEF3C7;
+    border: 1px solid var(--amber);
+    border-radius: 6px;
+    padding: 7px 12px;
+    margin-top: 18px;
+    font-size: 9.5px;
+    color: #7c5e10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sample-banner b { color: #5c4708; }
+  .chip {
+    background: var(--amber); color: #fff; font-weight: 700;
+    font-size: 8px; letter-spacing: 1px; padding: 2px 7px; border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  /* ── Section headers ───────────────────────── */
+  .sec {
+    display: flex; align-items: center; gap: 8px;
+    margin: 13px 0 7px;
+  }
+  .sec .bar { width: 4px; height: 15px; background: var(--amber); border-radius: 2px; }
+  .sec h2 {
+    font-size: 11px; font-weight: 700; color: var(--navy);
+    text-transform: uppercase; letter-spacing: .8px;
+  }
+  .sec .hint { font-size: 9px; color: var(--muted); font-weight: 500; margin-left: auto; }
+
+  /* ── KPI cards ─────────────────────────────── */
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
+  .kpi {
+    background: var(--slate);
+    border-radius: 8px;
+    padding: 10px 14px;
+    border-top: 3px solid var(--amber);
+  }
+  .kpi .label { font-size: 8.5px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .6px; }
+  .kpi .value { font-size: 25px; font-weight: 800; color: var(--navy); margin: 5px 0 2px; letter-spacing: -.5px; }
+  .kpi .value small { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0; }
+  .kpi .delta { font-size: 9px; font-weight: 600; }
+  .kpi .delta.up { color: var(--green); }
+  .kpi .delta.down { color: var(--red); }
+  .kpi .delta.flat { color: var(--muted); }
+
+  /* ── AR aging table ────────────────────────── */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: var(--navy); color: #fff;
+    font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+    text-align: left; padding: 7px 9px;
+  }
+  thead th.r { text-align: right; }
+  tbody td { padding: 5px 9px; font-size: 9.5px; vertical-align: middle; border-bottom: 1px solid var(--line); }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  tbody tr.top td { background: #FEF3C7; }
+  tbody tr.top td:first-child { box-shadow: inset 3px 0 0 var(--amber); }
+  td.r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .cust { font-weight: 700; color: var(--navy); }
+  .cust small { display: block; font-weight: 500; color: var(--muted); font-size: 8px; letter-spacing: .2px; margin-top: 1px; }
+  .pill {
+    display: inline-block; font-size: 8.5px; font-weight: 700;
+    padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .pill.late   { background: #FDECEC; color: var(--red); }
+  .pill.warn   { background: #FEF3C7; color: #8a6d12; }
+  .pill.fresh  { background: #E7F6EF; color: var(--green); }
+  .act { font-size: 9px; color: var(--ink); }
+  .act.go { color: var(--amber); font-weight: 700; }
+  .act .when { display: block; font-size: 8px; color: var(--muted); font-weight: 500; margin-top: 1px; }
+  tfoot td { padding: 7px 9px; font-size: 9.5px; font-weight: 800; color: var(--navy); border-top: 2px solid var(--navy); }
+  tfoot td.r { text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* ── Nudge sequence ────────────────────────── */
+  .nudge { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
+  .stage { border: 1px solid var(--line); border-radius: 8px; padding: 10px 13px; display: flex; flex-direction: column; }
+  .stage.s1 { border-top: 3px solid var(--green); }
+  .stage.s2 { border-top: 3px solid var(--amber); }
+  .stage.s3 { border-top: 3px solid var(--red); }
+  .stage .shead { display: flex; align-items: baseline; justify-content: space-between; }
+  .stage .sname { font-size: 10px; font-weight: 800; color: var(--navy); text-transform: uppercase; letter-spacing: .5px; }
+  .stage .sday { font-size: 8px; font-weight: 700; color: var(--muted); }
+  .stage .tone { font-size: 8.5px; font-weight: 600; margin: 4px 0 6px; }
+  .stage.s1 .tone { color: var(--green); }
+  .stage.s2 .tone { color: var(--amber); }
+  .stage.s3 .tone { color: var(--red); }
+  .stage .quote { font-size: 9px; line-height: 1.45; color: #374151; font-style: italic; border-left: 2px solid var(--line); padding-left: 8px; }
+
+  /* ── Method note ───────────────────────────── */
+  .card { border: 1px solid var(--line); border-radius: 8px; padding: 10px 15px; margin-top: 10px; }
+  .card .ttl { font-size: 9px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; }
+  .card p { font-size: 9.5px; line-height: 1.5; color: #374151; }
+  .card .src { font-size: 8px; color: var(--muted); margin-top: 7px; }
+  .card b { color: var(--ink); font-weight: 600; }
+
+  /* ── The One Thing ─────────────────────────── */
+  .onething {
+    background: var(--navy); color: #fff; border-radius: 10px;
+    padding: 14px 20px; margin: 13px 0 2px;
+    display: flex; gap: 16px; align-items: center;
+  }
+  .onething .badge {
+    background: var(--amber); color: var(--navy); font-weight: 800;
+    font-size: 8px; letter-spacing: 1px; padding: 4px 9px; border-radius: 5px;
+    text-transform: uppercase; white-space: nowrap; align-self: flex-start;
+  }
+  .onething h3 { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: #fff; }
+  .onething p { font-size: 9.5px; line-height: 1.5; color: #cbd5e1; }
+  .onething .dollar { color: var(--amber); font-weight: 800; }
+
+  /* ── Footer ────────────────────────────────── */
+  .footer {
+    margin-top: 12px;
+    border-top: 1px solid var(--line);
+    padding: 11px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8px; color: var(--muted); letter-spacing: .3px;
+  }
+  .footer .ef { font-weight: 800; color: var(--navy); }
+
+  @media print {
+    html, body { background: #fff; }
+    .page { margin: 0; box-shadow: none; width: auto; min-height: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="biz">Brightwell Commercial Cleaning, LLC</div>
+      <div class="sub">Clear Ledger · Invoice follow-up &amp; accounts-receivable recovery · June 2026 · Columbus, GA</div>
+    </div>
+    <div class="brand">
+      <div class="pre">POWERED BY</div>
+      <div class="mark">EchoFrame</div>
+      <div class="tag">Business intelligence, not accounting.</div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- Redacted sample banner -->
+    <div class="sample-banner">
+      <span class="chip">REDACTED SAMPLE</span>
+      <span><b>This is an anonymized demonstration report.</b> Business name, customers, invoice numbers, and dollar figures are fictional and do not represent a real client. Figures are illustrative of a Columbus, GA commercial-cleaning account.</span>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="sec">
+      <span class="bar"></span><h2>Receivables at a Glance</h2>
+      <span class="hint">7 open invoices in the follow-up sequence</span>
+    </div>
+    <div class="kpis">
+      <div class="kpi">
+        <div class="label">Total Overdue</div>
+        <div class="value">$17,705</div>
+        <div class="delta down">▲ across 7 past-due invoices</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Collected This Month</div>
+        <div class="value">$14,320</div>
+        <div class="delta up">▲ 8 invoices cleared by the sequence</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Avg Days to Pay</div>
+        <div class="value">31<small> days</small></div>
+        <div class="delta up">▼ down from 44 before Clear Ledger</div>
+      </div>
+    </div>
+
+    <!-- AR aging table -->
+    <div class="sec">
+      <span class="bar"></span><h2>Accounts-Receivable Aging</h2>
+      <span class="hint">oldest balance first · next action per invoice</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th style="width:78px">Invoice</th>
+          <th class="r" style="width:74px">Amount</th>
+          <th class="r" style="width:84px">Days Overdue</th>
+          <th style="width:150px">Next Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="top">
+          <td><span class="cust">Summit Ridge Medical Plaza<small>monthly common-area &amp; suite cleaning</small></span></td>
+          <td>INV-2041</td>
+          <td class="r">$6,480</td>
+          <td class="r"><span class="pill late">52 days</span></td>
+          <td class="act go">Final notice, then owner call<span class="when">scheduled today</span></td>
+        </tr>
+        <tr>
+          <td><span class="cust">Northgate Office Park<small>3-building janitorial contract</small></span></td>
+          <td>INV-2067</td>
+          <td class="r">$3,950</td>
+          <td class="r"><span class="pill late">38 days</span></td>
+          <td class="act">Final notice<span class="when">sends in 2 days</span></td>
+        </tr>
+        <tr>
+          <td><span class="cust">Riverfront Dental Group<small>twice-weekly service</small></span></td>
+          <td>INV-2089</td>
+          <td class="r">$2,420</td>
+          <td class="r"><span class="pill warn">27 days</span></td>
+          <td class="act">Firm follow-up<span class="when">sent · awaiting reply</span></td>
+        </tr>
+        <tr>
+          <td><span class="cust">Parkway Retail Center<small>nightly floor &amp; restroom service</small></span></td>
+          <td>INV-2103</td>
+          <td class="r">$1,875</td>
+          <td class="r"><span class="pill warn">19 days</span></td>
+          <td class="act">Firm follow-up<span class="when">sends tomorrow</span></td>
+        </tr>
+        <tr>
+          <td><span class="cust">Eastside Fitness Club<small>daily locker-room &amp; floor care</small></span></td>
+          <td>INV-2118</td>
+          <td class="r">$1,240</td>
+          <td class="r"><span class="pill warn">14 days</span></td>
+          <td class="act">Friendly reminder<span class="when">sent · opened</span></td>
+        </tr>
+        <tr>
+          <td><span class="cust">Heritage Law Offices<small>weekly suite cleaning</small></span></td>
+          <td>INV-2125</td>
+          <td class="r">$980</td>
+          <td class="r"><span class="pill fresh">9 days</span></td>
+          <td class="act">Friendly reminder<span class="when">sends in 1 day</span></td>
+        </tr>
+        <tr>
+          <td><span class="cust">Bradley Park Daycare<small>deep-clean + sanitation add-on</small></span></td>
+          <td>INV-2131</td>
+          <td class="r">$760</td>
+          <td class="r"><span class="pill fresh">6 days</span></td>
+          <td class="act">First nudge<span class="when">queued</span></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>Total open &amp; overdue</td>
+          <td></td>
+          <td class="r">$17,705</td>
+          <td class="r"></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <!-- Nudge sequence -->
+    <div class="sec">
+      <span class="bar"></span><h2>The Follow-Up Sequence</h2>
+      <span class="hint">runs automatically · you only step in at escalation</span>
+    </div>
+    <div class="nudge">
+      <div class="stage s1">
+        <div class="shead"><span class="sname">1 · Friendly</span><span class="sday">Day 3 past due</span></div>
+        <div class="tone">Warm reminder</div>
+        <div class="quote">"Hi — just a quick heads-up that invoice INV-2103 ($1,875) slipped past its due date. A copy and pay link are below. Thanks for being a great client!"</div>
+      </div>
+      <div class="stage s2">
+        <div class="shead"><span class="sname">2 · Firm</span><span class="sday">Day 14 past due</span></div>
+        <div class="tone">Direct follow-up</div>
+        <div class="quote">"Following up on INV-2089 ($2,420), now 14 days past due. Please remit by Friday or let us know if there's an issue with the invoice so we can resolve it."</div>
+      </div>
+      <div class="stage s3">
+        <div class="shead"><span class="sname">3 · Final</span><span class="sday">Day 30 past due</span></div>
+        <div class="tone">Final notice</div>
+        <div class="quote">"Final notice: INV-2041 ($6,480) is 30+ days past due. Payment is required within 5 business days to keep service active and avoid a late fee. We'd like to keep working together."</div>
+      </div>
+    </div>
+
+    <!-- Method note -->
+    <div class="card">
+      <div class="ttl">How Clear Ledger Works</div>
+      <p>Every open invoice is tracked from its due date and moved through the sequence automatically — <b>friendly at day 3, firm at day 14, final notice at day 30</b> — with messaging tuned to recover the balance while protecting the relationship. Most invoices clear at the friendly or firm stage and never need your attention. When one reaches final notice, goes silent, or comes back with a dispute, Clear Ledger flags it and hands it to you with the full contact history. This cycle, the sequence collected <b>$14,320</b> and pulled average days-to-pay from <b>44 down to 31</b>.</p>
+      <p class="src">Based on Brightwell's connected invoicing data · June 2026 billing cycle · EchoFrame Clear Ledger.</p>
+    </div>
+
+    <!-- The One Thing -->
+    <div class="onething">
+      <span class="badge">The One Thing</span>
+      <div>
+        <h3>Push Summit Ridge Medical Plaza to final notice today — then call.</h3>
+        <p>It's the oldest and largest balance on the ledger: <span class="dollar">$6,480</span> at <span class="dollar">52 days</span> overdue, more than a third of everything outstanding. Two automated nudges have gone unanswered, so it has crossed into human-handoff territory. Send the final notice this morning and follow it with a direct call to their office manager this afternoon. Recovering this one invoice clears <span class="dollar">37%</span> of your total overdue and removes the account most likely to age into a write-off.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; Clear Ledger</span>
+    <span>Page 1 of 1 · Confidential</span>
+  </div>
+
+</div>
+</body>
+</html>

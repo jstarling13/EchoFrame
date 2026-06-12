@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EchoFrame - Competitor &amp; Market Landscape - {{ biz_name }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy:#012A4A; --navy-2:#013a66; --amber:#C8972A; --green:#059669;
+    --red:#DC2626; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --slate:#f1f5f9;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { background:#525659; font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .page { width:8.5in; margin:24px auto; background:#fff; box-shadow:0 6px 30px rgba(0,0,0,.35); display:flex; flex-direction:column; }
+  .body { padding:22px 44px 0; flex:1; }
+  .header { background:var(--navy); color:#fff; padding:22px 44px; display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid var(--amber); }
+  .header .biz { font-size:22px; font-weight:800; letter-spacing:-.2px; }
+  .header .sub { font-size:9.5px; color:#9CA3AF; margin-top:3px; letter-spacing:.2px; }
+  .brand { text-align:right; }
+  .brand .pre { font-size:7px; font-weight:700; letter-spacing:1.5px; color:#fff; }
+  .brand .mark { font-size:27px; font-weight:800; color:var(--amber); line-height:1; margin:1px 0; }
+  .brand .tag { font-size:8px; font-style:italic; color:#cbd5e1; }
+  .sample-banner { margin-top:16px; font-size:9px; color:var(--muted); line-height:1.4; border-bottom:1px solid var(--line); padding-bottom:12px; }
+  .sample-banner b { color:var(--amber); font-weight:700; letter-spacing:.5px; }
+  .kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:18px; }
+  .kpi { background:#eef2f7; border-radius:8px; padding:13px 16px 14px; }
+  .kpi .label { font-size:8px; font-weight:700; color:#9aa6b2; text-transform:uppercase; letter-spacing:.8px; }
+  .kpi .value { font-size:30px; font-weight:800; color:var(--navy); margin:4px 0 6px; letter-spacing:-.5px; line-height:1; }
+  .kpi .value.txt { font-size:22px; }
+  .kpi .sub { font-size:9px; font-weight:600; color:var(--ink); border-top:1px solid #dde3ea; padding-top:7px; }
+  .kpi .sub.up { color:var(--red); } .kpi .sub.down { color:var(--green); } .kpi .sub.flat { color:var(--muted); }
+  .secbar { background:var(--navy); color:#fff; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:8px 13px; border-radius:4px; margin:24px 0 0; border-left:4px solid var(--amber); }
+  .secbar .lt { color:#9CA3AF; font-weight:600; text-transform:none; letter-spacing:.2px; }
+  p.para { font-size:10px; line-height:1.65; color:#374151; margin-top:11px; }
+  p.para b { color:var(--navy); }
+  .lead { font-size:10px; line-height:1.6; color:#374151; }
+  .pillrow { margin-top:12px; font-size:9.5px; color:var(--muted); }
+  .pillrow .chip { display:inline-block; background:var(--slate); color:var(--navy); font-weight:700; border-radius:20px; padding:3px 10px; margin-right:6px; font-size:9px; }
+  /* competitor profile cards */
+  .profile { border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin-top:13px; }
+  .profile .pname { font-size:13px; font-weight:800; color:var(--navy); }
+  .profile .pmeta { font-size:8.5px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-top:2px; }
+  .profile .pov { font-size:9.5px; line-height:1.55; color:#374151; margin-top:8px; }
+  .swcols { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:10px; }
+  .swcols h5 { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin-bottom:4px; }
+  .swcols ul { list-style:none; }
+  .swcols li { font-size:9px; line-height:1.45; color:#374151; padding-left:12px; position:relative; margin-bottom:3px; }
+  .swcols li:before { content:""; position:absolute; left:0; top:5px; width:5px; height:5px; border-radius:50%; }
+  .swcols .str li:before { background:var(--green); }
+  .swcols .wk li:before { background:var(--red); }
+  .pnote { font-size:9px; line-height:1.5; color:#374151; margin-top:9px; border-top:1px solid var(--line); padding-top:8px; }
+  .pnote b { color:var(--amber); }
+  /* scorecard */
+  table { width:100%; border-collapse:collapse; margin-top:12px; }
+  thead th { background:var(--navy); color:#fff; font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; padding:8px 7px; text-align:center; }
+  thead th.l { text-align:left; }
+  tbody td { padding:8px 7px; font-size:9.5px; text-align:center; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
+  tbody td.l { text-align:left; font-weight:600; color:var(--navy); }
+  tbody tr.you td { background:#eef2f7; font-weight:700; }
+  tbody tr.you td.l { box-shadow:inset 3px 0 0 var(--amber); }
+  td.tot { font-weight:800; color:var(--navy); }
+  /* winning / losing cards */
+  .wl { margin-top:12px; }
+  .wl .item { padding:11px 0; border-bottom:1px solid var(--line); }
+  .wl .h { font-size:10.5px; font-weight:800; color:var(--navy); }
+  .wl .h .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:7px; }
+  .wl.win .dot { background:var(--green); } .wl.lose .dot { background:var(--red); }
+  .wl .meta { font-size:8.5px; color:var(--muted); font-weight:600; margin-top:2px; }
+  .wl .meta b { color:var(--red); }
+  .wl p { font-size:9.5px; line-height:1.55; color:#374151; margin-top:6px; }
+  /* steal cards */
+  .steal { border-left:4px solid var(--amber); background:#fffdf6; border-radius:0 8px 8px 0; padding:13px 16px; margin-top:13px; }
+  .steal .st { font-size:11.5px; font-weight:800; color:var(--navy); }
+  .steal .from { font-size:8.5px; color:var(--amber); font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+  .steal p { font-size:9.5px; line-height:1.55; color:#374151; margin-top:6px; }
+  .steal ol { margin:8px 0 8px 18px; } .steal ol li { font-size:9.5px; line-height:1.5; color:#374151; margin-bottom:2px; }
+  .steal .impact { font-size:9.5px; font-style:italic; color:var(--green); font-weight:600; }
+  /* 90 day plan */
+  .plan { margin-top:12px; }
+  .plan .mo { margin-top:11px; }
+  .plan .mo h4 { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--amber); }
+  .plan ol { margin:5px 0 0 18px; } .plan ol li { font-size:9.5px; line-height:1.55; color:#374151; margin-bottom:3px; }
+  /* one move */
+  .onemove { margin-top:14px; background:var(--navy); color:#fff; border-radius:8px; padding:16px 18px; }
+  .onemove h3 { font-size:13px; font-weight:800; color:var(--amber); margin-bottom:7px; }
+  .onemove p { font-size:10px; line-height:1.6; color:#e5edf5; }
+  .footer { margin-top:24px; border-top:1px solid var(--line); padding:12px 44px; text-align:center; font-size:8px; color:var(--muted); letter-spacing:.3px; }
+  .footer .ef { font-weight:800; color:var(--navy); }
+  @media print { html, body { background:#fff; } .page { margin:0; box-shadow:none; width:auto; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div>
+      <div class="biz">{{ biz_name }}</div>
+      <div class="sub">{{ product_name }} &middot; {{ product_tagline }} &middot; {{ month }}{% if location %} &middot; {{ location }}{% endif %}</div>
+    </div>
+    <div class="brand">
+      <div class="pre">POWERED BY</div>
+      <div class="mark">EchoFrame</div>
+      <div class="tag">Business intelligence, not accounting.</div>
+    </div>
+  </div>
+
+  <div class="body">
+    {% if is_sample %}
+    <div class="sample-banner"><b>REDACTED SAMPLE</b> - Fictional business and competitors. Figures are illustrative only and do not reflect any real establishment.</div>
+    {% endif %}
+
+    <div class="kpis">
+      {% for k in kpis %}
+      <div class="kpi">
+        <div class="label">{{ k.label }}</div>
+        <div class="value{% if k.is_text %} txt{% endif %}">{{ k.value }}</div>
+        <div class="sub {{ k.sub_class }}">{{ k.sub }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="secbar">Executive Summary</div>
+    {% for p in executive_summary %}<p class="para">{{ p }}</p>{% endfor %}
+
+    <div class="secbar">Competitive Landscape <span class="lt">&middot; {{ landscape_overview.intensity }}</span></div>
+    <div class="pillrow">
+      <span class="chip">Position: {{ landscape_overview.hierarchy_position }}</span>
+    </div>
+    <p class="para">{{ landscape_overview.environment }}</p>
+    {% for p in landscape_overview.paragraphs %}<p class="para">{{ p }}</p>{% endfor %}
+
+    <div class="secbar">Competitor Profiles</div>
+    {% for c in competitor_profiles %}
+    <div class="profile">
+      <div class="pname">{{ c.name }}</div>
+      <div class="pmeta">Pricing: {{ c.pricing_position }} &middot; Online presence: {{ c.online_presence }}</div>
+      <div class="pov">{{ c.overview }}</div>
+      <div class="swcols">
+        <div class="str"><h5>Strengths</h5><ul>{% for s in c.strengths %}<li>{{ s }}</li>{% endfor %}</ul></div>
+        <div class="wk"><h5>Weaknesses</h5><ul>{% for w in c.weaknesses %}<li>{{ w }}</li>{% endfor %}</ul></div>
+      </div>
+      <div class="pnote"><b>Watch:</b> {{ c.watch }}</div>
+      <div class="pnote"><b>Vulnerable:</b> {{ c.vulnerability }}</div>
+    </div>
+    {% endfor %}
+
+    <div class="secbar">Competitive Scorecard <span class="lt">&middot; 1 (weak) to 5 (strong)</span></div>
+    <table>
+      <thead><tr>
+        <th class="l">Business</th>
+        {% for d in score_dims %}<th>{{ d }}</th>{% endfor %}
+        <th>Total</th>
+      </tr></thead>
+      <tbody>
+        {% for r in scorecard %}
+        <tr{% if r.is_you %} class="you"{% endif %}>
+          <td class="l">{{ r.name }}{% if r.is_you %} (You){% endif %}</td>
+          {% for s in r.scores %}<td>{{ s }}</td>{% endfor %}
+          <td class="tot">{{ r.total }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="secbar">Where You Are Winning</div>
+    <div class="wl win">
+      {% for w in where_winning %}
+      <div class="item">
+        <div class="h"><span class="dot"></span>{{ w.advantage }}</div>
+        <p>{{ w.why_customers_value }}</p>
+        <p><b>Amplify:</b> {{ w.how_to_amplify }}</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="secbar">Where You Are Losing</div>
+    <div class="wl lose">
+      {% for w in where_losing %}
+      <div class="item">
+        <div class="h"><span class="dot"></span>{{ w.gap }}</div>
+        <div class="meta">Exploited by {{ w.which_competitor }} &middot; <b>{{ w.monthly_impact }}</b></div>
+        <p>{{ w.what_to_do }}</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="secbar">The 3 Things To Steal</div>
+    {% for s in things_to_steal %}
+    <div class="steal">
+      <div class="from">From {{ s.competitor }}</div>
+      <div class="st">{{ s.what_they_do }}</div>
+      <p>{{ s.why_it_works }}</p>
+      <ol>{% for step in s.how_to_implement %}<li>{{ step }}</li>{% endfor %}</ol>
+      <p class="impact">Expected impact: {{ s.expected_impact }}</p>
+    </div>
+    {% endfor %}
+
+    <div class="secbar">90-Day Competitive Action Plan</div>
+    <div class="plan">
+      <div class="mo"><h4>Month 1 - Quick Moves</h4><ol>{% for i in ninety_day_plan.month1 %}<li>{{ i }}</li>{% endfor %}</ol></div>
+      <div class="mo"><h4>Month 2 - Positioning Plays</h4><ol>{% for i in ninety_day_plan.month2 %}<li>{{ i }}</li>{% endfor %}</ol></div>
+      <div class="mo"><h4>Month 3 - Long-Term Differentiator</h4><ol>{% for i in ninety_day_plan.month3 %}<li>{{ i }}</li>{% endfor %}</ol></div>
+    </div>
+
+    <div class="onemove">
+      <h3>{{ the_one_move.title }}</h3>
+      <p>{{ the_one_move.body }}</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="ef">EchoFrame</span> &nbsp;|&nbsp; {{ product_name }} &nbsp;&middot;&nbsp; {{ month }} &nbsp;&middot;&nbsp; Confidential. Business intelligence and informational analysis only.
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EchoFrame - Competitor &amp; Market Landscape - Apex Fitness Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy:#012A4A; --navy-2:#013a66; --amber:#C8972A; --green:#059669;
+    --red:#DC2626; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --slate:#f1f5f9;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { background:#525659; font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .page { width:8.5in; margin:24px auto; background:#fff; box-shadow:0 6px 30px rgba(0,0,0,.35); display:flex; flex-direction:column; }
+  .body { padding:22px 44px 0; flex:1; }
+  .header { background:var(--navy); color:#fff; padding:22px 44px; display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid var(--amber); }
+  .header .biz { font-size:22px; font-weight:800; letter-spacing:-.2px; }
+  .header .sub { font-size:9.5px; color:#9CA3AF; margin-top:3px; letter-spacing:.2px; }
+  .brand { text-align:right; }
+  .brand .pre { font-size:7px; font-weight:700; letter-spacing:1.5px; color:#fff; }
+  .brand .mark { font-size:27px; font-weight:800; color:var(--amber); line-height:1; margin:1px 0; }
+  .brand .tag { font-size:8px; font-style:italic; color:#cbd5e1; }
+  .sample-banner { margin-top:16px; font-size:9px; color:var(--muted); line-height:1.4; border-bottom:1px solid var(--line); padding-bottom:12px; }
+  .sample-banner b { color:var(--amber); font-weight:700; letter-spacing:.5px; }
+  .kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:18px; }
+  .kpi { background:#eef2f7; border-radius:8px; padding:13px 16px 14px; }
+  .kpi .label { font-size:8px; font-weight:700; color:#9aa6b2; text-transform:uppercase; letter-spacing:.8px; }
+  .kpi .value { font-size:30px; font-weight:800; color:var(--navy); margin:4px 0 6px; letter-spacing:-.5px; line-height:1; }
+  .kpi .value.txt { font-size:22px; }
+  .kpi .sub { font-size:9px; font-weight:600; color:var(--ink); border-top:1px solid #dde3ea; padding-top:7px; }
+  .kpi .sub.up { color:var(--red); } .kpi .sub.down { color:var(--green); } .kpi .sub.flat { color:var(--muted); }
+  .secbar { background:var(--navy); color:#fff; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:8px 13px; border-radius:4px; margin:24px 0 0; border-left:4px solid var(--amber); }
+  .secbar .lt { color:#9CA3AF; font-weight:600; text-transform:none; letter-spacing:.2px; }
+  p.para { font-size:10px; line-height:1.65; color:#374151; margin-top:11px; }
+  p.para b { color:var(--navy); }
+  .lead { font-size:10px; line-height:1.6; color:#374151; }
+  .pillrow { margin-top:12px; font-size:9.5px; color:var(--muted); }
+  .pillrow .chip { display:inline-block; background:var(--slate); color:var(--navy); font-weight:700; border-radius:20px; padding:3px 10px; margin-right:6px; font-size:9px; }
+  /* competitor profile cards */
+  .profile { border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin-top:13px; }
+  .profile .pname { font-size:13px; font-weight:800; color:var(--navy); }
+  .profile .pmeta { font-size:8.5px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-top:2px; }
+  .profile .pov { font-size:9.5px; line-height:1.55; color:#374151; margin-top:8px; }
+  .swcols { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:10px; }
+  .swcols h5 { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin-bottom:4px; }
+  .swcols ul { list-style:none; }
+  .swcols li { font-size:9px; line-height:1.45; color:#374151; padding-left:12px; position:relative; margin-bottom:3px; }
+  .swcols li:before { content:""; position:absolute; left:0; top:5px; width:5px; height:5px; border-radius:50%; }
+  .swcols .str li:before { background:var(--green); }
+  .swcols .wk li:before { background:var(--red); }
+  .pnote { font-size:9px; line-height:1.5; color:#374151; margin-top:9px; border-top:1px solid var(--line); padding-top:8px; }
+  .pnote b { color:var(--amber); }
+  /* scorecard */
+  table { width:100%; border-collapse:collapse; margin-top:12px; }
+  thead th { background:var(--navy); color:#fff; font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; padding:8px 7px; text-align:center; }
+  thead th.l { text-align:left; }
+  tbody td { padding:8px 7px; font-size:9.5px; text-align:center; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
+  tbody td.l { text-align:left; font-weight:600; color:var(--navy); }
+  tbody tr.you td { background:#eef2f7; font-weight:700; }
+  tbody tr.you td.l { box-shadow:inset 3px 0 0 var(--amber); }
+  td.tot { font-weight:800; color:var(--navy); }
+  /* winning / losing cards */
+  .wl { margin-top:12px; }
+  .wl .item { padding:11px 0; border-bottom:1px solid var(--line); }
+  .wl .h { font-size:10.5px; font-weight:800; color:var(--navy); }
+  .wl .h .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:7px; }
+  .wl.win .dot { background:var(--green); } .wl.lose .dot { background:var(--red); }
+  .wl .meta { font-size:8.5px; color:var(--muted); font-weight:600; margin-top:2px; }
+  .wl .meta b { color:var(--red); }
+  .wl p { font-size:9.5px; line-height:1.55; color:#374151; margin-top:6px; }
+  /* steal cards */
+  .steal { border-left:4px solid var(--amber); background:#fffdf6; border-radius:0 8px 8px 0; padding:13px 16px; margin-top:13px; }
+  .steal .st { font-size:11.5px; font-weight:800; color:var(--navy); }
+  .steal .from { font-size:8.5px; color:var(--amber); font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+  .steal p { font-size:9.5px; line-height:1.55; color:#374151; margin-top:6px; }
+  .steal ol { margin:8px 0 8px 18px; } .steal ol li { font-size:9.5px; line-height:1.5; color:#374151; margin-bottom:2px; }
+  .steal .impact { font-size:9.5px; font-style:italic; color:var(--green); font-weight:600; }
+  /* 90 day plan */
+  .plan { margin-top:12px; }
+  .plan .mo { margin-top:11px; }
+  .plan .mo h4 { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--amber); }
+  .plan ol { margin:5px 0 0 18px; } .plan ol li { font-size:9.5px; line-height:1.55; color:#374151; margin-bottom:3px; }
+  /* one move */
+  .onemove { margin-top:14px; background:var(--navy); color:#fff; border-radius:8px; padding:16px 18px; }
+  .onemove h3 { font-size:13px; font-weight:800; color:var(--amber); margin-bottom:7px; }
+  .onemove p { font-size:10px; line-height:1.6; color:#e5edf5; }
+  .footer { margin-top:24px; border-top:1px solid var(--line); padding:12px 44px; text-align:center; font-size:8px; color:var(--muted); letter-spacing:.3px; }
+  .footer .ef { font-weight:800; color:var(--navy); }
+  @media print { html, body { background:#fff; } .page { margin:0; box-shadow:none; width:auto; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div>
+      <div class="biz">Apex Fitness Studio</div>
+      <div class="sub">Competitor &amp; Market Landscape Report &middot; What the shop across town is doing, and how to beat it &middot; June 2026 &middot; Chattanooga</div>
+    </div>
+    <div class="brand">
+      <div class="pre">POWERED BY</div>
+      <div class="mark">EchoFrame</div>
+      <div class="tag">Business intelligence, not accounting.</div>
+    </div>
+  </div>
+
+  <div class="body">
+    
+
+    <div class="kpis">
+      
+      <div class="kpi">
+        <div class="label">Competitors Tracked</div>
+        <div class="value">4</div>
+        <div class="sub flat">In your local market</div>
+      </div>
+      
+      <div class="kpi">
+        <div class="label">Competitive Intensity</div>
+        <div class="value txt">Medium</div>
+        <div class="sub flat">How hard the field is fighting</div>
+      </div>
+      
+      <div class="kpi">
+        <div class="label">Tactics To Steal</div>
+        <div class="value">3</div>
+        <div class="sub down">High-value moves identified</div>
+      </div>
+      
+    </div>
+
+    <div class="secbar">Executive Summary</div>
+    <p class="para">Apex Fitness Studio operates in a Chattanooga boutique fitness market that is more crowded than it looks on the surface. With four meaningfully different competitors pulling from overlapping customer pools, and the broader post-pandemic fitness surge still sorting itself out across the city, Apex sits in an enviable position in terms of product quality but a fragile position in terms of discoverability and digital infrastructure. The studio currently serves 210 members with an annual retention rate of 78%, which is genuinely exceptional for boutique fitness where industry averages hover around 55-65%. That single number is the most important fact in this report: Apex keeps members. The problem is that not enough people know Apex exists in the first place, and of the people who do find it, a meaningful percentage are being lost at the consideration stage because the studio&#39;s digital experience does not match the quality of its in-person product.</p><p class="para">The competitive field breaks into three distinct tiers. At the bottom on price sit Iron Works Gym and Planet Fitness, both of which compete almost entirely on cost and access rather than coaching or community. These two are largely irrelevant to Apex&#39;s growth ambitions except in one important way: they dominate Google search results for high-intent terms like &#39;gym near me Chattanooga&#39; and &#39;cheap gym Chattanooga,&#39; which means they are capturing the top of the fitness funnel and sorting people before Apex even has a chance to make its case. In the middle sits Summit Strength Co., an eight-month-old small-group studio that is the single most dangerous competitive threat Apex faces right now. Summit is not yet better than Apex, but it is growing faster, it looks better online, and it has a frictionless digital enrollment experience that Apex lacks entirely. At the top end sits CrossFit Riverside, a premium, community-driven competitor with a 12,000-follower Instagram and a loyal 180-member base. CrossFit Riverside is not a direct substitute for most Apex prospects, but it is competing for the same high-value, fitness-committed customer segment.</p><p class="para">The single biggest threat facing Apex today is Summit Strength Co.&#39;s momentum. Summit opened eight months ago with roughly 120 members and is growing at an estimated 15 members per month on the back of aggressive intro offers, a slick online booking experience, and a TikTok presence that is reaching fitness-curious Chattanoogans who have never heard of Apex. Summit is not yet winning on quality or retention, but it is winning on first impressions and frictionless conversion. Every month that Apex delays building a comparable digital front door, Summit locks in more members and builds the community flywheel that boutique fitness runs on. If Summit reaches 250-300 members before Apex closes the digital gap, it will have enough social proof and community density to be genuinely difficult to displace among the small-group strength audience in Chattanooga.</p><p class="para">The single biggest opportunity for Apex is also the most straightforward: the studio&#39;s retention rate is so strong that the math of growth becomes surprisingly simple once the top-of-funnel problem is solved. At 78% annual retention, Apex loses roughly 46 members per year to attrition. To reach 350 members in 12 months, the studio needs a net gain of 140 members, which means acquiring roughly 186 gross new members over the year, or about 16 per month. That is an achievable number for a studio with a proven product. CrossFit Riverside&#39;s 12,000 Instagram followers and Iron Works Gym&#39;s 1,900 Google reviews are not accidents - they are the output of consistent, deliberate digital investment. Apex has not yet made that investment, which means the opportunity cost of inaction is real and growing. The sections that follow quantify exactly where that cost is accumulating and what to do about it.</p>
+
+    <div class="secbar">Competitive Landscape <span class="lt">&middot; Medium. There are four meaningful competitors in Apex&#39;s orbit, but they are spread across distinct price points and formats, which limits direct head-to-head overlap. The greatest intensity is concentrated at the mid-market boutique tier, where Summit Strength Co. is actively poaching the same prospect pool.</span></div>
+    <div class="pillrow">
+      <span class="chip">Position: Challenger. Apex has the product quality of a market leader but the visibility and infrastructure of a niche player, putting it in the challenger position: strong enough to win, not yet loud enough to be found.</span>
+    </div>
+    <p class="para">Chattanooga&#39;s boutique fitness market is in an active growth phase, driven by a younger professional demographic moving into the North Shore and Southside neighborhoods and a post-pandemic cultural shift toward strength training over cardio-only formats. The city supports a diverse mix of budget gyms, independent boutique studios, and franchise concepts, creating a competitive environment where differentiation on coaching quality and community is achievable but must be communicated loudly and consistently online to cut through the noise.</p>
+    <p class="para">The Chattanooga fitness market sits at an interesting inflection point. The city&#39;s population growth over the past five years, particularly among 25-44-year-old professionals drawn by remote work migration and the city&#39;s expanding tech and healthcare sectors, has created a receptive audience for premium, coached fitness experiences. This demographic does not want to wander around a Planet Fitness on their own; they want structure, accountability, and a coach who knows their name. That is precisely what Apex delivers, and the market appetite for it is real. Industry data from the International Health, Racquet &amp; Sportsclub Association suggests that boutique fitness studios now account for approximately 42% of all fitness memberships in mid-sized U.S. cities, up from roughly 28% a decade ago. Chattanooga is tracking in line with that shift.</p><p class="para">What makes the current moment both exciting and urgent for Apex is that the small-group strength-and-conditioning format specifically is having a national moment. The explosion of interest in functional strength, mobility, and longevity-focused training has moved a significant portion of the fitness-curious population away from traditional cardio and toward coached strength formats. Searches for &#39;strength training classes near me&#39; are up an estimated 38% nationally over the past three years according to Google Trends data. CrossFit captured this audience early and built a loyal subculture around it, but a large share of the population is interested in coached strength work without the intensity and competitive culture that CrossFit carries. Apex lives in exactly that sweet spot, offering rigorous but approachable group strength training. The problem is that this positioning is not yet communicated clearly enough online to capture the people who are searching.</p><p class="para">The local competitive structure is healthier for Apex than it might appear at first glance. Planet Fitness and Iron Works Gym, despite their size and visibility, are not competing for the same customer. A person willing to pay $149 or more per month for small-group coaching with a dedicated trainer has already self-selected out of the $10-25 per month gym segment. The real battle is between Apex, CrossFit Riverside, and Summit Strength Co. for the fitness-committed, coaching-hungry Chattanoogan. Of those three, only Apex and Summit are offering true small-group strength programming without the CrossFit brand&#39;s baggage of intensity and injury anxiety. That makes Summit the most direct competitor, and its eight-month head start on digital infrastructure is a gap that needs to close in the next 90 days, not the next year.</p><p class="para">One structural factor works powerfully in Apex&#39;s favor and cannot be overlooked: the studio&#39;s 78% annual retention rate creates a compounding membership base that, once the growth engine is running, will be very difficult for competitors to erode. At 78% retention, a member who joins today has roughly a one-in-three chance of still being a member four years from now. That creates real lifetime value. If Apex&#39;s average membership is priced at $149 per month, the average member lifetime value at current retention is approximately $790 per member, and that number grows substantially once referral value is included. Members who stay tend to refer, and boutique studio data consistently shows that member referrals convert at roughly three to four times the rate of cold digital leads. Building a formal referral program on top of this existing retention foundation is one of the highest-return moves available to Apex right now.</p>
+
+    <div class="secbar">Competitor Profiles</div>
+    
+    <div class="profile">
+      <div class="pname">Apex Fitness Studio (You)</div>
+      <div class="pmeta">Pricing: Premium. Estimated $130-160 per month for small-group coaching, positioned above mid-market but justified by coaching quality and low class sizes. &middot; Online presence: Weak. Minimal Google presence, no booking app, inconsistent social media with low follower counts. The digital experience does not reflect the quality of the in-person product.</div>
+      <div class="pov">Apex is a boutique small-group strength and conditioning studio in Chattanooga serving 210 members with a coaching-first model. The studio&#39;s defining strengths are its trainer quality, personal attention, and an annual retention rate of 78% that stands well above the boutique fitness industry average of 55-65%. The studio&#39;s primary vulnerabilities are concentrated in digital infrastructure and discoverability: no booking app, inconsistent social media presence, and minimal Google visibility for high-intent local search terms.</div>
+      <div class="swcols">
+        <div class="str"><h5>Strengths</h5><ul><li>78% annual retention rate, roughly 15-20 percentage points above boutique fitness industry average, indicating genuine product-market fit and deep member loyalty</li><li>Coaches know every member by name and track individual progress, creating a personalized experience that no budget gym and few boutique studios can match</li><li>Never-crowded environment provides a consistent, high-quality session experience that members actively cite as a reason for staying</li><li>Established brand in Chattanooga with real word-of-mouth credibility among current members, providing a referral base that simply does not exist for newer competitors like Summit</li></ul></div>
+        <div class="wk"><h5>Weaknesses</h5><ul><li>No digital booking system, requiring phone or in-person sign-up that creates friction for the 70%+ of fitness consumers who expect to book online instantly</li><li>Social media presence is weak and inconsistent, leaving the studio invisible to the large segment of fitness prospects who discover and evaluate studios through Instagram and TikTok before ever visiting</li><li>No Google Business profile optimization, resulting in near-zero organic search visibility for terms like &#39;gym near me Chattanooga&#39; or &#39;strength training classes Chattanooga&#39;</li><li>Limited evening class times and no childcare constrain access for the 25-44 working parent demographic that represents a major portion of the ideal member profile</li></ul></div>
+      </div>
+      <div class="pnote"><b>Watch:</b> Apex&#39;s retention rate is its most powerful competitive asset and its most undercommunicated one. No competitor in this market comes close to 78% annual retention, and that number should be the centerpiece of every marketing message.</div>
+      <div class="pnote"><b>Vulnerable:</b> Apex&#39;s own vulnerabilities are the story here: the gap between in-person product quality and digital presence is the primary obstacle to growth. Closing that gap is more important than any competitive maneuver.</div>
+    </div>
+    
+    <div class="profile">
+      <div class="pname">Iron Works Gym</div>
+      <div class="pmeta">Pricing: Budget. Estimated $25-45 per month. Competes on price and access, not quality or coaching. &middot; Online presence: Strong. 1,900 Google reviews and paid search advertising make Iron Works highly visible for local fitness searches. Social media presence is functional but not community-building.</div>
+      <div class="pov">Iron Works is Chattanooga&#39;s dominant traditional gym, operating 24/7 with an estimated 5,000 members and a large equipment floor. The gym competes primarily on access, price, and sheer equipment volume rather than coaching or programming quality. With 1,900 Google reviews at a 4.1 average, Iron Works has a significant local search presence that captures high-intent &#39;gym near me&#39; traffic before smaller studios even appear.</div>
+      <div class="swcols">
+        <div class="str"><h5>Strengths</h5><ul><li>Dominant Google presence with 1,900 reviews at 4.1 stars, likely capturing 40-60% of all local organic search traffic for gym-related queries in Chattanooga</li><li>24/7 access removes scheduling constraints entirely, appealing to shift workers, early risers, and anyone whose schedule does not fit standard class times</li><li>Massive equipment selection satisfies self-directed trainers who want variety and autonomy</li><li>Established brand presence over many years in Chattanooga with deep local name recognition</li></ul></div>
+        <div class="wk"><h5>Weaknesses</h5><ul><li>Zero coaching quality or accountability; members are entirely self-directed, which means many pay and rarely show up, and most plateau within 6-12 months</li><li>5,000-member model creates crowding and impersonal experience that is the opposite of what Apex offers</li><li>High churn rate typical of big-box gyms, estimated 40-50% annual turnover, meaning the gym constantly needs new members just to stand still</li><li>No programming, no classes, and no community creates a hollow membership experience that does not build loyalty</li></ul></div>
+      </div>
+      <div class="pnote"><b>Watch:</b> Iron Works&#39; Google dominance is the single most relevant fact about this competitor for Apex. It is not a product threat, but it is a visibility threat that intercepts Apex&#39;s potential members before they ever find the studio.</div>
+      <div class="pnote"><b>Vulnerable:</b> The impersonal, equipment-only model is increasingly out of step with what the 25-44 demographic wants. Any Apex prospect who has tried Iron Works and felt lost, unchallenged, or ignored is a warm lead waiting to be converted with a targeted message about what coached training actually feels like.</div>
+    </div>
+    
+    <div class="profile">
+      <div class="pname">CrossFit Riverside</div>
+      <div class="pmeta">Pricing: Premium. Estimated $175-220 per month. Justified by community and programming intensity but limited by CrossFit brand polarization. &middot; Online presence: Very strong on Instagram with 12,000 followers and active Reels content. The social media presence is the gym&#39;s most important growth engine and is clearly a strategic priority for the ownership team.</div>
+      <div class="pov">CrossFit Riverside is a three-year-old affiliate box serving approximately 180 members with a high-intensity, community-driven training model built on the CrossFit methodology. The gym has built a strong local social media presence, particularly on Instagram with 12,000 followers, and draws a loyal, enthusiastic membership base from Chattanooga&#39;s fitness-committed population. Its premium pricing and high-intensity positioning naturally limit its addressable market but create fierce loyalty among those who do join.</div>
+      <div class="swcols">
+        <div class="str"><h5>Strengths</h5><ul><li>12,000 Instagram followers is a genuinely impressive local number that drives consistent awareness and new member flow from social discovery</li><li>Strong community culture with shared athletic identity creates retention and word-of-mouth that compounds over time</li><li>Active Reels content keeps the brand in front of followers regularly and signals vitality and momentum to prospective members</li><li>Three-year operating history with a stable 180-member base demonstrates the box has found its audience and is not going anywhere</li></ul></div>
+        <div class="wk"><h5>Weaknesses</h5><ul><li>CrossFit brand carries significant baggage for a large segment of the fitness market: injury concerns, intimidation, and perceived extremism limit the addressable audience to a relatively narrow fitness enthusiast segment</li><li>High-intensity only format excludes members seeking longevity-focused, lower-impact strength work or those returning from injury</li><li>Premium pricing at an estimated $175-220 per month sits at the top of the local market, creating a price ceiling that restricts growth</li><li>No real introductory pathway for true beginners means the studio consistently struggles to convert fitness newcomers who represent the largest pool of available prospects</li></ul></div>
+      </div>
+      <div class="pnote"><b>Watch:</b> CrossFit Riverside&#39;s 12,000 Instagram followers represent a local audience of fitness-interested Chattanoogans that dwarfs anything Apex currently reaches. These followers are not all CrossFit converts; many are fitness-curious people who follow the account for motivation. A targeted Apex Instagram and Reels strategy could pull directly from this adjacent audience.</div>
+      <div class="pnote"><b>Vulnerable:</b> CrossFit Riverside cannot easily convert the large population of people who want coached strength training without the CrossFit intensity and culture. That is Apex&#39;s lane, and Apex should be explicit and confident about occupying it.</div>
+    </div>
+    
+    <div class="profile">
+      <div class="pname">Planet Fitness</div>
+      <div class="pmeta">Pricing: Budget. $10-25 per month. Competes exclusively on price. Has zero overlap with Apex&#39;s value proposition. &middot; Online presence: Strong national brand presence. Dominates brand-name and price-related search terms. Social media is managed nationally and is not community-driven at the local level.</div>
+      <div class="pov">Planet Fitness is the national $10-per-month chain operating in Chattanooga with its signature Judgement Free Zone positioning and a business model built almost entirely on high membership volume at minimal price. The franchise location serves several thousand members and dominates price-sensitive search terms online, backed by national marketing spend that no local studio can match dollar for dollar. Planet Fitness is not a direct product competitor to Apex but is a significant awareness competitor at the top of the fitness consideration funnel.</div>
+      <div class="swcols">
+        <div class="str"><h5>Strengths</h5><ul><li>National brand recognition and $10/month price point dominate price-sensitive search queries and capture first-time gym-goers at scale</li><li>Judgement Free Zone positioning is genuinely differentiated and resonates strongly with gym-anxious beginners who represent the largest untapped fitness segment</li><li>National marketing budget provides local advertising support that individual franchise locations benefit from without paying for it directly</li><li>Convenient hours and no-commitment month-to-month structure remove every barrier to joining, generating very high member volume</li></ul></div>
+        <div class="wk"><h5>Weaknesses</h5><ul><li>No classes, no coaching, and no programming create a member experience with essentially zero accountability or results delivery</li><li>Extremely high annual churn, estimated at 50-60%, as members join impulsively at the low price but disengage quickly without results or community</li><li>Lunk Alarm and anti-serious-lifter culture actively alienates the fitness-committed customer segment that Apex targets</li><li>&#39;Judgement Free&#39; positioning is a double-edged sword: it attracts beginners but signals to performance-oriented prospects that the environment will not challenge them</li></ul></div>
+      </div>
+      <div class="pnote"><b>Watch:</b> Planet Fitness is where many of Apex&#39;s future members are currently wasting money. The typical Planet Fitness member joins, goes twice, and then pays $10 per month without showing up. After 6-12 months of no results, that person is actively looking for something better. A targeted &#39;you deserve more than a gym you never go to&#39; message could convert a meaningful number of lapsed Planet Fitness members into Apex prospects.</div>
+      <div class="pnote"><b>Vulnerable:</b> Planet Fitness members who want actual results and have experienced the emptiness of the self-directed gym model are among the warmest possible leads for a coaching-driven studio. Apex should run direct comparison content that speaks to this exact moment of disillusionment.</div>
+    </div>
+    
+    <div class="profile">
+      <div class="pname">Summit Strength Co.</div>
+      <div class="pmeta">Pricing: Mid-Market. Estimated $110-135 per month, likely with an introductory discount to $75-90 for the first month or first six weeks. Positioned just below Apex to compete on value. &middot; Online presence: Growing fast. Slick website with online booking, active and growing TikTok channel. Summit&#39;s digital presence is more modern and functional than Apex&#39;s despite being a much newer business.</div>
+      <div class="pov">Summit Strength Co. is an eight-month-old small-group strength studio in Chattanooga with approximately 120 members, growing at an estimated 12-15 new members per month on the back of aggressive intro offers, a slick online booking experience, and a rapidly growing TikTok presence. Summit is the most direct product competitor to Apex, offering a nearly identical format at a slightly lower price point, and its digital infrastructure is already more advanced than Apex&#39;s despite being a fraction of the age.</div>
+      <div class="swcols">
+        <div class="str"><h5>Strengths</h5><ul><li>Online booking system removes all friction from the membership conversion process and captures impulse-decision prospects that Apex&#39;s phone-based system loses entirely</li><li>TikTok presence is growing fast, reaching a younger Chattanooga demographic that Apex is not currently touching</li><li>Slick, modern website creates a strong first impression that signals professionalism and investment, making Summit look more established than its eight months of operating history would suggest</li><li>Aggressive intro offers, likely a free first week or discounted first month, create a low-risk trial that converts browsers into members at a higher rate than studios without introductory pathways</li></ul></div>
+        <div class="wk"><h5>Weaknesses</h5><ul><li>Eight months old means Summit has not yet proven retention; early members are approaching the six-to-twelve month mark where attrition in boutique fitness is highest, and Summit&#39;s retention rate is almost certainly well below Apex&#39;s 78%</li><li>Coaching depth and trainer experience almost certainly lags behind Apex given the studio&#39;s newness; staff tenure and client relationship quality take years to build</li><li>Aggressive intro offers attract price-sensitive members who may churn when the discounted period ends, potentially masking a weaker core retention number</li><li>No established community culture or alumni base; the social proof and word-of-mouth network that Apex has built over years does not yet exist at Summit</li></ul></div>
+      </div>
+      <div class="pnote"><b>Watch:</b> Summit&#39;s trajectory is the most important competitive development in this report. At its current growth rate of 12-15 members per month, Summit will reach 200+ members within six months and could be at 250-280 members within twelve. Once Summit builds a meaningful community and generates strong early reviews, it will be nearly impossible to displace as the &#39;new and exciting&#39; boutique strength option in Chattanooga.</div>
+      <div class="pnote"><b>Vulnerable:</b> Summit&#39;s vulnerability is its youth. It has not yet proven it can retain members, its coaches are less experienced, and it does not have the community depth or word-of-mouth network that Apex has built. Apex should move aggressively to out-communicate its retention advantage and coaching quality before Summit earns those credentials on its own.</div>
+    </div>
+    
+
+    <div class="secbar">Competitive Scorecard <span class="lt">&middot; 1 (weak) to 5 (strong)</span></div>
+    <table>
+      <thead><tr>
+        <th class="l">Business</th>
+        <th>Price</th><th>Location</th><th>Online</th><th>Experience</th><th>Quality</th><th>Special.</th><th>Momentum</th>
+        <th>Total</th>
+      </tr></thead>
+      <tbody>
+        
+        <tr class="you">
+          <td class="l">Apex Fitness Studio (You) (You)</td>
+          
+          <td class="tot"></td>
+        </tr>
+        
+        <tr>
+          <td class="l">Iron Works Gym</td>
+          
+          <td class="tot"></td>
+        </tr>
+        
+        <tr>
+          <td class="l">CrossFit Riverside</td>
+          
+          <td class="tot"></td>
+        </tr>
+        
+        <tr>
+          <td class="l">Planet Fitness</td>
+          
+          <td class="tot"></td>
+        </tr>
+        
+        <tr>
+          <td class="l">Summit Strength Co.</td>
+          
+          <td class="tot"></td>
+        </tr>
+        
+      </tbody>
+    </table>
+
+    <div class="secbar">Where You Are Winning</div>
+    <div class="wl win">
+      
+      <div class="item">
+        <div class="h"><span class="dot"></span>Coach-to-member relationship quality and personal attention</div>
+        <p>In a market full of gyms where members are invisible, Apex&#39;s coaches know every member&#39;s name, training history, and personal goals. This is not a small thing: fitness research consistently shows that the number-one predictor of long-term gym adherence is social connection to a coach or peer group. Members who feel known and seen by a coach are dramatically less likely to cancel, less likely to plateau, and more likely to refer friends. This is the core reason Apex&#39;s retention rate is 15-20 points above industry average.</p>
+        <p><b>Amplify:</b> Apex should turn this invisible advantage into visible marketing. Film 30-60 second coach spotlight videos showing coaches calling members by name, adjusting form, and celebrating personal bests. Post these consistently on Instagram and TikTok so that every prospective member can see exactly what it feels like to train at Apex before they ever walk in the door. The personal attention story is the most powerful differentiator Apex has and it is currently hidden from everyone who has not already joined.</p>
+      </div>
+      
+      <div class="item">
+        <div class="h"><span class="dot"></span>78% annual member retention rate</div>
+        <p>A 78% annual retention rate means that roughly eight out of ten Apex members are still paying and training a full year after joining. In an industry where 40-50% annual churn is normal, this number is exceptional. Customers value this because retention is a proxy for results and satisfaction: people do not keep paying for something that is not working. Every current Apex member who has stayed for more than a year is living proof that the studio delivers on its promises.</p>
+        <p><b>Amplify:</b> Apex should communicate this number explicitly in marketing materials, on the website, and in sales conversations. Most fitness consumers have no idea what a good retention rate looks like, which means Apex needs to contextualize it: &#39;78% of our members are still here after a full year. The average gym? About half that.&#39; Turn the statistic into a proof point and feature multi-year member testimonials prominently in social content and on the website.</p>
+      </div>
+      
+      <div class="item">
+        <div class="h"><span class="dot"></span>Never-crowded training environment</div>
+        <p>Small-group fitness consumers who have experienced crowded boutique studios or packed big-box gyms place enormous value on guaranteed space, equipment access, and coach attention. A crowded class is not just an inconvenience; it directly degrades the quality of coaching, creates safety issues for strength work, and makes members feel like a number rather than a person. Apex&#39;s commitment to controlled class sizes preserves the quality of every session and is a direct reason people stay.</p>
+        <p><b>Amplify:</b> Lead with the class size cap in all marketing materials: &#39;Maximum 8 members per session&#39; or whatever the specific number is. Show photos and video of actual class environments so prospects can see the space. In comparison content, directly contrast the Apex experience with the crowded floor of a big-box gym. This is a tangible, easily-visualized benefit that communicates instantly.</p>
+      </div>
+      
+      <div class="item">
+        <div class="h"><span class="dot"></span>Established community and word-of-mouth network</div>
+        <p>After years of operation, Apex has a network of current and former members who are genuinely enthusiastic about the studio. Word-of-mouth referrals are the highest-quality leads available to any boutique fitness studio because they arrive pre-sold on the product, pre-trusting of the brand, and pre-connected to the community. Summit Strength Co. is a fundamentally different type of business in this regard: eight months old, it simply does not have the depth of relationships and alumni network that Apex has built.</p>
+        <p><b>Amplify:</b> Build a formal referral program immediately. Offer a tangible, meaningful incentive for referrals: a free month of membership, branded gear, or a credit toward merchandise. Track and celebrate referrals publicly within the member community. A well-designed referral program for a studio with 210 members and high satisfaction rates could generate 20-30 new member referrals per month, which alone would cover a significant portion of the monthly growth target.</p>
+      </div>
+      
+    </div>
+
+    <div class="secbar">Where You Are Losing</div>
+    <div class="wl lose">
+      
+      <div class="item">
+        <div class="h"><span class="dot"></span>Google search invisibility for high-intent local queries</div>
+        <div class="meta">Exploited by Iron Works Gym and Planet Fitness &middot; <b>$2,400-3,200/mo in lost new member revenue (estimated 4-6 lost trial conversions per month at $149 avg membership)</b></div>
+        <p>Claim and fully optimize the Apex Google Business Profile immediately. This means uploading 15-20 current photos of the training floor and coaches in action, writing a keyword-rich business description that includes &#39;strength training Chattanooga,&#39; &#39;small group fitness Chattanooga,&#39; and &#39;personal training Chattanooga,&#39; setting accurate hours and class schedule information, and launching an active review generation campaign targeting current members. Reaching 100 Google reviews at 4.7 or higher within 90 days is an achievable and transformative goal that will shift Apex&#39;s search ranking meaningfully.</p>
+      </div>
+      
+      <div class="item">
+        <div class="h"><span class="dot"></span>No online booking system causing drop-off at the conversion moment</div>
+        <div class="meta">Exploited by Summit Strength Co. &middot; <b>$1,800-2,600/mo in lost bookings (estimated 30-40% of interested prospects abandon when they cannot book instantly)</b></div>
+        <p>Implement a booking system within 30 days. Mindbody, Wodify, and Glofox are all purpose-built for boutique fitness studios and cost $100-200 per month. The ROI is immediate and measurable: industry data consistently shows that studios with online booking convert 30-40% more website visitors into trials than those without. Summit is winning this battle entirely on infrastructure, not product quality, and it is a fixable problem.</p>
+      </div>
+      
+      <div class="item">
+        <div class="h"><span class="dot"></span>Social media absence causing invisibility with 25-40 year old fitness-curious prospects</div>
+        <div class="meta">Exploited by CrossFit Riverside and Summit Strength Co. &middot; <b>$1,500-2,000/mo in lost awareness-stage leads (estimated 10-15 prospective members per month who discover and choose a competitor via social before ever finding Apex)</b></div>
+        <p>Commit to a minimum of four Instagram posts and two Reels or TikTok videos per week for 90 days straight. The content formula is simple: coach-member interaction clips, before-and-after training transformations, member milestone celebrations, and 15-second form coaching tips. This is not a creativity problem; it is a consistency and prioritization problem. Hire a part-time social media assistant for $500-800 per month or dedicate one staff member to owning this role with accountability metrics.</p>
+      </div>
+      
+      <div class="item">
+        <div class="h"><span class="dot"></span>No formal new member trial or introductory pathway</div>
+        <div class="meta">Exploited by Summit Strength Co. &middot; <b>$1,200-1,800/mo in lost first-time visitor conversions (estimated 8-12 prospects per month who choose Summit&#39;s free trial offer over Apex&#39;s unclear entry point)</b></div>
+        <p>Create and publicize a clear, low-friction introductory offer: a two-week trial at a fixed price, such as $49, or a free first session for any new prospect. This offer should be front and center on the website, social media bio, and Google Business Profile. The goal is not to discount the membership but to lower the risk of the first step. Once a prospect experiences two weeks of Apex coaching, the product sells itself.</p>
+      </div>
+      
+      <div class="item">
+        <div class="h"><span class="dot"></span>Limited evening class times constraining working professional access</div>
+        <div class="meta">Exploited by Iron Works Gym (24/7 access) and Summit Strength Co. &middot; <b>$900-1,400/mo in unaddressed demand from the 5:30-7:30pm time slot (estimated 6-10 prospective members per month who inquire and cannot find a suitable class time)</b></div>
+        <p>Survey current members immediately to quantify evening demand, then pilot a 6:00pm and 7:00pm class on Tuesday, Wednesday, and Thursday for 60 days. Track attendance and waitlist behavior. If these slots fill to 70%+ capacity within 45 days, make them permanent and consider adding Saturday morning options. The working parent demographic, which is a primary growth segment for Apex, essentially cannot access the studio without viable evening options.</p>
+      </div>
+      
+    </div>
+
+    <div class="secbar">The 3 Things To Steal</div>
+    
+    <div class="steal">
+      <div class="from">From CrossFit Riverside</div>
+      <div class="st">Consistent, high-volume Instagram Reels featuring real members, coach-athlete moments, and community events that have built a local following of 12,000 people over three years.</div>
+      <p>Instagram Reels are currently the highest-reach content format available to local businesses on Instagram, regularly receiving three to five times the organic reach of static posts. CrossFit Riverside&#39;s 12,000 followers represent a local fitness-interested audience that is ten to fifteen times larger than Apex&#39;s current social reach. More importantly, Reels work as discovery content: they reach people who do not follow the account and are seeing Apex for the first time. Every Reel that shows a real coaching moment, a member hitting a new personal best, or a coach explaining a movement is a free advertisement reaching exactly the right audience.</p>
+      <ol><li>Designate one coach or staff member as the weekly &#39;content lead&#39; responsible for filming three to five short clips per week during actual classes, with explicit permission from participating members documented via a simple media release.</li><li>Build a bank of ten to fifteen ready-to-post Reels in the first two weeks covering: coach-correction moments, member before-and-afters, class environment walkthroughs, and &#39;what a session at Apex actually looks like&#39; format videos.</li><li>Post a minimum of three Reels per week on Instagram for 90 consecutive days. Use location tags for Chattanooga and relevant hashtags including strengthtraining, Chattanooga, smallgroupfitness, and personaltraining to maximize local discovery reach.</li><li>Engage with every comment within two hours of posting and respond to every DM inquiry the same day. Algorithm-friendly behavior and genuine responsiveness compound over time.</li><li>At the 90-day mark, evaluate which content types are generating the most profile visits and DM inquiries, then double down on the top two formats and cut the underperformers.</li></ol>
+      <p class="impact">Expected impact: Estimated 800-1,500 new local Instagram followers within 90 days, generating 20-35 inbound inquiries per month and 8-14 converted trials. At Apex&#39;s conversion rate, this represents 4-8 new members per month from the social channel alone, worth $7,200-14,400 in annualized new membership revenue.</p>
+    </div>
+    
+    <div class="steal">
+      <div class="from">From Summit Strength Co.</div>
+      <div class="st">Summit operates a slick, conversion-optimized website with an embedded online booking system that allows a prospect to go from visiting the site to booking a trial session in under 90 seconds.</div>
+      <p>Fitness purchasing decisions are highly impulsive and time-sensitive. The moment a person decides they want to try a studio, any friction between that decision and booking a session results in drop-off. Research on service business conversion rates shows that web visitors who can book instantly convert at 2-3 times the rate of those who must call, email, or wait for a response. Summit is capturing that impulse moment; Apex is not. Every week that passes without online booking is another week of avoidable lead loss.</p>
+      <ol><li>Select and sign up for Mindbody, Glofox, or Wodify within the next two weeks. For a studio at Apex&#39;s size, Mindbody&#39;s Starter plan at approximately $139 per month or Glofox at approximately $110 per month are the most appropriate options.</li><li>Configure the booking system with all current class times, descriptions, and a clear introductory offer slot specifically for new member trials so that prospects land on a purpose-built first-visit flow.</li><li>Embed the booking widget directly on the Apex homepage above the fold so it is the first action available to any website visitor. Add a &#39;Book Your First Session&#39; button to every page of the site and to every social media bio link.</li><li>Set up automated confirmation emails and 24-hour reminder texts for all bookings through the platform to reduce no-show rates, which typically run 20-30% for first-time trial bookings without reminders.</li><li>Add the booking link to the Google Business Profile so that prospects searching for Apex on Google can book directly from the search result without ever visiting the website, reducing one additional step from the conversion funnel.</li></ol>
+      <p class="impact">Expected impact: Estimated 30-40% increase in trial bookings within 60 days of launch, based on industry benchmarks for boutique fitness studios adding online booking. At current inquiry volume, this represents 5-8 additional trials per month, converting to 3-5 new members per month, worth $5,400-9,000 in annualized new membership revenue.</p>
+    </div>
+    
+    <div class="steal">
+      <div class="from">From Iron Works Gym</div>
+      <div class="st">Iron Works has 1,900 Google reviews accumulated over years and an optimized Google Business Profile that places it at or near the top of local search results for gym-related queries in Chattanooga. This single asset drives an estimated 40-60% of their new member inquiries.</div>
+      <p>Google search remains the dominant discovery channel for local service businesses, and the Google Map Pack, the three business listings that appear at the top of local search results, drives an enormous share of all local fitness inquiries. A business with 100+ Google reviews at 4.5 or higher is significantly more likely to appear in the Map Pack and to convert clicks into calls or visits than one with fewer reviews or a lower rating. Iron Works&#39; review count is not the result of having a better product; it is the result of asking consistently, over many years. Apex almost certainly has a better product but a dramatically smaller review count, which means it is invisible in the most important discovery channel.</p>
+      <ol><li>Claim and verify the Apex Google Business Profile today if not already claimed, then fully complete every field: business description with keywords, hours, class schedule, photos, services, and a direct booking link.</li><li>Launch a review generation campaign this week: personally ask the 210 current members to leave a Google review by sending a direct text message from their coach, not a mass email, with a direct link to the review page. Personal asks from coaches convert at 3-5 times the rate of mass email requests.</li><li>Set a 90-day target of 75-100 Google reviews at 4.7 or above, which is achievable given Apex&#39;s satisfaction level, and will likely be sufficient to move Apex into the Google Map Pack for relevant local searches.</li><li>Post a Google Business update at least twice per week featuring class schedule changes, member milestones, and new trainer content to signal to Google&#39;s algorithm that the listing is active and relevant.</li><li>Respond to every existing review, positive or negative, within 24 hours. Review response is a ranking signal and a trust signal that prospects evaluate before deciding to inquire.</li></ol>
+      <p class="impact">Expected impact: Appearing in the Chattanooga Google Map Pack for &#39;gym near me,&#39; &#39;strength training Chattanooga,&#39; and &#39;small group fitness Chattanooga&#39; is estimated to generate 25-40 new website visits per week from high-intent searchers. Converting 8-12% of those visitors to trials yields 2-5 new members per month from search alone, worth $3,600-9,000 in annualized membership revenue. Over 12 months, as the review count grows, this channel compounds significantly.</p>
+    </div>
+    
+
+    <div class="secbar">90-Day Competitive Action Plan</div>
+    <div class="plan">
+      <div class="mo"><h4>Month 1 - Quick Moves</h4><ol><li>Claim, complete, and fully optimize the Apex Google Business Profile this week, and simultaneously send a personal text message from each coach to their roster of members asking for a Google review with a direct link. The goal is to reach 50 Google reviews within 30 days, which is enough to begin moving the needle on local search visibility.</li><li>Select and launch an online booking platform, Mindbody, Glofox, or Wodify, within two weeks. Embed the booking widget on the website homepage and connect it to the Google Business Profile so that any prospect who finds Apex online can book a trial in under two minutes.</li><li>Film and post three Instagram Reels and two TikTok videos in the first week, establishing a content rhythm that will be maintained for the full 90 days. The initial content should focus on what a real Apex class looks and feels like, since that is the single most powerful thing Apex can show a prospect who has never visited.</li></ol></div>
+      <div class="mo"><h4>Month 2 - Positioning Plays</h4><ol><li>Launch a formal member referral program with a meaningful incentive, specifically a free month of membership for any current member who refers a friend who joins. Announce it at classes, via text to all current members, and on social media. With 210 members and an enthusiasm level consistent with 78% retention, this program should generate 15-25 referral leads in its first active month.</li><li>Run a targeted Facebook and Instagram ad campaign with a budget of $600-800 per month specifically targeting Chattanooga residents aged 25-44 who have shown interest in fitness, with the ad offering the introductory two-week trial. This is not a long-term discount strategy; it is a trial pipeline builder. Set up conversion tracking so the cost per new member acquisition is measured precisely from the first day.</li></ol></div>
+      <div class="mo"><h4>Month 3 - Long-Term Differentiator</h4><ol><li>Pilot two additional evening class times, specifically 6:00pm and 7:00pm on Tuesday through Thursday, and promote them as the &#39;Working Professional Track&#39; to signal that Apex understands the scheduling reality of its target member. Track attendance weekly and make the schedule permanent if either slot reaches 70% capacity within 45 days. This single expansion could unlock a segment of the Chattanooga market that currently cannot access Apex.</li></ol></div>
+    </div>
+
+    <div class="onemove">
+      <h3>Fix Your Digital Front Door Before Any Other Investment</h3>
+      <p>Apex has a product that is objectively better than every competitor in this market on the dimensions that drive long-term retention and member results. The entire growth problem is that almost no one who has not already been referred to Apex can find it, evaluate it, or book a trial. Iron Works dominates Google with 1,900 reviews while Apex sits invisible. Summit Strength Co. captures impulse sign-ups with instant online booking while Apex loses them to a phone tag. CrossFit Riverside reaches 12,000 local fitness prospects on Instagram every week while Apex reaches a fraction of that. None of these competitors have a better product. They have a better front door. The math is unambiguous: Apex needs 186 gross new members over the next 12 months to hit its 350-member goal, which is 15-16 per month. Right now, the studio is likely converting somewhere in the range of 4-6 new members per month from organic sources. Google optimization alone is estimated to add 2-5 per month. Online booking adds 3-5. A consistent social media presence adds 4-8. A referral program on top of 210 satisfied members adds another 5-10. These numbers stack. Fix the digital front door in the next 30 days, layer on the referral program and social content in month two, and pilot the evening schedule expansion in month three. The product is already there. The studio just needs to be found.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="ef">EchoFrame</span> &nbsp;|&nbsp; Competitor &amp; Market Landscape Report &nbsp;&middot;&nbsp; June 2026 &nbsp;&middot;&nbsp; Confidential. Business intelligence and informational analysis only.
+  </div>
+</div>
+</body>
+</html>
