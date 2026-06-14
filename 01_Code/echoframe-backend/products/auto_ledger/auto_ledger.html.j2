@@ -59,6 +59,13 @@
     font-size: 7px; font-weight: 800; letter-spacing: 1px; padding: 2px 7px;
     border-radius: 4px; text-transform: uppercase; margin-top: 5px;
   }
+  /* compact header for pages 2-4 */
+  .header.mini { padding: 12px 40px; }
+  .header.mini .biz { font-size: 14px; }
+  .header.mini .sub { font-size: 8.5px; margin-top: 1px; }
+  .header.mini .brand .mark { font-size: 18px; }
+  .header.mini .brand .pre, .header.mini .brand .tag, .header.mini .tierchip { display: none; }
+  .header.mini .cont { font-size: 8px; color: #9CA3AF; font-style: italic; }
 
   /* ── Sample banner ─────────────────────────── */
   .sample-banner {
@@ -85,6 +92,7 @@
     display: flex; align-items: center; gap: 8px;
     margin: 20px 0 9px;
   }
+  .sec.first { margin-top: 16px; }
   .sec .bar { width: 4px; height: 15px; background: var(--amber); border-radius: 2px; }
   .sec h2 {
     font-size: 11px; font-weight: 700; color: var(--navy);
@@ -127,6 +135,17 @@
   }
   .note { color: var(--muted); font-size: 8.5px; line-height: 1.35; margin-top: 3px; }
   .note b { color: var(--ink); font-weight: 600; }
+  .contnote { font-size: 8px; color: var(--muted); font-style: italic; margin: 4px 0 0; }
+
+  /* ── Category breakdown bars ───────────────── */
+  .breakdown { margin-top: 12px; }
+  .brow { display: grid; grid-template-columns: 150px 1fr 78px; gap: 12px; align-items: center; padding: 5px 0; }
+  .brow .bname { font-size: 9.5px; font-weight: 600; color: var(--navy); }
+  .brow .btrack { background: var(--slate); border-radius: 5px; height: 12px; overflow: hidden; }
+  .brow .bfill { height: 100%; background: var(--navy); border-radius: 5px; }
+  .brow .bfill.rev { background: var(--green); }
+  .brow .bamt { font-size: 9px; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 600; }
+  .brow .bamt small { color: var(--muted); font-weight: 500; }
 
   /* ── Two-up cards (summary + miscat) ──────── */
   .twoup { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
@@ -153,14 +172,36 @@
 
   .acct-list { width: 100%; border-collapse: collapse; }
   .acct-list td { padding: 6px 9px; font-size: 9px; border-bottom: 1px solid var(--line); }
-  .acct-list td.status { text-align: right; color: var(--green); font-weight: 600; }
+  .acct-list td.status { text-align: right; color: var(--green); font-weight: 600; white-space: nowrap; }
   .rules li { font-size: 9px; color: #374151; line-height: 1.5; margin-left: 16px; }
   .rules li b { color: var(--navy); }
+
+  /* ── P&L / cash summary ───────────────────── */
+  .pl { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch; }
+  .pltable { width: 100%; border-collapse: collapse; }
+  .pltable td { padding: 6px 0; font-size: 9.5px; border-bottom: 1px solid var(--line); }
+  .pltable td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  .pltable tr.sub td { font-weight: 700; color: var(--navy); }
+  .pltable tr.tot td { font-weight: 800; color: var(--navy); border-bottom: none; border-top: 2px solid var(--navy); padding-top: 8px; }
+  .pltable tr.tot td.r.pos { color: var(--green); }
+  .cashcard { background: var(--slate); border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; justify-content: center; }
+  .cashcard .l { font-size: 8.5px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .6px; }
+  .cashcard .row { display: flex; justify-content: space-between; font-size: 10px; padding: 5px 0; border-bottom: 1px solid #e3e8ee; }
+  .cashcard .row:last-child { border-bottom: none; }
+  .cashcard .row.big { font-size: 13px; font-weight: 800; color: var(--navy); padding-top: 9px; }
+  .cashcard .row .pos { color: var(--green); font-weight: 700; }
+
+  /* ── Watch-next list ──────────────────────── */
+  .watch { margin-top: 6px; }
+  .watch li { list-style: none; font-size: 9.5px; line-height: 1.5; color: #374151; padding: 6px 0 6px 18px; position: relative; border-bottom: 1px dashed var(--line); }
+  .watch li:last-child { border-bottom: none; }
+  .watch li:before { content: ""; position: absolute; left: 0; top: 11px; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); }
+  .watch li b { color: var(--navy); }
 
   /* ── The One Thing ─────────────────────────── */
   .onething {
     background: var(--navy); color: #fff; border-radius: 10px;
-    padding: 16px 20px; margin: 22px 0 4px;
+    padding: 16px 20px; margin: 20px 0 4px;
     display: flex; gap: 16px; align-items: center;
   }
   .onething .badge {
@@ -184,14 +225,45 @@
 
   @media print {
     html, body { background: #fff; }
-    .page { margin: 0; box-shadow: none; width: auto; min-height: auto; }
+    .page { margin: 0; box-shadow: none; width: auto; min-height: auto; page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
   }
 </style>
 </head>
 <body>
-<div class="page">
 
-  <!-- Header -->
+{# ── shared transaction-table header, reused on pages 1 & 2 ── #}
+{% macro txn_head() %}
+  <thead>
+    <tr>
+      <th style="width:62px">Date</th>
+      <th>Transaction &amp; what Auto Ledger did with it</th>
+      <th style="width:96px">Category</th>
+      <th class="r" style="width:80px">Amount</th>
+    </tr>
+  </thead>
+{% endmacro %}
+
+{% macro txn_rows(rows) %}
+  {% for t in rows %}
+  <tr>
+    <td>{{ t.date }}</td>
+    <td>
+      {{ t.title }}
+      <div class="note"><b>What it was:</b> {{ t.what_was }} <b>Why this category:</b> {{ t.why_category }}</div>
+    </td>
+    <td><span class="cat">{{ t.category }}</span></td>
+    <td class="r {{ t.amt_class }}">{{ t.amount_str }}</td>
+  </tr>
+  {% endfor %}
+{% endmacro %}
+
+{% set split = page1_txn_count if page1_txn_count else transactions|length %}
+{% set page1_txns = transactions[:split] %}
+{% set page2_txns = transactions[split:] %}
+
+<!-- ════════════════════════ PAGE 1 ════════════════════════ -->
+<div class="page">
   <div class="header">
     <div>
       <div class="biz">{{ biz_name }}</div>
@@ -206,17 +278,14 @@
   </div>
 
   <div class="body">
-
     {% if is_sample %}
-    <!-- Redacted sample banner -->
     <div class="sample-banner">
       <span class="chip">REDACTED SAMPLE</span>
       <span><b>This is an anonymized demonstration report.</b> Business name, account numbers, and dollar figures are fictional and do not represent a real client. Account details have been masked (••••).</span>
     </div>
     {% endif %}
 
-    <!-- KPI cards -->
-    <div class="sec">
+    <div class="sec first">
       <span class="bar"></span><h2>The Month at a Glance</h2>
       {% if vs_label %}<span class="hint">{{ vs_label }}</span>{% endif %}
     </div>
@@ -230,56 +299,93 @@
       {% endfor %}
     </div>
 
-    <!-- Categorized transactions -->
     <div class="sec">
       <span class="bar"></span><h2>Categorized Transactions</h2>
       <span class="hint">every line explained in plain English</span>
     </div>
     <table>
-      <thead>
-        <tr>
-          <th style="width:62px">Date</th>
-          <th>Transaction &amp; what Auto Ledger did with it</th>
-          <th style="width:96px">Category</th>
-          <th class="r" style="width:80px">Amount</th>
-        </tr>
-      </thead>
+      {{ txn_head() }}
       <tbody>
-        {% for t in transactions %}
-        <tr>
-          <td>{{ t.date }}</td>
-          <td>
-            {{ t.title }}
-            <div class="note"><b>What it was:</b> {{ t.what_was }} <b>Why this category:</b> {{ t.why_category }}</div>
-          </td>
-          <td><span class="cat">{{ t.category }}</span></td>
-          <td class="r {{ t.amt_class }}">{{ t.amount_str }}</td>
-        </tr>
-        {% endfor %}
+        {{ txn_rows(page1_txns) }}
       </tbody>
     </table>
+    {% if page2_txns %}
+    <p class="contnote">Continued on page 2 — {{ page2_txns|length }} more categorized transaction{{ 's' if page2_txns|length != 1 else '' }}.</p>
+    {% endif %}
+  </div>
 
-    {% if accounts %}
-    <!-- [PRO] Connected accounts -->
-    <div class="sec">
-      <span class="bar"></span><h2>Connected Accounts</h2>
-      <span class="hint">all reconciled within 24 hours</span>
+  <div class="footer">
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; {{ product_name }} · {{ tier_label }} Plan</span>
+    <span>Page 1 of 4 · Confidential</span>
+  </div>
+</div>
+
+<!-- ════════════════════════ PAGE 2 ════════════════════════ -->
+<div class="page">
+  <div class="header mini">
+    <div>
+      <div class="biz">{{ biz_name }}</div>
+      <div class="sub">{{ product_name }} · {{ month }}</div>
     </div>
-    <table class="acct-list">
+    <div class="brand">
+      <div class="mark">EchoFrame</div>
+      <div class="cont">Categorized transactions &amp; spend</div>
+    </div>
+  </div>
+
+  <div class="body">
+    {% if page2_txns %}
+    <div class="sec first">
+      <span class="bar"></span><h2>Categorized Transactions</h2>
+      <span class="hint">continued from page 1</span>
+    </div>
+    <table>
+      {{ txn_head() }}
       <tbody>
-        {% for a in accounts %}
-        <tr>
-          <td><b>{{ a.name }}</b> · {{ a.type }}</td>
-          <td>{{ a.txn_count }} transactions</td>
-          <td class="status">{{ a.status }}</td>
-        </tr>
-        {% endfor %}
+        {{ txn_rows(page2_txns) }}
       </tbody>
     </table>
     {% endif %}
 
-    <!-- What changed + miscategorizations -->
-    <div class="sec">
+    {% if category_breakdown %}
+    <div class="sec{% if not page2_txns %} first{% endif %}">
+      <span class="bar"></span><h2>Where Your Money Went</h2>
+      <span class="hint">share of total spend this month</span>
+    </div>
+    <div class="breakdown">
+      {% for b in category_breakdown %}
+      <div class="brow">
+        <div class="bname">{{ b.name }}</div>
+        <div class="btrack"><div class="bfill" style="width:{{ b.pct_width }}%"></div></div>
+        <div class="bamt">{{ b.amount_str }} <small>· {{ b.pct }}%</small></div>
+      </div>
+      {% endfor %}
+    </div>
+    {% if breakdown_note %}<p class="contnote">{{ breakdown_note | safe }}</p>{% endif %}
+    {% endif %}
+  </div>
+
+  <div class="footer">
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; {{ product_name }} · {{ tier_label }} Plan</span>
+    <span>Page 2 of 4 · Confidential</span>
+  </div>
+</div>
+
+<!-- ════════════════════════ PAGE 3 ════════════════════════ -->
+<div class="page">
+  <div class="header mini">
+    <div>
+      <div class="biz">{{ biz_name }}</div>
+      <div class="sub">{{ product_name }} · {{ month }}</div>
+    </div>
+    <div class="brand">
+      <div class="mark">EchoFrame</div>
+      <div class="cont">Analysis, catches &amp; tax set-aside</div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="sec first">
       <span class="bar"></span><h2>What Changed &amp; What We Caught</h2>
     </div>
     <div class="twoup">
@@ -301,7 +407,6 @@
     </div>
 
     {% if tax_estimate %}
-    <!-- [GROWTH] Quarterly tax estimate -->
     <div class="sec">
       <span class="bar"></span><h2>Quarterly Tax Estimate</h2>
       <span class="hint">{{ tax_estimate.period }}</span>
@@ -315,8 +420,25 @@
     <p class="taxnote">{{ tax_estimate.note | safe }}</p>
     {% endif %}
 
+    {% if accounts %}
+    <div class="sec">
+      <span class="bar"></span><h2>Connected Accounts</h2>
+      <span class="hint">all reconciled within 24 hours</span>
+    </div>
+    <table class="acct-list">
+      <tbody>
+        {% for a in accounts %}
+        <tr>
+          <td><b>{{ a.name }}</b> · {{ a.type }}</td>
+          <td>{{ a.txn_count }} transactions</td>
+          <td class="status">{{ a.status }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
     {% if custom_rules %}
-    <!-- [PRO] Custom categorization rules applied -->
     <div class="sec">
       <span class="bar"></span><h2>Custom Rules Applied</h2>
       <span class="hint">your categorization preferences, enforced automatically</span>
@@ -329,8 +451,57 @@
       </ul>
     </div>
     {% endif %}
+  </div>
 
-    <!-- The One Thing -->
+  <div class="footer">
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; {{ product_name }} · {{ tier_label }} Plan</span>
+    <span>Page 3 of 4 · Confidential</span>
+  </div>
+</div>
+
+<!-- ════════════════════════ PAGE 4 ════════════════════════ -->
+<div class="page">
+  <div class="header mini">
+    <div>
+      <div class="biz">{{ biz_name }}</div>
+      <div class="sub">{{ product_name }} · {{ month }}</div>
+    </div>
+    <div class="brand">
+      <div class="mark">EchoFrame</div>
+      <div class="cont">Bottom line &amp; what to do next</div>
+    </div>
+  </div>
+
+  <div class="body">
+    {% if pl_summary %}
+    <div class="sec first">
+      <span class="bar"></span><h2>Profit &amp; Loss Summary</h2>
+      <span class="hint">{{ month }}</span>
+    </div>
+    <div class="pl">
+      <table class="pltable">
+        <tbody>
+          {% for row in pl_summary %}
+          <tr class="{{ 'tot' if row.total else ('sub' if row.subtotal else '') }}">
+            <td>{% if row.indent %}&nbsp;&nbsp;{% endif %}{{ row.label }}</td>
+            <td class="r{% if row.total and row.pos %} pos{% endif %}">{{ row.value }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if cash_position %}
+      <div class="cashcard">
+        <div class="l">Cash Position</div>
+        {% if cash_position.opening %}<div class="row"><span>Opening balance</span><span>{{ cash_position.opening }}</span></div>{% endif %}
+        <div class="row"><span>Money in</span><span class="pos">{{ cash_position.money_in }}</span></div>
+        <div class="row"><span>Money out</span><span>{{ cash_position.money_out }}</span></div>
+        <div class="row big"><span>{% if cash_position.closing %}Closing balance{% else %}Net cash change{% endif %}</span><span>{{ cash_position.closing if cash_position.closing else cash_position.net_change }}</span></div>
+      </div>
+      {% endif %}
+    </div>
+    {% if pl_note %}<p class="contnote">{{ pl_note | safe }}</p>{% endif %}
+    {% endif %}
+
     <div class="onething">
       <span class="badge">The One Thing</span>
       <div>
@@ -339,14 +510,23 @@
       </div>
     </div>
 
+    {% if watch_next %}
+    <div class="sec">
+      <span class="bar"></span><h2>What to Watch Next Month</h2>
+    </div>
+    <ul class="watch">
+      {% for w in watch_next %}
+      <li>{{ w | safe }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
   </div>
 
-  <!-- Footer -->
   <div class="footer">
-    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; {{ product_name }}</span>
-    <span>{{ tier_label }} Plan · Confidential</span>
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; {{ product_name }} · {{ tier_label }} Plan</span>
+    <span>Page 4 of 4 · Confidential · EchoFrame provides business intelligence, not accounting, tax, or legal advice.</span>
   </div>
-
 </div>
+
 </body>
 </html>

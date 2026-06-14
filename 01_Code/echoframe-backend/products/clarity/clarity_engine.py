@@ -729,13 +729,34 @@ def _send_report_email(
     month     = meta.get("Month", datetime.utcnow().strftime("%B %Y")).strip()
     biz       = meta.get("Business Name", "your business").strip() or "your business"
     greeting  = (owner_name or "").strip() or "there"
-    file_name = f"EchoFrame_Clarity_Report_{month.replace(' ', '_') or 'Report'}.docx"
+    base_name = f"EchoFrame_Clarity_Report_{month.replace(' ', '_') or 'Report'}"
     subject   = f"Your {month} Clarity Report — {biz}".strip()
+
+    # Deliver as PDF — convert the generated Word doc so it opens natively for every
+    # recipient (no "opens in Word as code" problem). Fall back to the .docx if the
+    # converter (headless LibreOffice) isn't available in this environment.
+    try:
+        from pdf_render import docx_to_pdf
+        _pdf = docx_to_pdf(attachment_bytes)
+        attachment = {
+            "filename": f"{base_name}.pdf",
+            "content": base64.b64encode(_pdf).decode("ascii"),
+            "content_type": "application/pdf",
+        }
+        doc_word = "PDF"
+        print("[EchoFrame] Clarity report converted to PDF for delivery.")
+    except Exception as _e:
+        print(f"[EchoFrame] Clarity PDF conversion unavailable ({_e}); sending .docx.")
+        attachment = {
+            "filename": f"{base_name}.docx",
+            "content": base64.b64encode(attachment_bytes).decode("ascii"),
+        }
+        doc_word = "Word document"
 
     html = (
         f"<p>Hi {greeting},</p>"
         f"<p>Your {month} Monthly Financial Clarity Report for {biz} is attached as a "
-        f"Word document.</p>"
+        f"{doc_word}.</p>"
         f"<p>It walks through your revenue, where your money is going relative to industry "
         f"benchmarks, the single highest-leverage thing to fix this month, and the next steps "
         f"to take.</p>"
@@ -750,12 +771,7 @@ def _send_report_email(
         "to":      [customer_email],
         "subject": subject,
         "html":    html,
-        "attachments": [
-            {
-                "filename": file_name,
-                "content":  base64.b64encode(attachment_bytes).decode("ascii"),
-            }
-        ],
+        "attachments": [attachment],
     }
     resend.Emails.send(params)
     print("[EchoFrame] Report email dispatched.")  # no PII in logs

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>EchoFrame — Auto Ledger Sample · Blue Ridge Comfort Systems</title>
+<title>EchoFrame — Auto Ledger · Blue Ridge Comfort Systems, LLC</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -54,6 +54,18 @@
   .brand .pre { font-size: 7px; font-weight: 700; letter-spacing: 1.5px; color: #fff; }
   .brand .mark { font-size: 27px; font-weight: 800; color: var(--amber); line-height: 1; margin: 1px 0; }
   .brand .tag { font-size: 8px; font-style: italic; color: #cbd5e1; }
+  .tierchip {
+    display: inline-block; background: var(--amber); color: var(--navy);
+    font-size: 7px; font-weight: 800; letter-spacing: 1px; padding: 2px 7px;
+    border-radius: 4px; text-transform: uppercase; margin-top: 5px;
+  }
+  /* compact header for pages 2-4 */
+  .header.mini { padding: 12px 40px; }
+  .header.mini .biz { font-size: 14px; }
+  .header.mini .sub { font-size: 8.5px; margin-top: 1px; }
+  .header.mini .brand .mark { font-size: 18px; }
+  .header.mini .brand .pre, .header.mini .brand .tag, .header.mini .tierchip { display: none; }
+  .header.mini .cont { font-size: 8px; color: #9CA3AF; font-style: italic; }
 
   /* ── Sample banner ─────────────────────────── */
   .sample-banner {
@@ -80,6 +92,7 @@
     display: flex; align-items: center; gap: 8px;
     margin: 20px 0 9px;
   }
+  .sec.first { margin-top: 16px; }
   .sec .bar { width: 4px; height: 15px; background: var(--amber); border-radius: 2px; }
   .sec h2 {
     font-size: 11px; font-weight: 700; color: var(--navy);
@@ -122,12 +135,24 @@
   }
   .note { color: var(--muted); font-size: 8.5px; line-height: 1.35; margin-top: 3px; }
   .note b { color: var(--ink); font-weight: 600; }
+  .contnote { font-size: 8px; color: var(--muted); font-style: italic; margin: 4px 0 0; }
+
+  /* ── Category breakdown bars ───────────────── */
+  .breakdown { margin-top: 12px; }
+  .brow { display: grid; grid-template-columns: 150px 1fr 78px; gap: 12px; align-items: center; padding: 5px 0; }
+  .brow .bname { font-size: 9.5px; font-weight: 600; color: var(--navy); }
+  .brow .btrack { background: var(--slate); border-radius: 5px; height: 12px; overflow: hidden; }
+  .brow .bfill { height: 100%; background: var(--navy); border-radius: 5px; }
+  .brow .bfill.rev { background: var(--green); }
+  .brow .bamt { font-size: 9px; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 600; }
+  .brow .bamt small { color: var(--muted); font-weight: 500; }
 
   /* ── Two-up cards (summary + miscat) ──────── */
   .twoup { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
   .card { border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; }
   .card p { font-size: 9.5px; line-height: 1.5; color: #374151; }
   .card p + p { margin-top: 7px; }
+  .card-title { font-size:9px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px; }
   .flag {
     display: flex; gap: 9px; padding: 8px 0; border-bottom: 1px dashed var(--line);
     font-size: 9px; line-height: 1.4;
@@ -137,10 +162,46 @@
   .flag .fix { color: var(--green); font-weight: 600; }
   .flag .from { color: var(--muted); text-decoration: line-through; }
 
+  /* ── Tier add-on: tax estimate / accounts / rules ── */
+  .taxgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 4px; }
+  .taxbox { background: var(--slate); border-radius: 8px; padding: 11px 13px; border-left: 3px solid var(--navy); }
+  .taxbox.total { border-left-color: var(--amber); }
+  .taxbox .l { font-size: 8px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .5px; }
+  .taxbox .v { font-size: 18px; font-weight: 800; color: var(--navy); margin-top: 4px; letter-spacing: -.3px; }
+  .taxnote { font-size: 8.5px; color: var(--muted); line-height: 1.4; margin-top: 9px; }
+
+  .acct-list { width: 100%; border-collapse: collapse; }
+  .acct-list td { padding: 6px 9px; font-size: 9px; border-bottom: 1px solid var(--line); }
+  .acct-list td.status { text-align: right; color: var(--green); font-weight: 600; white-space: nowrap; }
+  .rules li { font-size: 9px; color: #374151; line-height: 1.5; margin-left: 16px; }
+  .rules li b { color: var(--navy); }
+
+  /* ── P&L / cash summary ───────────────────── */
+  .pl { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch; }
+  .pltable { width: 100%; border-collapse: collapse; }
+  .pltable td { padding: 6px 0; font-size: 9.5px; border-bottom: 1px solid var(--line); }
+  .pltable td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  .pltable tr.sub td { font-weight: 700; color: var(--navy); }
+  .pltable tr.tot td { font-weight: 800; color: var(--navy); border-bottom: none; border-top: 2px solid var(--navy); padding-top: 8px; }
+  .pltable tr.tot td.r.pos { color: var(--green); }
+  .cashcard { background: var(--slate); border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; justify-content: center; }
+  .cashcard .l { font-size: 8.5px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .6px; }
+  .cashcard .row { display: flex; justify-content: space-between; font-size: 10px; padding: 5px 0; border-bottom: 1px solid #e3e8ee; }
+  .cashcard .row:last-child { border-bottom: none; }
+  .cashcard .row.big { font-size: 13px; font-weight: 800; color: var(--navy); padding-top: 9px; }
+  .cashcard .row .pos { color: var(--green); font-weight: 700; }
+
+  /* ── Watch-next list ──────────────────────── */
+  .watch { margin-top: 6px; }
+  .watch li { list-style: none; font-size: 9.5px; line-height: 1.5; color: #374151; padding: 6px 0 6px 18px; position: relative; border-bottom: 1px dashed var(--line); }
+  .watch li:last-child { border-bottom: none; }
+  .watch li:before { content: ""; position: absolute; left: 0; top: 11px; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); }
+  .watch li b { color: var(--navy); }
+
   /* ── The One Thing ─────────────────────────── */
   .onething {
     background: var(--navy); color: #fff; border-radius: 10px;
-    padding: 16px 20px; margin: 22px 0 4px;
+    padding: 16px 20px; margin: 20px 0 4px;
     display: flex; gap: 16px; align-items: center;
   }
   .onething .badge {
@@ -164,176 +225,528 @@
 
   @media print {
     html, body { background: #fff; }
-    .page { margin: 0; box-shadow: none; width: auto; min-height: auto; }
+    .page { margin: 0; box-shadow: none; width: auto; min-height: auto; page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
   }
 </style>
 </head>
 <body>
-<div class="page">
 
-  <!-- Header -->
+
+
+
+
+
+
+
+
+
+<!-- ════════════════════════ PAGE 1 ════════════════════════ -->
+<div class="page">
   <div class="header">
     <div>
       <div class="biz">Blue Ridge Comfort Systems, LLC</div>
-      <div class="sub">Auto Ledger · Bookkeeping that explains itself · May 2026 · Columbus, GA</div>
+      <div class="sub">Auto Ledger · Bookkeeping that explains itself · May 2026 · Columbus GA</div>
     </div>
     <div class="brand">
       <div class="pre">POWERED BY</div>
       <div class="mark">EchoFrame</div>
       <div class="tag">Business intelligence, not accounting.</div>
+      <div class="tierchip">Growth Plan</div>
     </div>
   </div>
 
   <div class="body">
-
-    <!-- Redacted sample banner -->
+    
     <div class="sample-banner">
       <span class="chip">REDACTED SAMPLE</span>
       <span><b>This is an anonymized demonstration report.</b> Business name, account numbers, and dollar figures are fictional and do not represent a real client. Account details have been masked (••••).</span>
     </div>
+    
 
-    <!-- KPI cards -->
-    <div class="sec">
+    <div class="sec first">
       <span class="bar"></span><h2>The Month at a Glance</h2>
-      <span class="hint">vs. April 2026</span>
+      <span class="hint">vs. prior month</span>
     </div>
     <div class="kpis">
+      
       <div class="kpi">
         <div class="label">Revenue</div>
         <div class="value">$58,420</div>
-        <div class="delta up">▲ 11.3% &nbsp;·&nbsp; +$5,930 over April</div>
+        <div class="delta up">▲ 11.3% &nbsp;·&nbsp; +$5,930 vs prior</div>
       </div>
+      
       <div class="kpi">
         <div class="label">Net Income</div>
         <div class="value">$12,180</div>
         <div class="delta up">▲ 20.8% margin &nbsp;·&nbsp; up from 17.4%</div>
       </div>
+      
       <div class="kpi">
         <div class="label">Uncategorized Cleared</div>
         <div class="value">47 → 0</div>
         <div class="delta flat">All 47 sorted &amp; explained this month</div>
       </div>
+      
     </div>
 
-    <!-- Categorized transactions -->
     <div class="sec">
       <span class="bar"></span><h2>Categorized Transactions</h2>
       <span class="hint">every line explained in plain English</span>
     </div>
     <table>
-      <thead>
-        <tr>
-          <th style="width:62px">Date</th>
-          <th>Transaction &amp; what Auto Ledger did with it</th>
-          <th style="width:96px">Category</th>
-          <th class="r" style="width:80px">Amount</th>
-        </tr>
-      </thead>
+      
+  <thead>
+    <tr>
+      <th style="width:62px">Date</th>
+      <th>Transaction &amp; what Auto Ledger did with it</th>
+      <th style="width:96px">Category</th>
+      <th class="r" style="width:80px">Amount</th>
+    </tr>
+  </thead>
+
       <tbody>
-        <tr>
-          <td>May 03</td>
-          <td>
-            ACH deposit · ServiceTitan payout ••••8841
-            <div class="note"><b>What it was:</b> Customer card payments for 9 completed jobs, batched by your field-service software. <b>Why this category:</b> Money in from selling your core service, so it lands in Service Revenue — not "Other Income."</div>
-          </td>
-          <td><span class="cat">Service Revenue</span></td>
-          <td class="r amt-in">+$14,260</td>
-        </tr>
-        <tr>
-          <td>May 07</td>
-          <td>
-            Carrier Enterprise · invoice #CE-20418
-            <div class="note"><b>What it was:</b> A 4-ton condenser and coil for the Whitesville Rd install. <b>Why this category:</b> Equipment resold to a customer on a job, so it's Cost of Goods Sold — it offsets that job's revenue, not overhead.</div>
-          </td>
-          <td><span class="cat">COGS — Equipment</span></td>
-          <td class="r amt-out">−$3,940</td>
-        </tr>
-        <tr>
-          <td>May 12</td>
-          <td>
-            Fuel · RaceTrac, Manchester Expy (fleet card ••••2207)
-            <div class="note"><b>What it was:</b> Diesel for the two service vans. <b>Why this category:</b> Recurring fleet card charge at a gas station → Vehicle &amp; Fuel, automatically, no receipt chasing.</div>
-          </td>
-          <td><span class="cat">Vehicle &amp; Fuel</span></td>
-          <td class="r amt-out">−$612</td>
-        </tr>
-        <tr>
-          <td>May 15</td>
-          <td>
-            Gusto · payroll run (4 techs, 1 office)
-            <div class="note"><b>What it was:</b> Bi-weekly wages plus employer taxes. <b>Why this category:</b> Split for you — gross pay to Payroll, the employer portion to Payroll Taxes, so your labor cost is clean.</div>
-          </td>
-          <td><span class="cat">Payroll</span></td>
-          <td class="r amt-out">−$18,540</td>
-        </tr>
-        <tr>
-          <td>May 19</td>
-          <td>
-            Zelle deposit · "J. Hammond" ••••5520
-            <div class="note"><b>What it was:</b> Final balance on the Midland heat-pump replacement, paid outside the card system. <b>Why this category:</b> Matched to open Invoice #1042, so it counts as Service Revenue — not an untracked transfer.</div>
-          </td>
-          <td><span class="cat">Service Revenue</span></td>
-          <td class="r amt-in">+$6,800</td>
-        </tr>
-        <tr>
-          <td>May 22</td>
-          <td>
-            Synovus Bank · monthly service charge
-            <div class="note"><b>What it was:</b> Business checking account fee. <b>Why this category:</b> Bank's own fee → Bank Charges, kept separate from your real operating expenses.</div>
-          </td>
-          <td><span class="cat">Bank Charges</span></td>
-          <td class="r amt-out">−$29</td>
-        </tr>
-        <tr>
-          <td>May 26</td>
-          <td>
-            The Home Depot #0114 · Airport Thruway
-            <div class="note"><b>What it was:</b> Conduit, fittings, and a replacement drill. <b>Why this category:</b> Consumable job materials, not resold equipment → Supplies. The drill is under your $500 threshold, so it's expensed, not capitalized.</div>
-          </td>
-          <td><span class="cat">Supplies</span></td>
-          <td class="r amt-out">−$418</td>
-        </tr>
-        <tr>
-          <td>May 29</td>
-          <td>
-            Google Ads · acct ••••0931
-            <div class="note"><b>What it was:</b> "AC repair Columbus GA" search campaign. <b>Why this category:</b> Recurring spend with an ad platform → Advertising &amp; Marketing.</div>
-          </td>
-          <td><span class="cat">Advertising</span></td>
-          <td class="r amt-out">−$740</td>
-        </tr>
+        
+  
+  <tr>
+    <td>May 03</td>
+    <td>
+      ACH deposit · ServiceTitan payout ••••8841
+      <div class="note"><b>What it was:</b> Customer card payments for 9 completed jobs, batched by your field-service software. <b>Why this category:</b> Money in from selling your core service, so it lands in Service Revenue — not “Other Income.”</div>
+    </td>
+    <td><span class="cat">Service Revenue</span></td>
+    <td class="r amt-in">+$14,260</td>
+  </tr>
+  
+  <tr>
+    <td>May 07</td>
+    <td>
+      Carrier Enterprise · invoice #CE-20418
+      <div class="note"><b>What it was:</b> A 4-ton condenser and coil for the Whitesville Rd install. <b>Why this category:</b> Equipment resold to a customer on a job, so it&#39;s Cost of Goods Sold — it offsets that job&#39;s revenue, not overhead.</div>
+    </td>
+    <td><span class="cat">COGS — Equipment</span></td>
+    <td class="r amt-out">−$3,940</td>
+  </tr>
+  
+  <tr>
+    <td>May 12</td>
+    <td>
+      Fuel · RaceTrac, Manchester Expy
+      <div class="note"><b>What it was:</b> Diesel for the two service vans. <b>Why this category:</b> Recurring fleet card charge at a gas station → Vehicle &amp; Fuel, automatically, no receipt chasing.</div>
+    </td>
+    <td><span class="cat">Vehicle &amp; Fuel</span></td>
+    <td class="r amt-out">−$612</td>
+  </tr>
+  
+  <tr>
+    <td>May 15</td>
+    <td>
+      Gusto · payroll run (4 techs + 1 office)
+      <div class="note"><b>What it was:</b> Bi-weekly wages plus employer taxes. <b>Why this category:</b> Split for you — gross pay to Payroll, the employer portion to Payroll Taxes, so your labor cost is clean.</div>
+    </td>
+    <td><span class="cat">Payroll</span></td>
+    <td class="r amt-out">−$18,540</td>
+  </tr>
+  
+  <tr>
+    <td>May 19</td>
+    <td>
+      Zelle deposit · J. Hammond ••••5520
+      <div class="note"><b>What it was:</b> Final balance on the Midland heat-pump replacement, paid outside the card system. <b>Why this category:</b> Matched to open Invoice #1042, so it counts as Service Revenue — not an untracked transfer.</div>
+    </td>
+    <td><span class="cat">Service Revenue</span></td>
+    <td class="r amt-in">+$6,800</td>
+  </tr>
+  
+  <tr>
+    <td>May 22</td>
+    <td>
+      Synovus Bank · monthly service charge
+      <div class="note"><b>What it was:</b> Business checking account fee. <b>Why this category:</b> Bank&#39;s own fee → Bank Charges, kept separate from your real operating expenses.</div>
+    </td>
+    <td><span class="cat">Bank Charges</span></td>
+    <td class="r amt-out">−$29</td>
+  </tr>
+  
+  <tr>
+    <td>May 26</td>
+    <td>
+      The Home Depot #0114 · Airport Thruway
+      <div class="note"><b>What it was:</b> Conduit, fittings, and a replacement drill. <b>Why this category:</b> Consumable job materials, not resold equipment → Supplies. The drill is under your $500 threshold, so it&#39;s expensed, not capitalized.</div>
+    </td>
+    <td><span class="cat">Supplies</span></td>
+    <td class="r amt-out">−$418</td>
+  </tr>
+  
+
       </tbody>
     </table>
+    
+    <p class="contnote">Continued on page 2 — 12 more categorized transactions.</p>
+    
+  </div>
 
-    <!-- What changed + miscategorizations -->
+  <div class="footer">
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; Auto Ledger · Growth Plan</span>
+    <span>Page 1 of 4 · Confidential</span>
+  </div>
+</div>
+
+<!-- ════════════════════════ PAGE 2 ════════════════════════ -->
+<div class="page">
+  <div class="header mini">
+    <div>
+      <div class="biz">Blue Ridge Comfort Systems, LLC</div>
+      <div class="sub">Auto Ledger · May 2026</div>
+    </div>
+    <div class="brand">
+      <div class="mark">EchoFrame</div>
+      <div class="cont">Categorized transactions &amp; spend</div>
+    </div>
+  </div>
+
+  <div class="body">
+    
+    <div class="sec first">
+      <span class="bar"></span><h2>Categorized Transactions</h2>
+      <span class="hint">continued from page 1</span>
+    </div>
+    <table>
+      
+  <thead>
+    <tr>
+      <th style="width:62px">Date</th>
+      <th>Transaction &amp; what Auto Ledger did with it</th>
+      <th style="width:96px">Category</th>
+      <th class="r" style="width:80px">Amount</th>
+    </tr>
+  </thead>
+
+      <tbody>
+        
+  
+  <tr>
+    <td>May 02</td>
+    <td>
+      Ferguson HVAC #4471 · counter sale
+      <div class="note"><b>What it was:</b> Line sets, refrigerant, and a contactor for two repair calls. <b>Why this category:</b> Job materials consumed on service work → Supplies.</div>
+    </td>
+    <td><span class="cat">Supplies</span></td>
+    <td class="r amt-out">−$1,240</td>
+  </tr>
+  
+  <tr>
+    <td>May 06</td>
+    <td>
+      Cintas · uniform &amp; mat service
+      <div class="note"><b>What it was:</b> Monthly tech uniforms and shop mats. <b>Why this category:</b> Recurring vendor on a service contract → Operating Expense.</div>
+    </td>
+    <td><span class="cat">Operating Exp.</span></td>
+    <td class="r amt-out">−$186</td>
+  </tr>
+  
+  <tr>
+    <td>May 09</td>
+    <td>
+      Cincinnati Insurance · GL + commercial auto
+      <div class="note"><b>What it was:</b> Monthly liability and commercial-auto premium. <b>Why this category:</b> Recurring insurer ACH → Insurance, not lumped into overhead.</div>
+    </td>
+    <td><span class="cat">Insurance</span></td>
+    <td class="r amt-out">−$890</td>
+  </tr>
+  
+  <tr>
+    <td>May 14</td>
+    <td>
+      ACH deposit · ServiceTitan payout ••••8841
+      <div class="note"><b>What it was:</b> Card payments for 6 completed jobs in the second weekly batch. <b>Why this category:</b> Core service revenue → Service Revenue.</div>
+    </td>
+    <td><span class="cat">Service Revenue</span></td>
+    <td class="r amt-in">+$9,180</td>
+  </tr>
+  
+  <tr>
+    <td>May 16</td>
+    <td>
+      Lennox · invoice #LX-88142
+      <div class="note"><b>What it was:</b> Two-stage gas furnace for the Smiths Station changeout. <b>Why this category:</b> Equipment resold on a job → COGS — Equipment.</div>
+    </td>
+    <td><span class="cat">COGS — Equipment</span></td>
+    <td class="r amt-out">−$2,310</td>
+  </tr>
+  
+  <tr>
+    <td>May 20</td>
+    <td>
+      Fuel · Circle K, Buena Vista Rd
+      <div class="note"><b>What it was:</b> Diesel and DEF for the vans. <b>Why this category:</b> Fleet card at a fuel station → Vehicle &amp; Fuel.</div>
+    </td>
+    <td><span class="cat">Vehicle &amp; Fuel</span></td>
+    <td class="r amt-out">−$548</td>
+  </tr>
+  
+  <tr>
+    <td>May 23</td>
+    <td>
+      ServiceTitan · monthly software subscription
+      <div class="note"><b>What it was:</b> Your field-service management subscription. <b>Why this category:</b> Recurring SaaS charge → Software &amp; Subscriptions.</div>
+    </td>
+    <td><span class="cat">Software</span></td>
+    <td class="r amt-out">−$329</td>
+  </tr>
+  
+  <tr>
+    <td>May 27</td>
+    <td>
+      ACH deposit · ServiceTitan payout ••••8841
+      <div class="note"><b>What it was:</b> Final weekly batch — 7 jobs including two maintenance-plan renewals. <b>Why this category:</b> Service Revenue, with the renewals tagged as recurring.</div>
+    </td>
+    <td><span class="cat">Service Revenue</span></td>
+    <td class="r amt-in">+$11,380</td>
+  </tr>
+  
+  <tr>
+    <td>May 29</td>
+    <td>
+      Google Ads · acct ••••0931
+      <div class="note"><b>What it was:</b> “AC repair Columbus GA” search campaign. <b>Why this category:</b> Recurring spend with an ad platform → Advertising &amp; Marketing.</div>
+    </td>
+    <td><span class="cat">Advertising</span></td>
+    <td class="r amt-out">−$740</td>
+  </tr>
+  
+  <tr>
+    <td>May 29</td>
+    <td>
+      Gusto · payroll run (4 techs + 1 office)
+      <div class="note"><b>What it was:</b> Second bi-weekly payroll of the month. <b>Why this category:</b> Wages to Payroll, employer taxes split out automatically.</div>
+    </td>
+    <td><span class="cat">Payroll</span></td>
+    <td class="r amt-out">−$18,540</td>
+  </tr>
+  
+  <tr>
+    <td>May 30</td>
+    <td>
+      Transfer to Synovus Savings ••••3390 · owner
+      <div class="note"><b>What it was:</b> Owner moved profit to personal savings. <b>Why this category:</b> Not a business expense → Owner&#39;s Draw, so it doesn&#39;t reduce your reported profit.</div>
+    </td>
+    <td><span class="cat">Owner&#39;s Draw</span></td>
+    <td class="r amt-out">−$2,400</td>
+  </tr>
+  
+  <tr>
+    <td>May 31</td>
+    <td>
+      Service-van loan · Ally Financial ••••7781
+      <div class="note"><b>What it was:</b> Monthly note on the 2024 Transit service van. <b>Why this category:</b> Split into Loan Interest (expense) and Loan Principal (balance-sheet) — only the interest hits your P&amp;L.</div>
+    </td>
+    <td><span class="cat">Loan Payment</span></td>
+    <td class="r amt-out">−$720</td>
+  </tr>
+  
+
+      </tbody>
+    </table>
+    
+
+    
     <div class="sec">
+      <span class="bar"></span><h2>Where Your Money Went</h2>
+      <span class="hint">share of total spend this month</span>
+    </div>
+    <div class="breakdown">
+      
+      <div class="brow">
+        <div class="bname">Payroll</div>
+        <div class="btrack"><div class="bfill" style="width:100%"></div></div>
+        <div class="bamt">$37,080 <small>· 76%</small></div>
+      </div>
+      
+      <div class="brow">
+        <div class="bname">COGS — Equipment</div>
+        <div class="btrack"><div class="bfill" style="width:17%"></div></div>
+        <div class="bamt">$6,250 <small>· 13%</small></div>
+      </div>
+      
+      <div class="brow">
+        <div class="bname">Supplies</div>
+        <div class="btrack"><div class="bfill" style="width:4%"></div></div>
+        <div class="bamt">$1,658 <small>· 3%</small></div>
+      </div>
+      
+      <div class="brow">
+        <div class="bname">Vehicle &amp; Fuel</div>
+        <div class="btrack"><div class="bfill" style="width:3%"></div></div>
+        <div class="bamt">$1,160 <small>· 2%</small></div>
+      </div>
+      
+      <div class="brow">
+        <div class="bname">Insurance</div>
+        <div class="btrack"><div class="bfill" style="width:2%"></div></div>
+        <div class="bamt">$890 <small>· 2%</small></div>
+      </div>
+      
+      <div class="brow">
+        <div class="bname">Advertising</div>
+        <div class="btrack"><div class="bfill" style="width:2%"></div></div>
+        <div class="bamt">$740 <small>· 2%</small></div>
+      </div>
+      
+      <div class="brow">
+        <div class="bname">Other</div>
+        <div class="btrack"><div class="bfill" style="width:3%"></div></div>
+        <div class="bamt">$1,264 <small>· 3%</small></div>
+      </div>
+      
+    </div>
+    <p class="contnote">Owner's draws and loan principal ($2,400) are excluded above — they move cash but aren't operating costs, so they don't distort your expense picture.</p>
+    
+  </div>
+
+  <div class="footer">
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; Auto Ledger · Growth Plan</span>
+    <span>Page 2 of 4 · Confidential</span>
+  </div>
+</div>
+
+<!-- ════════════════════════ PAGE 3 ════════════════════════ -->
+<div class="page">
+  <div class="header mini">
+    <div>
+      <div class="biz">Blue Ridge Comfort Systems, LLC</div>
+      <div class="sub">Auto Ledger · May 2026</div>
+    </div>
+    <div class="brand">
+      <div class="mark">EchoFrame</div>
+      <div class="cont">Analysis, catches &amp; tax set-aside</div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="sec first">
       <span class="bar"></span><h2>What Changed &amp; What We Caught</h2>
     </div>
     <div class="twoup">
       <div class="card">
-        <p style="font-size:9px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">What changed this month</p>
+        <p class="card-title">What changed this month</p>
+        
         <p><b>Revenue was your best of the year</b> — up 11% on the spring AC-repair rush. Eight of those jobs came from the Google Ads campaign, which is now paying for itself roughly 19× over.</p>
+        
         <p><b>Margin widened to 20.8%</b> because revenue grew faster than payroll. You added one tech in March; this is the first full month they were billable rather than just a cost.</p>
-        <p><b>The books are caught up.</b> Last month you carried 47 uncategorized transactions. All 47 are now sorted, matched to invoices where possible, and explained above — nothing is sitting in "Ask My Accountant."</p>
+        
+        <p><b>The books are caught up.</b> Last month you carried 47 uncategorized transactions. All 47 are now sorted, matched to invoices where possible, and explained above — nothing is sitting in “Ask My Accountant.”</p>
+        
       </div>
       <div class="card">
-        <p style="font-size:9px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Miscategorizations we caught</p>
+        <p class="card-title">Miscategorizations we caught</p>
+        
         <div class="flag">
           <span class="ico">!</span>
           <span>An <b>$1,180 Carrier equipment</b> charge was auto-booked as <span class="from">Supplies</span> → moved to <span class="fix">COGS — Equipment</span>. Supplies were overstated; gross margin on that job is now correct.</span>
         </div>
+        
         <div class="flag">
           <span class="ico">!</span>
           <span>A <b>$2,400 owner transfer</b> to personal savings was sitting in <span class="from">Expenses</span> → reclassed to <span class="fix">Owner's Draw</span>. It's not a business cost and shouldn't reduce your profit.</span>
         </div>
+        
         <div class="flag">
           <span class="ico">!</span>
           <span>A <b>$540 duplicate</b> from a double-swiped Ferguson charge was flagged; the credit was matched, so it nets to <span class="fix">$0</span> instead of inflating Supplies.</span>
         </div>
+        
       </div>
     </div>
 
-    <!-- The One Thing -->
+    
+    <div class="sec">
+      <span class="bar"></span><h2>Quarterly Tax Estimate</h2>
+      <span class="hint">Q2 2026 · due Jun 15, 2026</span>
+    </div>
+    <div class="taxgrid">
+      <div class="taxbox"><div class="l">Est. Federal</div><div class="v">$5,481</div></div>
+      <div class="taxbox"><div class="l">Est. State</div><div class="v">$1,827</div></div>
+      <div class="taxbox"><div class="l">Self-Employment</div><div class="v">$3,362</div></div>
+      <div class="taxbox total"><div class="l">Set Aside</div><div class="v">$10,670</div></div>
+    </div>
+    <p class="taxnote">Set aside <b>$10,670</b> for Q2 2026 based on this month's net income at run-rate. This is a planning estimate, not a filing — your CPA-ready export ships with the figures behind it.</p>
+    
+
+    
+
+    
+  </div>
+
+  <div class="footer">
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; Auto Ledger · Growth Plan</span>
+    <span>Page 3 of 4 · Confidential</span>
+  </div>
+</div>
+
+<!-- ════════════════════════ PAGE 4 ════════════════════════ -->
+<div class="page">
+  <div class="header mini">
+    <div>
+      <div class="biz">Blue Ridge Comfort Systems, LLC</div>
+      <div class="sub">Auto Ledger · May 2026</div>
+    </div>
+    <div class="brand">
+      <div class="mark">EchoFrame</div>
+      <div class="cont">Bottom line &amp; what to do next</div>
+    </div>
+  </div>
+
+  <div class="body">
+    
+    <div class="sec first">
+      <span class="bar"></span><h2>Profit &amp; Loss Summary</h2>
+      <span class="hint">May 2026</span>
+    </div>
+    <div class="pl">
+      <table class="pltable">
+        <tbody>
+          
+          <tr class="">
+            <td>Service Revenue</td>
+            <td class="r">$58,420</td>
+          </tr>
+          
+          <tr class="">
+            <td>&nbsp;&nbsp;less Cost of Goods Sold</td>
+            <td class="r">−$6,250</td>
+          </tr>
+          
+          <tr class="sub">
+            <td>Gross Profit</td>
+            <td class="r">$52,170</td>
+          </tr>
+          
+          <tr class="">
+            <td>&nbsp;&nbsp;Operating expenses (payroll, vehicle, overhead)</td>
+            <td class="r">−$39,990</td>
+          </tr>
+          
+          <tr class="tot">
+            <td>Net Income</td>
+            <td class="r pos">$12,180</td>
+          </tr>
+          
+        </tbody>
+      </table>
+      
+      <div class="cashcard">
+        <div class="l">Cash Position</div>
+        <div class="row"><span>Opening balance</span><span>$31,640</span></div>
+        <div class="row"><span>Money in</span><span class="pos">+$41,620</span></div>
+        <div class="row"><span>Money out</span><span>−$51,442</span></div>
+        <div class="row big"><span>Closing balance</span><span>$21,818</span></div>
+      </div>
+      
+    </div>
+    <p class="contnote">Net income of $12,180 is a 20.8% margin on $58,420 of revenue. The spend bars on page 2 break the operating costs down by category.</p>
+    
+
     <div class="onething">
       <span class="badge">The One Thing</span>
       <div>
@@ -342,14 +755,29 @@
       </div>
     </div>
 
+    
+    <div class="sec">
+      <span class="bar"></span><h2>What to Watch Next Month</h2>
+    </div>
+    <ul class="watch">
+      
+      <li><b>The quarterly tax set-aside</b> is due June 15 — move it to a separate account this week so it's out of spending reach.</li>
+      
+      <li><b>Two maintenance-plan renewals</b> recurred this month and four more are due in June; we'll track whether your renewal rate holds above 80%.</li>
+      
+      <li><b>$4,700 of equipment</b> was bought ahead of June installs — watch that it converts to revenue and doesn't sit as idle inventory.</li>
+      
+      <li><b>The March-hire tech</b> is now billable — track their job hours against payroll cost next month to confirm they're fully paying for themselves.</li>
+      
+    </ul>
+    
   </div>
 
-  <!-- Footer -->
   <div class="footer">
-    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; Auto Ledger</span>
-    <span>Page 1 of 4 · Confidential</span>
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; Auto Ledger · Growth Plan</span>
+    <span>Page 4 of 4 · Confidential · EchoFrame provides business intelligence, not accounting, tax, or legal advice.</span>
   </div>
-
 </div>
+
 </body>
 </html>

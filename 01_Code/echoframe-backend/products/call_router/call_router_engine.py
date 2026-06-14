@@ -185,6 +185,7 @@ def _save(meta, html):
     p.write_text(html, encoding="utf-8"); print(f"[CallRouter] Report saved -> {p.name}"); return str(p)
 def _email(email, owner, html_bytes, meta):
     import resend
+    from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     period = meta.get("Period", "").strip(); biz = meta.get("Business Name", "your business").strip()
     resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
@@ -192,8 +193,7 @@ def _email(email, owner, html_bytes, meta):
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your Call Router report for {biz} ({period}) is "
                 f"attached — every inbound call answered, qualified, and routed, plus the after-hours work you'd "
                 f"have lost to voicemail.</p><p>— EchoFrame</p>",
-        "attachments": [{"filename": f"EchoFrame_CallRouter_{period.replace(' ','_').replace(',','')}.html",
-                         "content": base64.b64encode(html_bytes).decode("ascii"), "content_type": "text/html"}]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_CallRouter_{period.replace(' ','_').replace(',','')}.html")]})
     print("[CallRouter] Report email dispatched.")
 
 

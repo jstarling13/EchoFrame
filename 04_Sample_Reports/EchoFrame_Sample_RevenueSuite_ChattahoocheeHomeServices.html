@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EchoFrame — Revenue Suite · Chattahoochee Home Services LLC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy:#012A4A; --navy-2:#013a66; --amber:#C8972A; --green:#059669;
+    --red:#DC2626; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --slate:#f1f5f9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background:#525659; font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .page { width:8.5in; min-height:11in; margin:24px auto; background:#fff; box-shadow:0 6px 30px rgba(0,0,0,.35); display:flex; flex-direction:column; }
+  .body { padding:22px 40px 0; flex:1; }
+  .header { background:var(--navy); color:#fff; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid var(--amber); }
+  .header .biz { font-size:21px; font-weight:800; letter-spacing:-.2px; }
+  .header .sub { font-size:9.5px; color:#9CA3AF; margin-top:3px; letter-spacing:.2px; }
+  .brand { text-align:right; }
+  .brand .pre { font-size:7px; font-weight:700; letter-spacing:1.5px; color:#fff; }
+  .brand .mark { font-size:27px; font-weight:800; color:var(--amber); line-height:1; margin:1px 0; }
+  .brand .tag { font-size:8px; font-style:italic; color:#cbd5e1; }
+  .tierchip { display:inline-block; background:var(--amber); color:var(--navy); font-size:7px; font-weight:800; letter-spacing:1px; padding:2px 7px; border-radius:4px; text-transform:uppercase; margin-top:5px; }
+  .sample-banner { background:#FEF3C7; border:1px solid var(--amber); border-radius:6px; padding:7px 12px; margin-top:18px; font-size:9.5px; color:#7c5e10; display:flex; align-items:center; gap:8px; }
+  .sample-banner b { color:#5c4708; }
+  .chip { background:var(--amber); color:#fff; font-weight:700; font-size:8px; letter-spacing:1px; padding:2px 7px; border-radius:4px; white-space:nowrap; }
+  .sec { display:flex; align-items:center; gap:8px; margin:20px 0 9px; }
+  .sec .bar { width:4px; height:15px; background:var(--amber); border-radius:2px; }
+  .sec h2 { font-size:11px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:.8px; }
+  .sec .hint { font-size:9px; color:var(--muted); font-weight:500; margin-left:auto; }
+  /* hero total */
+  .hero { background:var(--navy); color:#fff; border-radius:10px; padding:18px 22px; margin-top:14px; display:flex; align-items:center; justify-content:space-between; border-left:4px solid var(--amber); }
+  .hero .l { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#9CA3AF; }
+  .hero .v { font-size:40px; font-weight:800; letter-spacing:-1px; line-height:1; margin-top:4px; }
+  .hero .v small { font-size:13px; color:#cbd5e1; font-weight:700; }
+  .hero .r { text-align:right; font-size:9px; color:#cbd5e1; line-height:1.5; max-width:230px; }
+  /* product KPI strip */
+  .kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px; }
+  .kpi { background:var(--slate); border-radius:8px; padding:13px 15px; border-top:3px solid var(--amber); }
+  .kpi .label { font-size:8.5px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:.6px; }
+  .kpi .value { font-size:23px; font-weight:800; color:var(--navy); margin:5px 0 2px; letter-spacing:-.5px; }
+  .kpi .delta { font-size:9px; font-weight:600; color:var(--green); }
+  /* modules */
+  .modules { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
+  .module { border:1px solid var(--line); border-radius:8px; overflow:hidden; display:flex; flex-direction:column; }
+  .module .cap { background:var(--navy); color:#fff; padding:8px 13px; display:flex; align-items:baseline; justify-content:space-between; }
+  .module .cap .mname { font-size:10.5px; font-weight:800; letter-spacing:.2px; }
+  .module .cap .price { font-size:7.5px; font-weight:700; color:var(--amber); }
+  .module .stat { padding:11px 13px 4px; font-size:22px; font-weight:800; color:var(--navy); letter-spacing:-.5px; }
+  .module .stat small { font-size:9px; color:var(--muted); font-weight:700; }
+  .module ul { list-style:none; padding:4px 13px 12px; margin:0; flex:1; }
+  .module li { position:relative; padding:3px 0 3px 12px; font-size:9px; line-height:1.4; color:#374151; }
+  .module li::before { content:"›"; position:absolute; left:0; color:var(--amber); font-weight:800; }
+  .module .top { background:#fafbfc; border-top:1px solid var(--line); padding:7px 13px; font-size:8.5px; color:var(--muted); }
+  .module .top b { color:var(--navy); }
+  /* card */
+  .card { border:1px solid var(--line); border-radius:8px; padding:13px 15px; margin-top:14px; }
+  .card .ttl { font-size:9px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px; }
+  .card p { font-size:9.5px; line-height:1.5; color:#374151; }
+  .card b { color:var(--ink); font-weight:600; }
+  .onething { background:var(--navy); color:#fff; border-radius:10px; padding:16px 20px; margin:14px 0 4px; display:flex; gap:16px; align-items:center; }
+  .onething .badge { background:var(--amber); color:var(--navy); font-weight:800; font-size:8px; letter-spacing:1px; padding:4px 9px; border-radius:5px; text-transform:uppercase; white-space:nowrap; align-self:flex-start; }
+  .onething h3 { font-size:13px; font-weight:700; margin-bottom:4px; color:#fff; }
+  .onething p { font-size:9.5px; line-height:1.5; color:#cbd5e1; }
+  .onething .dollar { color:var(--amber); font-weight:800; }
+  .footer { margin-top:18px; border-top:1px solid var(--line); padding:11px 40px; display:flex; justify-content:space-between; align-items:center; font-size:8px; color:var(--muted); letter-spacing:.3px; }
+  .footer .ef { font-weight:800; color:var(--navy); }
+  @media print { html,body{background:#fff;} .page{margin:0;box-shadow:none;width:auto;min-height:auto;} }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div>
+      <div class="biz">Chattahoochee Home Services LLC</div>
+      <div class="sub">Revenue Suite · Call Catch + Quote Revive + Clear Ledger · June 2026 · Columbus GA</div>
+    </div>
+    <div class="brand">
+      <div class="pre">POWERED BY</div><div class="mark">EchoFrame</div>
+      <div class="tag">Business intelligence, not accounting.</div>
+      <div class="tierchip">Revenue Suite</div>
+    </div>
+  </div>
+  <div class="body">
+    
+    <div class="sample-banner">
+      <span class="chip">REDACTED SAMPLE</span>
+      <span><b>This is an anonymized demonstration report.</b> Business name and dollar figures are fictional and do not represent a real client.</span>
+    </div>
+    
+
+    <div class="sec"><span class="bar"></span><h2>Revenue Recovered at a Glance</h2><span class="hint">all three tools · June 2026</span></div>
+    <div class="hero">
+      <div>
+        <div class="l">Total Revenue Recovered</div>
+        <div class="v">$64,640<small> this month</small></div>
+      </div>
+      <div class="r">Across all three tools, the suite put <b>$64,640</b> back on the table this month — money that would otherwise have leaked from missed calls, cold quotes, and unpaid invoices.</div>
+    </div>
+    <div class="kpis">
+      
+      <div class="kpi">
+        <div class="label">Call Catch</div>
+        <div class="value">$12,400</div>
+        <div class="delta">11 leads recovered</div>
+      </div>
+      
+      <div class="kpi">
+        <div class="label">Quote Revive</div>
+        <div class="value">$38,500</div>
+        <div class="delta">2 jobs closed</div>
+      </div>
+      
+      <div class="kpi">
+        <div class="label">Clear Ledger</div>
+        <div class="value">$13,740</div>
+        <div class="delta">9 invoices cleared</div>
+      </div>
+      
+    </div>
+
+    <div class="sec"><span class="bar"></span><h2>Where the Money Came Back</h2><span class="hint">one module per leak point</span></div>
+    <div class="modules">
+      
+      <div class="module">
+        <div class="cap"><span class="mname">Call Catch</span><span class="price">$79/mo</span></div>
+        <div class="stat">$12,400<small> saved</small></div>
+        <ul><li>38 missed calls → 11 recovered (29%)</li><li>Every call texted back in ~41s</li></ul>
+        <div class="top"><b>Biggest catch:</b> after-hours emergency calls booked overnight</div>
+      </div>
+      
+      <div class="module">
+        <div class="cap"><span class="mname">Quote Revive</span><span class="price">$99/mo</span></div>
+        <div class="stat">$38,500<small> reactivated</small></div>
+        <ul><li>14 cold quotes worked → 5 revived, 2 closed</li><li>$84,600 open pipeline at month start</li></ul>
+        <div class="top"><b>Biggest live quote:</b> engaged but unclosed — worth a personal call</div>
+      </div>
+      
+      <div class="module">
+        <div class="cap"><span class="mname">Clear Ledger</span><span class="price">$99/mo</span></div>
+        <div class="stat">$13,740<small> collected</small></div>
+        <ul><li>$13,480 still overdue across 6 invoices</li><li>Avg days-to-pay 27 → 11</li></ul>
+        <div class="top"><b>Oldest balance:</b> flagged for owner handoff</div>
+      </div>
+      
+    </div>
+
+    <div class="card">
+      <div class="ttl">How the Suite Works</div>
+      <p>Every dollar you're owed leaks out at one of three points — the call you missed, the quote that went cold, or the invoice that never got paid. The <b>Revenue Suite</b> plugs all three on one bill: Call Catch texts back missed callers in under a minute, Quote Revive works your ghosted quotes on a timed sequence, and Clear Ledger escalates overdue invoices from friendly nudge to final notice. One login, one report, priority support.</p>
+    </div>
+
+    <div class="onething">
+      <span class="badge">The One Thing</span>
+      <div><h3>Call the $31,200 metal-roof quote — the biggest single lever across all three tools.</h3><p>Quote Revive flagged a <span class="dollar">$31,200</span> standing-seam job that has opened both follow-ups but hasn't replied — the largest engaged opportunity anywhere in the suite this month. Automation has done its part; a two-minute owner call now is worth more than another text. Closing this one quote would add more than <span class="dollar">double</span> this month's Clear Ledger collections, on top of the <span class="dollar">$64,640</span> already recovered.</p></div>
+    </div>
+  </div>
+  <div class="footer">
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; Revenue Suite</span>
+    <span>Revenue Suite · Page 1 of 1 · Confidential</span>
+  </div>
+</div>
+</body>
+</html>

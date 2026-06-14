@@ -1,0 +1,19 @@
+Time,Customer,Vehicle,Invoice,PayLink,Outcome,OutType
+2026-05-01 09:15,Maria Lopez,2019 Toyota Camry,842.50,11 min,Paid at pickup,won
+2026-05-01 14:30,James Carter,2021 Ford F-150,1340.00,3 hr,Paid later,pend
+2026-05-02 10:05,Dana Whitfield,2018 Honda CR-V,512.75,8 min,Paid at pickup,won
+2026-05-02 16:40,Greg Mason,2020 Chevy Silverado,2210.00,,Unpaid,lost
+2026-05-03 11:20,Priya Nair,2017 Subaru Outback,388.20,15 min,Paid at pickup,won
+2026-05-05 08:50,Tom Becker,2022 Ram 1500,1755.40,1 hr,Paid later,pend
+2026-05-06 13:10,Alicia Gomez,2016 Nissan Altima,265.00,6 min,Paid at pickup,won
+2026-05-07 15:25,Victor Hahn,2019 Jeep Wrangler,980.10,4 hr,Paid later,pend
+2026-05-08 09:40,Rachel Kim,2021 Hyundai Tucson,1125.00,9 min,Paid at pickup,won
+2026-05-09 12:00,Owen Pratt,2015 GMC Sierra,3025.75,,Unpaid,lost
+2026-05-12 10:30,Sandra Diaz,2020 Mazda CX-5,640.00,12 min,Paid at pickup,won
+2026-05-13 14:15,Leo Fischer,2018 Ford Escape,915.25,2 hr,Paid later,pend
+2026-05-14 11:05,Nina Patel,2023 Tesla Model Y,470.00,7 min,Paid at pickup,won
+2026-05-16 09:55,Carl Jensen,2017 Dodge Charger,1280.50,5 hr,Paid later,pend
+2026-05-19 13:35,Mona Reyes,2019 Kia Sorento,725.00,10 min,Paid at pickup,won
+2026-05-20 16:10,Dale Cooper,2014 Toyota Tacoma,1990.00,,Unpaid,lost
+2026-05-22 10:45,Erin Walsh,2021 Volkswagen Atlas,560.30,8 min,Paid at pickup,won
+2026-05-27 12:20,Sam Ortiz,2018 Chevy Equinox,1340.00,3 hr,Paid later,pend
