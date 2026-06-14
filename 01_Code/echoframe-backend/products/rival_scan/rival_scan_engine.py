@@ -399,6 +399,7 @@ def _save_report(meta, html) -> str:
 
 def _send_report_email(customer_email, owner_name, html_bytes, meta):
     import resend
+    from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", datetime.now().strftime("%B %Y")).strip()
     biz   = meta.get("Business Name", "your business").strip() or "your business"
@@ -418,11 +419,7 @@ def _send_report_email(customer_email, owner_name, html_bytes, meta):
         "from": email_from, "to": [customer_email],
         "subject": f"Your {month} Rival Scan — {biz}".strip(),
         "html": body,
-        "attachments": [{
-            "filename": fname,
-            "content": base64.b64encode(html_bytes).decode("ascii"),
-            "content_type": "text/html",
-        }],
+        "attachments": [report_attachment(html_bytes, fname)],
     })
     print("[RivalScan] Report email dispatched.")  # no PII in logs
 

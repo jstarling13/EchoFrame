@@ -138,14 +138,14 @@ def _save(biz, html):
     p.write_text(html, encoding="utf-8"); print(f"[RevenueSuite] Report saved -> {p.name}"); return str(p)
 def _email(email, owner, html_bytes, biz, month):
     import resend
+    from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
         "to": [email], "subject": f"Your {month} Revenue Suite — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Revenue Suite report for {biz} is "
                 f"attached — Call Catch, Quote Revive, and Clear Ledger on one page, with everything you "
                 f"recovered this month and the one move worth making next.</p><p>— EchoFrame</p>",
-        "attachments": [{"filename": f"EchoFrame_RevenueSuite_{month.replace(' ','_')}.html",
-                         "content": base64.b64encode(html_bytes).decode("ascii"), "content_type": "text/html"}]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_RevenueSuite_{month.replace(' ','_')}.html")]})
     print("[RevenueSuite] Report email dispatched.")
 
 

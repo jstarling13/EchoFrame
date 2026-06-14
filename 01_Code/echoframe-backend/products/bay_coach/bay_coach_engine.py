@@ -178,14 +178,14 @@ def _save(meta, html):
     p.write_text(html, encoding="utf-8"); print(f"[BayCoach] Report saved -> {p.name}"); return str(p)
 def _email(email, owner, html_bytes, meta):
     import resend
+    from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your shop").strip()
     resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
         "to": [email], "subject": f"Your {month} Bay Coach — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Bay Coach report for {biz} is "
                 f"attached — the right recommendation at write-up, based on the vehicle's real history and mileage.</p><p>— EchoFrame</p>",
-        "attachments": [{"filename": f"EchoFrame_BayCoach_{month.replace(' ','_')}.html",
-                         "content": base64.b64encode(html_bytes).decode("ascii"), "content_type": "text/html"}]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_BayCoach_{month.replace(' ','_')}.html")]})
     print("[BayCoach] Report email dispatched.")
 
 

@@ -211,6 +211,11 @@ def _calculate_metrics(df: pd.DataFrame, meta: dict) -> dict:
     outflow = float(df.loc[df["Amount"] < 0, "Amount"].sum())  # negative
     net     = inflow + outflow
 
+    # Raw ledger cash movement, kept even if revenue/net are overridden below
+    # (accrual figures can differ from actual cash in/out for the month).
+    raw_inflow  = inflow
+    raw_outflow = outflow
+
     rev_override = _to_float(meta.get("Revenue", ""))
     net_override = meta.get("Net Income", "")
     if rev_override:
@@ -232,6 +237,7 @@ def _calculate_metrics(df: pd.DataFrame, meta: dict) -> dict:
 
     return {
         "inflow": inflow, "outflow": outflow, "net": net, "margin": margin,
+        "raw_inflow": raw_inflow, "raw_outflow": raw_outflow,
         "prior_rev": prior_rev, "prior_margin": prior_margin,
         "rev_change": rev_change, "rev_change_pct": rev_change_pct,
         "uncategorized": int(uncat),
@@ -316,8 +322,12 @@ AUTO_LEDGER_TOOL = {
             },
             "one_thing_title": {"type": "string", "description": "Short imperative headline for the single highest-value cleanup, e.g. 'Move your van loan payment off the credit card.'"},
             "one_thing_body": {"type": "string", "description": "2-3 sentences. The one cleanup with real dollars attached this month. Wrap any dollar figure in <span class=\"dollar\">...</span>. Use only supplied numbers; you may state a plausible interest/APR figure only if framed as an estimate."},
+            "watch_next": {
+                "type": "array", "items": {"type": "string"},
+                "description": "3-4 specific, forward-looking items the owner should watch next month, each one sentence. Wrap the key noun/figure of each in <b>...</b> at the start. Tie them to this month's data (tax deadline if a set-aside was given, recurring revenue, equipment timing, payroll vs. billable hours, etc.). Concrete and actionable, never generic.",
+            },
         },
-        "required": ["transactions", "what_changed", "miscatches", "one_thing_title", "one_thing_body"],
+        "required": ["transactions", "what_changed", "miscatches", "one_thing_title", "one_thing_body", "watch_next"],
     },
 }
 
@@ -366,6 +376,8 @@ _SYSTEM_PROMPT = (
     "  • Categories are the owner's books, not tax codes. Money in from the core service "
     "is 'Service Revenue', not 'Other Income'. Resold equipment is 'COGS — Equipment'. "
     "Owner transfers to personal accounts are 'Owner's Draw', never an expense.\n"
+    "  • 'watch_next' is 3-4 forward-looking items for next month, each tied to a real "
+    "number from this month. Start each with the key noun/figure in <b>...</b>.\n"
     "  • Be concrete and useful. No filler, no hedging, no markdown."
 )
 
@@ -397,15 +409,18 @@ def _build_context(df, meta, metrics, prose, tier: str, is_sample: bool) -> dict
     by_index = {int(t.get("index", n)): t for n, t in enumerate(prose["transactions"])}
 
     transactions = []
+    cat_amounts = []  # (category, signed_amount) parallel to transactions, for breakdown/P&L
     for i, r in df.iterrows():
         t = by_index.get(i, {})
         amt = float(r["Amount"])
+        category = t.get("category", "Uncategorized")
+        cat_amounts.append((category, amt))
         transactions.append({
             "date": _fmt_date(str(r["Date"])),
             "title": str(r["Description"]),
             "what_was": t.get("what_it_was", ""),
             "why_category": t.get("why_category", ""),
-            "category": t.get("category", "Uncategorized"),
+            "category": category,
             "amount_str": _signed_amount(amt),
             "amt_class": "amt-in" if amt > 0 else "amt-out",
         })
@@ -436,6 +451,14 @@ def _build_context(df, meta, metrics, prose, tier: str, is_sample: bool) -> dict
          "delta_class": "flat", "delta_text": f"All {metrics['uncategorized']} sorted &amp; explained this month"},
     ]
 
+    # Page 2 / 4 analytics — derived entirely from the categorized ledger.
+    breakdown, breakdown_note = _category_breakdown(cat_amounts)
+    pl_summary, pl_note = _pl_summary(cat_amounts, metrics)
+    cash_position = _cash_position(metrics, meta)
+
+    # Split the ledger across pages 1–2: keep page 1 to a comfortable count.
+    page1_txn_count = min(7, len(transactions)) if len(transactions) > 9 else len(transactions)
+
     ctx = {
         "biz_name": meta.get("Business Name", "Your Business"),
         "product_name": PRODUCT_NAME,
@@ -448,9 +471,16 @@ def _build_context(df, meta, metrics, prose, tier: str, is_sample: bool) -> dict
         "vs_label": (f"vs. prior month" if metrics["prior_rev"] else ""),
         "kpis": kpis,
         "transactions": transactions,
+        "page1_txn_count": page1_txn_count,
+        "category_breakdown": breakdown,
+        "breakdown_note": breakdown_note,
         "what_changed": prose["what_changed"],
         "miscatches": prose["miscatches"],
+        "pl_summary": pl_summary,
+        "pl_note": pl_note,
+        "cash_position": cash_position,
         "one_thing": {"title": prose["one_thing_title"], "body": prose["one_thing_body"]},
+        "watch_next": prose.get("watch_next", []),
         "tax_estimate": None,
         "accounts": None,
         "custom_rules": None,
@@ -502,6 +532,110 @@ def _custom_rules(meta) -> list:
     return rules
 
 
+# ── Page 2 / 4 analytics (derived from the categorized ledger) ───────────────────
+
+# Categories excluded from the operating-spend breakdown: they move cash but
+# aren't operating costs, so including them would distort the expense picture.
+_NON_OPEX_RE = re.compile(r"owner|draw|principal|transfer", re.I)
+_COGS_RE     = re.compile(r"cogs|cost of goods|equipment resold", re.I)
+
+
+def _category_breakdown(cat_amounts: list, top_n: int = 7):
+    """'Where your money went' — group OUTFLOWS by category, return bar rows.
+
+    Returns (rows, note). Each row: name, amount_str, pct, pct_width.
+    Owner draws / loan principal are excluded and called out in the note.
+    """
+    spend = {}
+    excluded = 0.0
+    for cat, amt in cat_amounts:
+        if amt >= 0:
+            continue
+        mag = -amt
+        if _NON_OPEX_RE.search(cat or ""):
+            excluded += mag
+            continue
+        spend[cat] = spend.get(cat, 0.0) + mag
+
+    total = sum(spend.values())
+    if total <= 0:
+        return [], ""
+
+    ordered = sorted(spend.items(), key=lambda kv: kv[1], reverse=True)
+    rows = []
+    if len(ordered) > top_n:
+        head, tail = ordered[:top_n - 1], ordered[top_n - 1:]
+        other = sum(v for _, v in tail)
+        ordered = head + [("Other", other)]
+
+    top_amt = ordered[0][1] if ordered else 1.0
+    for name, amt in ordered:
+        pct = round(amt / total * 100)
+        rows.append({
+            "name": name,
+            "amount_str": _money(amt),
+            "pct": pct,
+            # bar width is relative to the largest category so small lines stay visible
+            "pct_width": round(amt / top_amt * 100),
+        })
+
+    note = ""
+    if excluded > 0:
+        note = (f"Owner's draws and loan principal ({_money(excluded)}) are excluded above — "
+                f"they move cash but aren't operating costs, so they don't distort your expense picture.")
+    return rows, note
+
+
+def _pl_summary(cat_amounts: list, metrics: dict):
+    """Profit & loss waterfall that always reconciles to the engine's Net Income.
+
+    Revenue − COGS = Gross Profit; Gross Profit − Operating Expenses = Net Income.
+    Operating Expenses is derived as (Gross Profit − Net Income) so the bottom
+    line always equals the verified figure, regardless of curated ledger rows.
+    """
+    revenue = metrics["inflow"]
+    cogs = sum(-amt for cat, amt in cat_amounts if amt < 0 and _COGS_RE.search(cat or ""))
+    gross = revenue - cogs
+    net = metrics["net"]
+    opex = gross - net
+
+    rows = [{"label": "Service Revenue", "value": _money(revenue)}]
+    if cogs > 0:
+        rows.append({"label": "less Cost of Goods Sold", "value": _money(-cogs), "indent": True})
+        rows.append({"label": "Gross Profit", "value": _money(gross), "subtotal": True})
+    if opex > 0:
+        rows.append({"label": "Operating expenses (payroll, vehicle, overhead)",
+                     "value": _money(-opex), "indent": True})
+    elif opex < 0:
+        rows.append({"label": "Operating income (net of costs)",
+                     "value": _money(-opex), "indent": True})
+    rows.append({"label": "Net Income", "value": _money(net),
+                 "total": True, "pos": net >= 0})
+
+    margin = metrics["margin"]
+    note = (f"Net income of {_money(net)} is a {margin:.1f}% margin on {_money(revenue)} of revenue. "
+            f"The spend bars on page 2 break the operating costs down by category.")
+    return rows, note
+
+
+def _cash_position(metrics: dict, meta: dict):
+    """Actual cash in/out for the month, with opening/closing if an opening balance
+    is supplied via `_Opening Cash` metadata."""
+    money_in  = metrics.get("raw_inflow", metrics["inflow"])
+    money_out = abs(metrics.get("raw_outflow", metrics["outflow"]))
+    net_change = money_in - money_out
+
+    opening = _to_float(meta.get("Opening Cash", "") or meta.get("Opening Balance", ""))
+    cp = {
+        "money_in": f"+{_money(money_in)}",
+        "money_out": _money(-money_out),
+        "net_change": _signed_amount(net_change),
+        "opening": _money(opening) if opening else "",
+        "closing": _money(opening + net_change) if opening else "",
+    }
+    return cp
+
+
 # ── Step 5: render, persist, deliver ────────────────────────────────────────────
 
 def _render_html(ctx: dict) -> str:
@@ -528,7 +662,26 @@ def _send_report_email(customer_email, owner_name, html_bytes, meta, tier):
     month = meta.get("Month", datetime.now().strftime("%B %Y")).strip()
     biz   = meta.get("Business Name", "your business").strip() or "your business"
     greet = (owner_name or "").strip() or "there"
-    fname = f"EchoFrame_AutoLedger_{month.replace(' ', '_')}.html"
+    base_name = f"EchoFrame_AutoLedger_{month.replace(' ', '_')}"
+    # Prefer a PDF attachment — renders identically for every recipient and can't
+    # be mis-opened in Word. Fall back to the HTML file if the PDF renderer
+    # (headless Chromium) isn't available in this environment.
+    try:
+        from pdf_render import html_to_pdf
+        _pdf = html_to_pdf(html_bytes)
+        attachment = {
+            "filename": f"{base_name}.pdf",
+            "content": base64.b64encode(_pdf).decode("ascii"),
+            "content_type": "application/pdf",
+        }
+        print("[AutoLedger] Report rendered to PDF for delivery.")
+    except Exception as _e:
+        print(f"[AutoLedger] PDF render unavailable ({_e}); sending HTML instead.")
+        attachment = {
+            "filename": f"{base_name}.html",
+            "content": base64.b64encode(html_bytes).decode("ascii"),
+            "content_type": "text/html",
+        }
     email_from = os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>")
     body = (
         f"<p>Hi {greet},</p>"
@@ -544,11 +697,7 @@ def _send_report_email(customer_email, owner_name, html_bytes, meta, tier):
         "to": [customer_email],
         "subject": f"Your {month} Auto Ledger — {biz}".strip(),
         "html": body,
-        "attachments": [{
-            "filename": fname,
-            "content": base64.b64encode(html_bytes).decode("ascii"),
-            "content_type": "text/html",
-        }],
+        "attachments": [attachment],
     })
     print("[AutoLedger] Report email dispatched.")  # no PII in logs
 

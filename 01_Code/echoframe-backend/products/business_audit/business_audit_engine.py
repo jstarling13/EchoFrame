@@ -275,6 +275,7 @@ def _save(meta, html):
 
 def _email(email, owner, html_bytes, meta):
     import resend
+    from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     biz = meta.get("Business Name", "your business").strip()
     resend.Emails.send({
@@ -284,9 +285,7 @@ def _email(email, owner, html_bytes, meta):
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your Business Audit Report for {biz} is "
                 f"attached - a full, consulting-grade read on your finances, market position, "
                 f"operations, and the highest-ROI moves to make next.</p><p>- EchoFrame</p>",
-        "attachments": [{"filename": f"EchoFrame_BusinessAudit_{_slug(biz)}.html",
-                         "content": base64.b64encode(html_bytes).decode("ascii"),
-                         "content_type": "text/html"}]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_BusinessAudit_{_slug(biz)}.html")]})
     print("[BusinessAudit] Report email dispatched.")
 
 

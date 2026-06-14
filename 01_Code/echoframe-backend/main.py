@@ -8,8 +8,9 @@ from collections import OrderedDict
 from datetime import datetime, timezone
 from pathlib import Path
 from dotenv import load_dotenv
+from urllib.parse import urlencode
 from fastapi import FastAPI, Request, Form, UploadFile, File, HTTPException, BackgroundTasks
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.concurrency import run_in_threadpool
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -95,7 +96,7 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 _CSP_POLICY = (
     "default-src 'self'; "
-    "script-src 'self'; "
+    "script-src 'self' 'unsafe-inline'; "
     "style-src 'self' 'unsafe-inline'; "
     "img-src 'self' data:; "
     "connect-src 'self'; "
@@ -238,14 +239,91 @@ def _verify_stripe_session(session_id: str, email: str) -> None:
     except stripe.error.StripeError:
         raise HTTPException(status_code=503, detail="Payment verification unavailable.")
 
-    if session.get("status") != "complete":
+    if getattr(session, "status", None) != "complete":
         raise HTTPException(status_code=403, detail="Payment not completed for this session.")
 
-    session_email = (
-        (session.get("customer_details") or {}).get("email") or ""
-    ).lower().strip()
+    _cd = getattr(session, "customer_details", None)
+    session_email = (getattr(_cd, "email", None) or "").lower().strip()
     if session_email and session_email != email:
         raise HTTPException(status_code=403, detail="Email does not match payment record.")
+
+
+def _sget(obj, key, default=None):
+    """Read a field whether obj is a plain dict or a Stripe SDK object.
+
+    Stripe objects in this SDK version don't expose a dict-style .get(), so a
+    bare obj.get(key) raises. This works for both shapes.
+    """
+    if obj is None:
+        return default
+    if isinstance(obj, dict):
+        return obj.get(key, default)
+    return getattr(obj, key, default)
+
+
+def _to_plain(obj):
+    """Convert a Stripe SDK object into a plain (recursive) dict so downstream
+    code that relies on dict.get() keeps working. Returns {} on failure."""
+    if obj is None or isinstance(obj, dict):
+        return obj or {}
+    for attr in ("to_dict_recursive", "to_dict"):
+        fn = getattr(obj, attr, None)
+        if callable(fn):
+            try:
+                return fn()
+            except Exception:
+                pass
+    try:
+        return json.loads(str(obj))
+    except Exception:
+        return {}
+
+
+def _resolve_session(session_id: str) -> dict:
+    """Best-effort: pull buyer email + purchased product/tier off a Checkout session.
+
+    Stripe only substitutes {CHECKOUT_SESSION_ID} into Payment Link redirect URLs
+    (never the email or product), so the upload page resolves them itself:
+      - email   from session.customer_details.email
+      - product from the purchased line item, via registry.route_stripe_purchase
+                (matches by live Stripe product id, falling back to product name —
+                 which is what makes sandbox/test clones route correctly too).
+    Returns {"email", "product", "tier"}; blanks on any failure (never raises).
+    """
+    out = {"email": "", "product": "", "tier": ""}
+    if not session_id:
+        return out
+    try:
+        session = stripe.checkout.Session.retrieve(
+            session_id, expand=["line_items.data.price.product"]
+        )
+    except Exception:
+        return out
+    # NOTE: Stripe SDK objects don't expose a dict-style .get() here — use
+    # attribute access (getattr) throughout.
+    try:
+        cd = getattr(session, "customer_details", None)
+        out["email"] = (getattr(cd, "email", None) or "").strip().lower()
+    except Exception:
+        pass
+    try:
+        li = getattr(session, "line_items", None)
+        data = getattr(li, "data", None) or []
+        if data:
+            price = getattr(data[0], "price", None)
+            prod  = getattr(price, "product", None) if price else None
+            if isinstance(prod, str):
+                pid, pname = prod, ""
+            else:
+                pid   = getattr(prod, "id", "") or ""
+                pname = getattr(prod, "name", "") or ""
+            routed = route_stripe_purchase(product_id=pid, product_name=pname)
+            if routed.get("slug"):
+                out["product"] = routed["slug"]
+                out["tier"]    = routed.get("tier") or ""
+    except Exception:
+        pass
+    return out
 
 
 # ── Drop zone UI ──────────────────────────────────────────────────────────────
@@ -259,6 +337,28 @@ async def upload_page(
     product: str = "",
     tier: str = "",
 ):
+    # Unresolved Stripe template variables (e.g. "{CHECKOUT_SESSION_CUSTOMER_EMAIL}")
+    # are not real values — treat them as missing.
+    if "{" in email:
+        email = ""
+    if "{" in product:
+        product = ""
+
+    # If we arrived with a session_id but are missing the email or the product,
+    # resolve both from the Stripe session and re-enter with clean query params so
+    # the buyer lands on the correct intake page with their email pre-filled.
+    if session_id and (not email or not product):
+        info = _resolve_session(session_id)
+        new_email   = email   or info["email"]
+        new_product = product or info["product"]
+        new_tier    = tier    or info["tier"]
+        if (new_email, new_product, new_tier) != (email, product, tier):
+            params = {"session_id": session_id}
+            if new_email:   params["email"]   = new_email
+            if token:       params["token"]   = token
+            if new_product: params["product"] = new_product
+            if new_tier:    params["tier"]    = new_tier
+            return RedirectResponse(url=f"/upload?{urlencode(params)}", status_code=303)
     # Renewal links carry a product (+ optional tier) so the client lands on the
     # exact intake page for THAT subscription's report. Month-1 (no product) keeps
     # the original generic Clarity upload page untouched.
@@ -343,6 +443,30 @@ async def upload_csv(
         raw_bytes.decode("utf-8")
     except UnicodeDecodeError:
         raise HTTPException(status_code=400, detail="File must be UTF-8 encoded text.")
+
+    # Personalize from the typed intake fields. Every engine reads its
+    # Business Name / Month / Industry / Location / Role from leading "_Key,value"
+    # rows in the CSV — so inject whatever the customer typed on the page as those
+    # rows. One place, personalizes the report for ALL products. (If the customer's
+    # own CSV already carries "_" rows, those win — they appear later in the file.)
+    try:
+        _form = await request.form()
+        _FORM_TO_META = {
+            "business": "Business Name", "month": "Month", "industry": "Industry",
+            "location": "Location", "role": "Role",
+        }
+        _meta_lines = []
+        for _fname, _metakey in _FORM_TO_META.items():
+            _val = _form.get(_fname)
+            if isinstance(_val, str) and _val.strip():
+                _v = _val.strip()
+                if ("," in _v) or ('"' in _v) or ("\n" in _v):
+                    _v = '"' + _v.replace('"', '""') + '"'
+                _meta_lines.append(f"_{_metakey},{_v}")
+        if _meta_lines:
+            raw_bytes = ("\n".join(_meta_lines) + "\n").encode("utf-8") + raw_bytes
+    except Exception:
+        print(f"[EchoFrame] WARN: intake-field injection failed:\n{traceback.format_exc()}", flush=True)
 
     UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
     dest = UPLOADS_DIR / f"{_safe_email(email)}.csv"
@@ -482,7 +606,7 @@ async def stripe_webhook(request: Request):
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid webhook payload.")
 
-    event_id = (event or {}).get("id") or ""
+    event_id = _sget(event, "id") or ""
 
     # Idempotency: Stripe retries deliver the same event id; process each once.
     # _claim_event uses the durable store (atomic SETNX+TTL) when configured,
@@ -490,17 +614,17 @@ async def stripe_webhook(request: Request):
     if not _claim_event(event_id):
         return JSONResponse({"status": "ok", "note": "duplicate"})
 
-    event_type = (event or {}).get("type")
+    event_type = _sget(event, "type")
 
     # Month-1 signup: save the buyer's email + name so the Step-2 upload page can
     # attribute the report. Product routing happens at upload time via the
     # per-product intake page (the `product` form field).
     if event_type == "checkout.session.completed":
-        session = ((event.get("data") or {}).get("object")) or {}
-        details = session.get("customer_details") or {}
-        email = (details.get("email") or "").strip().lower()
-        name  = (details.get("name") or "").strip() or "Client"
-        customer_id = session.get("customer") or ""
+        session = _sget(_sget(event, "data"), "object")
+        details = _sget(session, "customer_details")
+        email = (_sget(details, "email") or "").strip().lower()
+        name  = (_sget(details, "name") or "").strip() or "Client"
+        customer_id = _sget(session, "customer") or ""
         if email:
             try:
                 _save_customer(email, name, stripe_customer=customer_id)
@@ -513,7 +637,7 @@ async def stripe_webhook(request: Request):
     # already covered by the checkout flow above, so we must not double-send.
     elif event_type == "invoice.payment_succeeded":
         try:
-            _handle_invoice_paid(((event.get("data") or {}).get("object")) or {})
+            _handle_invoice_paid(_to_plain(_sget(_sget(event, "data"), "object")))
         except Exception:
             print(f"[EchoFrame] WEBHOOK ERROR handling invoice:\n{traceback.format_exc()}", flush=True)
 
