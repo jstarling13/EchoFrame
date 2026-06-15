@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EchoFrame — Plain English Financial Reports for Columbus Small Businesses</title>
+  <meta name="description" content="A 5 minute monthly report that tells Columbus business owners exactly where the money is leaking and the one thing to fix this month. $150/month.">
+
+  <!-- SEO -->
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://echoframe.net/"><!-- UPDATE with your real domain -->
+
+  <!-- Open Graph (Facebook, LinkedIn, iMessage, Slack) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://echoframe.net/"><!-- UPDATE -->
+  <meta property="og:site_name" content="EchoFrame">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="EchoFrame — Plain English Financial Reports for Columbus Small Businesses">
+  <meta property="og:description" content="A 5 minute monthly report that tells Columbus business owners exactly where the money is leaking and the one thing to fix this month. $150/month.">
+  <meta property="og:image" content="image_9316a9.png">
+  <meta property="og:image:alt" content="EchoFrame — Plain English Financial Reports">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="EchoFrame — Plain English Financial Reports for Columbus Small Businesses">
+  <meta name="twitter:description" content="A 5 minute monthly report that tells Columbus business owners exactly where the money is leaking and the one thing to fix this month. $150/month.">
+  <meta name="twitter:image" content="image_9316a9.png">
+  <meta name="twitter:image:alt" content="EchoFrame — Plain English Financial Reports">
+  <style>
+    :root {
+      --navy: #0A274F;
+      --amber: #1E90FF;
+      --amber-soft: #DBEAFE;
+      --amber-line: #1E90FF;
+      --ink: #111827;
+      --ink-soft: #4B5563;
+      --ink-faint: #6B7280;
+      --line: #E5E7EB;
+      --bg: #FFFFFF;
+      --bg-soft: #F9FAFB;
+      --bg-deep: #F3F4F6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: var(--ink); }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    .nav { padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--navy); font-size: 20px; letter-spacing: -0.015em; }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background: var(--navy);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
+    }
+    .brand-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .nav a.btn-link { font-size: 15px; color: var(--navy); font-weight: 500; }
+
+    /* Hero */
+    .hero { padding: 88px 0 72px; }
+    .eyebrow {
+      display: inline-block;
+      color: var(--amber);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-size: 56px;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      color: var(--navy);
+      font-weight: 700;
+      margin-bottom: 22px;
+      max-width: 900px;
+    }
+    .sub {
+      font-size: 20px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+      max-width: 740px;
+      margin-bottom: 32px;
+    }
+    .no-q {
+      font-size: 18px;
+      color: var(--navy);
+      font-weight: 600;
+      max-width: 740px;
+      margin-bottom: 28px;
+      padding: 18px 22px;
+      background: var(--amber-soft);
+      border-left: 3px solid var(--amber);
+      border-radius: 0 8px 8px 0;
+    }
+    .cta {
+      display: inline-block;
+      background: var(--amber);
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 16px 28px;
+      border-radius: 8px;
+      transition: background 0.15s ease;
+    }
+    .cta:hover { background: #1873CC; text-decoration: none; color: white; }
+    .cta-secondary {
+      display: inline-block;
+      color: var(--navy);
+      font-weight: 500;
+      font-size: 16px;
+      padding: 16px 8px;
+      margin-left: 14px;
+    }
+    .cta-note {
+      display: block;
+      margin-top: 14px;
+      font-size: 14px;
+      color: var(--ink-faint);
+    }
+
+    /* Section header */
+    .section { padding: 88px 0; border-top: 1px solid var(--line); }
+    .section.alt { background: var(--bg-soft); }
+    .section-eyebrow {
+      color: var(--amber);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: block;
+    }
+    .section-title {
+      font-size: 36px;
+      color: var(--navy);
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      margin-bottom: 16px;
+      max-width: 720px;
+    }
+    .section-lead {
+      color: var(--ink-soft);
+      font-size: 18px;
+      line-height: 1.55;
+      max-width: 700px;
+      margin-bottom: 48px;
+    }
+
+    /* 3 column problem / evidence cards */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 32px 28px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .card.shaded { background: var(--bg-soft); }
+    .card-num {
+      color: var(--amber);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .card-title {
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 19px;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .card-body {
+      color: var(--ink-soft);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* The bucket / pain box */
+    .pain-box {
+      margin-top: 48px;
+      padding: 32px 36px;
+      background: var(--navy);
+      border-radius: 14px;
+      color: white;
+    }
+    .pain-eyebrow {
+      color: #FBBF24;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .pain-text {
+      font-size: 22px;
+      line-height: 1.4;
+      font-weight: 500;
+      max-width: 820px;
+    }
+    .pain-text em {
+      color: #FBBF24;
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    /* Human in the loop strip */
+    .hitl {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 22px 26px;
+      background: white;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--amber);
+      border-radius: 10px;
+      margin-bottom: 40px;
+      max-width: 880px;
+    }
+    .hitl-badge {
+      flex-shrink: 0;
+      padding: 5px 10px;
+      background: var(--amber);
+      color: white;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+    .hitl-text {
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+    .hitl-text strong { color: var(--navy); }
+
+    /* Evidence stat */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 32px;
+    }
+    .stat {
+      text-align: left;
+    }
+    .stat-num {
+      font-size: 44px;
+      font-weight: 700;
+      color: var(--amber);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .stat-label {
+      color: var(--ink-soft);
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    /* Products */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .product {
+      padding: 32px 28px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    .product.anchor { border-color: var(--amber); position: relative; }
+    .product.anchor:before {
+      content: "Most popular";
+      position: absolute;
+      top: -11px;
+      left: 24px;
+      background: var(--amber);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.02em;
+    }
+    .product:hover { border-color: var(--amber); transform: translateY(-2px); }
+    .product-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .product-price {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--amber);
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    .product-price .unit {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-soft);
+    }
+    .product-tag {
+      color: var(--ink-faint);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+    .product-desc {
+      font-size: 15px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    /* Quotes */
+    .quote-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .quote {
+      background: white;
+      padding: 28px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+    .quote-mark {
+      color: var(--amber);
+      font-size: 36px;
+      line-height: 1;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .quote-text {
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+    .quote-attr {
+      font-size: 13px;
+      color: var(--ink-faint);
+      font-weight: 500;
+    }
+
+    /* Final */
+    .final {
+      padding: 100px 0;
+      text-align: center;
+      border-top: 1px solid var(--line);
+      background: var(--navy);
+      color: white;
+    }
+    .final h2 {
+      font-size: 42px;
+      letter-spacing: -0.02em;
+      margin-bottom: 18px;
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.1;
+    }
+    .final p {
+      color: #D1D5DB;
+      font-size: 19px;
+      margin-bottom: 38px;
+      max-width: 660px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.55;
+    }
+    .final .ask {
+      color: #FBBF24;
+      font-style: italic;
+      font-weight: 500;
+      max-width: 700px;
+      margin: 0 auto 38px;
+      font-size: 18px;
+    }
+    .final .cta { background: var(--amber); }
+    .final .cta:hover { background: #1873CC; }
+
+    /* Footer */
+    footer {
+      padding: 36px 0;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+      color: var(--ink-faint);
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    /* Mobile */
+    @media (max-width: 760px) {
+      h1 { font-size: 34px; }
+      .sub { font-size: 17px; }
+      .grid-3 { grid-template-columns: 1fr; gap: 14px; }
+      .product-grid { grid-template-columns: 1fr; gap: 14px; }
+      .quote-grid { grid-template-columns: 1fr; gap: 14px; }
+      .stat-row { grid-template-columns: 1fr; gap: 28px; }
+      .hero { padding: 56px 0 40px; }
+      .section { padding: 56px 0; }
+      .section-lead { font-size: 16px; margin-bottom: 32px; }
+      .final { padding: 72px 0; }
+      .final h2 { font-size: 26px; }
+      .final p { font-size: 16px; }
+      .final .ask { font-size: 16px; }
+      .section-title { font-size: 26px; }
+      .pain-box { padding: 24px 20px; }
+      .pain-text { font-size: 18px; }
+      .stat-num { font-size: 36px; }
+      .hitl { flex-direction: column; gap: 12px; padding: 18px 20px; }
+      .hitl-badge { align-self: flex-start; }
+      .card { padding: 24px 20px; }
+      .quote { padding: 22px 20px; }
+      .product { padding: 24px 20px; }
+      .no-q { font-size: 16px; padding: 16px 18px; }
+      .cta-secondary { display: block; margin: 16px 0 0; }
+      .product.anchor:before { left: 20px; }
+      .footer-inner { flex-direction: column; gap: 8px; }
+    }
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(1, 42, 74, 0.75);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+      box-shadow: 0 24px 64px rgba(1, 42, 74, 0.2);
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--ink-faint);
+      cursor: pointer;
+      line-height: 1;
+      font-family: inherit;
+      padding: 4px 8px;
+    }
+    .modal-close:hover { color: var(--ink); }
+    .modal-eyebrow {
+      color: var(--amber);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .modal h3 {
+      font-size: 26px;
+      color: var(--navy);
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .modal-sub {
+      color: var(--ink-soft);
+      font-size: 15px;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .form-field { margin-bottom: 16px; }
+    .form-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .form-field input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 15px;
+      color: var(--ink);
+      font-family: inherit;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .form-field input:focus {
+      outline: none;
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px var(--amber-soft);
+    }
+    .modal-submit {
+      display: block;
+      width: 100%;
+      background: var(--amber);
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 8px;
+      transition: background 0.15s ease;
+    }
+    .modal-submit:hover { background: #1873CC; }
+    .modal-note {
+      text-align: center;
+      font-size: 13px;
+      color: var(--ink-faint);
+      margin-top: 12px;
+    }
+    @media (max-width: 760px) {
+      .modal { padding: 36px 24px; }
+      .modal h3 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        <span class="brand-logo"><img src="echoframe_logo.png" alt="EchoFrame logo" /></span>
+        EchoFrame
+      </div>
+      <a class="btn-link" href="mailto:jacobstarling4313@gmail.com?subject=Free%20sample%20report">Talk to us</a>
+    </div>
+  </nav>
+
+  <!-- Hero: Mirror & Label -->
+  <section class="hero">
+    <div class="container">
+      <span class="eyebrow">For Columbus, GA small business owners</span>
+      <h1>You're working 60 hour weeks. The money still feels like it's gone before it hits the account.</h1>
+      <p class="sub">You get a P&amp;L from your accountant. You look at it. You don't fully understand it. So you make the next big call on gut feel, because gut feel is all you have.</p>
+      <div class="no-q">Are you against the idea of finally knowing exactly where every dollar in your Columbus business is leaking?</div>
+      <a class="cta" href="#" onclick="openModal(); return false;">Get a free sample report</a>
+      <a class="cta-secondary" href="#how">How it works →</a>
+      <span class="cta-note">No commitment. No credit card. Real report on your actual business.</span>
+    </div>
+  </section>
+
+  <!-- Discovery: Calibrated Pain -->
+  <section class="section alt">
+    <div class="container">
+      <span class="section-eyebrow">Why this isn't already solved</span>
+      <h2 class="section-title">You've tried the other options. Here's why they aren't working.</h2>
+
+      <div class="grid-3">
+        <div class="card">
+          <span class="card-num">01</span>
+          <h3 class="card-title">Your CPA is a historian.</h3>
+          <p class="card-body">They tell you what happened last quarter so the IRS is happy. That doesn't help you decide whether to hire another tech tomorrow, or whether to cut your marketing spend today.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">02</span>
+          <h3 class="card-title">Raw AI is just a fast calculator.</h3>
+          <p class="card-body">It doesn't know the Columbus market. It doesn't know that 4 points over the food cost benchmark is the difference between a good year and a closed restaurant. Context is the whole job.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">03</span>
+          <h3 class="card-title">QuickBooks shows you everything except the answer.</h3>
+          <p class="card-body">You can pull a hundred reports and still not know which jobs make money, which line cooks are over portioning, or whether your new stylists are profitable yet. The data's there. The story isn't.</p>
+        </div>
+      </div>
+
+      <div class="pain-box">
+        <span class="pain-eyebrow">The honest version</span>
+        <p class="pain-text">It feels like you're <em>filling a bucket with holes in the bottom</em>. Another 60 hour week, another payroll covered, another month gone. If you don't find the leaks now, the next six months are the same week on repeat.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Evidence: Proof of Life -->
+  <section class="section" id="how">
+    <div class="container">
+      <span class="section-eyebrow">What you actually get</span>
+      <h2 class="section-title">A 5 minute story in plain English. One specific thing to fix this month.</h2>
+      <p class="section-lead">We don't send 20 page spreadsheets. Every report ends with the One Thing — a single recommendation tied to a specific dollar amount, on the table this month, that you can act on this week.</p>
+
+      <div class="hitl">
+        <div class="hitl-badge">HUMAN REVIEW</div>
+        <div class="hitl-text">
+          <strong>AI assisted, not AI generated.</strong> The engine handles the math. A senior analyst who knows the Columbus market reviews the One Thing on every single report before it goes out. That's the difference between $150 a month and a $20 ChatGPT subscription.
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card shaded">
+          <span class="card-num">EVIDENCE</span>
+          <h3 class="card-title">One discovery, one year paid for.</h3>
+          <p class="card-body">A Columbus restaurant owner read his first report and found a 4 point gap in food cost. He fixed it in two weeks. That single line item paid for the next twelve months of reports.</p>
+        </div>
+        <div class="card shaded">
+          <span class="card-num">EVIDENCE</span>
+          <h3 class="card-title">Built for the Chattahoochee Valley.</h3>
+          <p class="card-body">National tools handle bookings and payroll. They don't know your local labor market, your supplier costs, or what the shop across town is charging. We do. Every benchmark in every report is local.</p>
+        </div>
+        <div class="card shaded">
+          <span class="card-num">EVIDENCE</span>
+          <h3 class="card-title">CFO grade analysis. Owner grade language.</h3>
+          <p class="card-body">The same financial discipline a $400 an hour consultant uses. Translated into the words you'd use with your spouse over dinner. No jargon. No 30 page deck. Just the answer.</p>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat">
+          <div class="stat-num">5 min</div>
+          <div class="stat-label">Average time to read the monthly report. We don't waste yours.</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">$1,200+</div>
+          <div class="stat-label">Median dollar leak we identify in the first report. Eight times the subscription.</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">48 hrs</div>
+          <div class="stat-label">Turnaround on your free sample. Real business, real numbers, real recommendations.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <section class="section alt">
+    <div class="container">
+      <span class="section-eyebrow">Pricing</span>
+      <h2 class="section-title">Less than your power bill. Pays for itself the first month.</h2>
+      <p class="section-lead">At $150 a month, this isn't a consulting fee. It's a utility — except this one puts money back in your pocket.</p>
+
+      <div class="product-grid">
+        <div class="product anchor">
+          <div class="product-name">Monthly Clarity Report</div>
+          <div class="product-price">$150<span class="unit"> / month</span></div>
+          <div class="product-tag">The anchor product</div>
+          <p class="product-desc">Plain English monthly breakdown of your financials with one specific recommendation. Cancel any time.</p>
+          <a href="https://buy.stripe.com/4gMeVf9fr4wh9HT4bBcwg02" class="cta" style="display:block;text-align:center;margin-top:24px;">Get started →</a>
+        </div>
+        <div class="product">
+          <div class="product-name">Business Audit</div>
+          <div class="product-price">$499<span class="unit"> one time</span></div>
+          <div class="product-tag">Free with 12 month commit</div>
+          <p class="product-desc">Full health check of your business with a scored assessment and ranked action plan. Best for owners in a tight spot right now.</p>
+          <a href="https://buy.stripe.com/dRm28t1MZ6Ep1bn8rRcwg01" class="cta" style="display:block;text-align:center;margin-top:24px;">Get started →</a>
+        </div>
+        <div class="product">
+          <div class="product-name">Competitor Report</div>
+          <div class="product-price">$299<span class="unit"> one time</span></div>
+          <div class="product-tag">Add on for subscribers</div>
+          <p class="product-desc">See exactly where you stand vs. the shop across town and what to do about it. Local market intelligence.</p>
+          <a href="https://buy.stripe.com/fZudRbezL9QB3jvdMbcwg00" class="cta" style="display:block;text-align:center;margin-top:24px;">Get started →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social proof -->
+  <section class="section">
+    <div class="container">
+      <span class="section-eyebrow">What owners say</span>
+      <h2 class="section-title">From the first batch of reports.</h2>
+
+      <div class="quote-grid">
+        <div class="quote">
+          <div class="quote-mark">"</div>
+          <p class="quote-text">My accountant told me I made money. The report told me which jobs lost money. Two different conversations. I needed the second one.</p>
+          <div class="quote-attr">HVAC owner, Columbus</div>
+        </div>
+        <div class="quote">
+          <div class="quote-mark">"</div>
+          <p class="quote-text">First report flagged my food cost was 4 points high. Fixed it in two weeks. That one fix paid for a year of reports.</p>
+          <div class="quote-attr">Restaurant owner, Columbus</div>
+        </div>
+        <div class="quote">
+          <div class="quote-mark">"</div>
+          <p class="quote-text">It's the first time I've actually understood my own numbers. Worth more than what I pay my CPA.</p>
+          <div class="quote-attr">Salon owner, Atlanta</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final: Low-Stakes Ask -->
+  <section class="final">
+    <div class="container">
+      <h2>What's the cost of another six months of gut feel?</h2>
+      <p>The bucket keeps leaking until you find the holes. The leaks keep growing until somebody names them.</p>
+      <p class="ask">"How would it affect your business if I built you a real sample report this week — for free — just so you can see the leaks for yourself?"</p>
+      <a class="cta" href="#" onclick="openModal(); return false;">Send me a free sample report</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>&copy; 2026 EchoFrame</div>
+    </div>
+  </footer>
+
+  <!-- Sample Report Modal -->
+  <div class="modal-overlay" id="sample-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
+      <div class="modal-eyebrow">Free Sample Report</div>
+      <h3 id="modal-title">See your leaks for yourself.</h3>
+      <p class="modal-sub">Tell us about your business and we'll build a real report in 48 hours &mdash; no charge, no commitment.</p>
+      <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <div class="form-field">
+          <label for="modal-business">Business Name</label>
+          <input type="text" id="modal-business" name="business_name" placeholder="e.g. River Road Grille" required>
+        </div>
+        <div class="form-field">
+          <label for="modal-industry">Industry</label>
+          <input type="text" id="modal-industry" name="industry" placeholder="e.g. Restaurant, HVAC, Salon" required>
+        </div>
+        <div class="form-field">
+          <label for="modal-revenue">Approximate Monthly Revenue</label>
+          <input type="text" id="modal-revenue" name="monthly_revenue" placeholder="e.g. $40,000" required>
+        </div>
+        <button type="submit" class="modal-submit">Send me my free report &rarr;</button>
+        <p class="modal-note">48 hour turnaround &mdash; real numbers, real recommendations.</p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openModal() {
+      document.getElementById('sample-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      document.getElementById('sample-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('sample-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+
+</body>
+</html>

@@ -1,4 +1,16 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false
+  "crons": [
+    {
+      "path": "/api/cron/scrape-competitors",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/send-alerts",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/send-weekly-digest",
+      "schedule": "0 9 * * 5"
+    }
+  ]
 }

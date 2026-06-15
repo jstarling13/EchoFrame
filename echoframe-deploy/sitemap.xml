@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- EchoFrame Parent -->
+  <url><loc>https://echoframe.net/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://echoframe.net/privacy.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+
+  <!-- EchoFrame Intelligence -->
+  <url><loc>https://echoframe.net/intelligence/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://echoframe.net/intelligence/vericount</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/intelligence/oryn</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/intelligence/veris</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/intelligence/strata</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- EchoFrame Revenue -->
+  <url><loc>https://echoframe.net/revenue/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://echoframe.net/revenue/missedcall</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/revenue/quoterevive</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/revenue/clearledger</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- EchoFrame Ops -->
+  <url><loc>https://echoframe.net/ops/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://echoframe.net/ops/traderelay</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/ops/permitwatch</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/ops/ironhire</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/ops/baysignal</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/ops/hydropay</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+</urlset>

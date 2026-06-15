@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Rate Watch Dev Server",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "Sample Reports Static",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["-y", "http-server", "04_Sample_Reports", "-p", "4599", "-c-1"],
+      "port": 4599
+    }
+  ]
+}

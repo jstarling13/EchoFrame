@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EchoFrame — Call Catch Sample · Chattahoochee Plumbing Co.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy:   #012A4A;
+    --navy-2: #013a66;
+    --amber:  #C8972A;
+    --green:  #059669;
+    --red:    #DC2626;
+    --ink:    #1f2937;
+    --muted:  #6b7280;
+    --line:   #e5e7eb;
+    --slate:  #f1f5f9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #525659;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    margin: 24px auto;
+    background: #fff;
+    box-shadow: 0 6px 30px rgba(0,0,0,.35);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .body { padding: 22px 40px 0; flex: 1; }
+
+  /* ── Header band ───────────────────────────── */
+  .header {
+    background: var(--navy);
+    color: #fff;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--amber);
+  }
+  .header .biz { font-size: 21px; font-weight: 800; letter-spacing: -.2px; }
+  .header .sub { font-size: 9.5px; color: #9CA3AF; margin-top: 3px; letter-spacing: .2px; }
+  .brand { text-align: right; }
+  .brand .pre { font-size: 7px; font-weight: 700; letter-spacing: 1.5px; color: #fff; }
+  .brand .mark { font-size: 27px; font-weight: 800; color: var(--amber); line-height: 1; margin: 1px 0; }
+  .brand .tag { font-size: 8px; font-style: italic; color: #cbd5e1; }
+
+  /* ── Sample banner ─────────────────────────── */
+  .sample-banner {
+    background: #FEF3C7;
+    border: 1px solid var(--amber);
+    border-radius: 6px;
+    padding: 7px 12px;
+    margin-top: 18px;
+    font-size: 9.5px;
+    color: #7c5e10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sample-banner b { color: #5c4708; }
+  .chip {
+    background: var(--amber); color: #fff; font-weight: 700;
+    font-size: 8px; letter-spacing: 1px; padding: 2px 7px; border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  /* ── Section headers ───────────────────────── */
+  .sec {
+    display: flex; align-items: center; gap: 8px;
+    margin: 20px 0 9px;
+  }
+  .sec .bar { width: 4px; height: 15px; background: var(--amber); border-radius: 2px; }
+  .sec h2 {
+    font-size: 11px; font-weight: 700; color: var(--navy);
+    text-transform: uppercase; letter-spacing: .8px;
+  }
+  .sec .hint { font-size: 9px; color: var(--muted); font-weight: 500; margin-left: auto; }
+
+  /* ── KPI cards ─────────────────────────────── */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+  .kpi {
+    background: var(--slate);
+    border-radius: 8px;
+    padding: 13px 14px;
+    border-top: 3px solid var(--amber);
+  }
+  .kpi .label { font-size: 8px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .5px; }
+  .kpi .value { font-size: 24px; font-weight: 800; color: var(--navy); margin: 5px 0 2px; letter-spacing: -.5px; }
+  .kpi .value small { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0; }
+  .kpi .delta { font-size: 8.5px; font-weight: 600; line-height: 1.35; }
+  .kpi .delta.up { color: var(--green); }
+  .kpi .delta.down { color: var(--red); }
+  .kpi .delta.flat { color: var(--muted); }
+
+  /* ── Two-column body row ───────────────────── */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+
+  /* ── Message bubbles (text thread) ─────────── */
+  .thread {
+    background: #f6f7f9;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 13px 13px 15px;
+    margin-top: 14px;
+  }
+  .thread .meta {
+    font-size: 8px; color: var(--muted); text-align: center;
+    text-transform: uppercase; letter-spacing: .6px; font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .sysnote {
+    text-align: center; font-size: 8px; color: var(--red); font-weight: 700;
+    background: #FDECEC; border-radius: 5px; padding: 4px 8px;
+    margin: 0 auto 10px; display: inline-block;
+  }
+  .syswrap { text-align: center; }
+  .bubble { max-width: 80%; padding: 8px 11px; border-radius: 13px; margin-bottom: 8px; position: relative; }
+  .bubble p { font-size: 9.5px; line-height: 1.4; }
+  .bubble .t { font-size: 7.5px; margin-top: 4px; opacity: .8; }
+  .bubble.out {
+    background: var(--navy); color: #fff; margin-left: auto;
+    border-bottom-right-radius: 4px;
+  }
+  .bubble.out .who { font-size: 7px; font-weight: 700; letter-spacing: .5px; color: var(--amber); text-transform: uppercase; margin-bottom: 2px; }
+  .bubble.out .t { color: #cbd5e1; text-align: right; }
+  .bubble.in {
+    background: #fff; color: var(--ink); margin-right: auto;
+    border: 1px solid var(--line); border-bottom-left-radius: 4px;
+  }
+  .bubble.in .who { font-size: 7px; font-weight: 700; letter-spacing: .5px; color: var(--muted); text-transform: uppercase; margin-bottom: 2px; }
+  .bubble.in .t { color: var(--muted); }
+  .auto-tag {
+    display: inline-block; font-size: 6.5px; font-weight: 700; letter-spacing: .4px;
+    background: var(--amber); color: #fff; padding: 1px 5px; border-radius: 3px;
+    margin-left: 5px; vertical-align: middle;
+  }
+
+  /* ── Log table ─────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: var(--navy); color: #fff;
+    font-size: 7.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px;
+    text-align: left; padding: 7px 8px;
+  }
+  thead th.r { text-align: right; }
+  tbody td { padding: 7px 8px; font-size: 9px; vertical-align: middle; border-bottom: 1px solid var(--line); }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  tbody tr.win td:first-child { box-shadow: inset 3px 0 0 var(--green); }
+  td.r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .time { font-weight: 700; color: var(--navy); white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; color: var(--ink); }
+  .resp { color: var(--muted); font-style: italic; }
+  .pill {
+    display: inline-block; font-size: 8px; font-weight: 700;
+    padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .pill.won  { background: #E7F6EF; color: var(--green); }
+  .pill.lost { background: #FDECEC; color: var(--red); }
+  .pill.pend { background: #FEF3C7; color: #7c5e10; }
+
+  /* ── The One Thing ─────────────────────────── */
+  .onething {
+    background: var(--navy); color: #fff; border-radius: 10px;
+    padding: 16px 20px; margin: 22px 0 4px;
+    display: flex; gap: 16px; align-items: center;
+  }
+  .onething .badge {
+    background: var(--amber); color: var(--navy); font-weight: 800;
+    font-size: 8px; letter-spacing: 1px; padding: 4px 9px; border-radius: 5px;
+    text-transform: uppercase; white-space: nowrap; align-self: flex-start;
+  }
+  .onething h3 { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: #fff; }
+  .onething p { font-size: 9.5px; line-height: 1.5; color: #cbd5e1; }
+  .onething .dollar { color: var(--amber); font-weight: 800; }
+
+  /* ── Footer ────────────────────────────────── */
+  .footer {
+    margin-top: 18px;
+    border-top: 1px solid var(--line);
+    padding: 11px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8px; color: var(--muted); letter-spacing: .3px;
+  }
+  .footer .ef { font-weight: 800; color: var(--navy); }
+
+  @media print {
+    html, body { background: #fff; }
+    .page { margin: 0; box-shadow: none; width: auto; min-height: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="biz">Chattahoochee Plumbing Co., LLC</div>
+      <div class="sub">Call Catch · Missed-call auto-text recovery · June 2026 · Columbus, GA</div>
+    </div>
+    <div class="brand">
+      <div class="pre">POWERED BY</div>
+      <div class="mark">EchoFrame</div>
+      <div class="tag">Business intelligence, not accounting.</div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- Redacted sample banner -->
+    <div class="sample-banner">
+      <span class="chip">REDACTED SAMPLE</span>
+      <span><b>This is an anonymized demonstration report.</b> Business name, phone numbers, and dollar figures are fictional and do not represent a real client. Caller numbers are masked. Volumes are illustrative of a Columbus, GA home-services shop.</span>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="sec">
+      <span class="bar"></span><h2>This Month at a Glance</h2>
+      <span class="hint">the moment you miss a call, we text the lead back</span>
+    </div>
+    <div class="kpis">
+      <div class="kpi">
+        <div class="label">Missed Calls</div>
+        <div class="value">38</div>
+        <div class="delta flat">Unanswered, busy &amp; after-hours</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Auto-Texts Sent</div>
+        <div class="value">38</div>
+        <div class="delta up">100% caught · avg 41s to send</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Leads Recovered</div>
+        <div class="value">14</div>
+        <div class="delta up">▲ 37% of missed calls re-engaged</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Est. Revenue Saved</div>
+        <div class="value">$8,420</div>
+        <div class="delta up">Booked jobs that would've walked</div>
+      </div>
+    </div>
+
+    <!-- Text sequence -->
+    <div class="sec">
+      <span class="bar"></span><h2>What the Caller Sees</h2>
+      <span class="hint">actual auto-text sequence · sample thread</span>
+    </div>
+    <div class="thread">
+      <div class="meta">Thread · Tue Jun 17, 2:14 PM · Caller (706) •••-4827</div>
+      <div class="syswrap"><div class="sysnote">✕ Missed call — no answer (line busy on another job)</div></div>
+
+      <div class="bubble out">
+        <div class="who">Chattahoochee Plumbing<span class="auto-tag">AUTO · 2:15 PM</span></div>
+        <p>Hi, this is Chattahoochee Plumbing — sorry we missed your call! We're out on a job right now. How can we help? Reply here and we'll get right back to you. 🔧</p>
+        <div class="t">Delivered · 2:15 PM</div>
+      </div>
+
+      <div class="bubble in">
+        <div class="who">Caller</div>
+        <p>Hey — water heater is leaking all over my garage floor. Need someone out today if you can.</p>
+        <div class="t">2:16 PM</div>
+      </div>
+
+      <div class="bubble out">
+        <div class="who">Chattahoochee Plumbing</div>
+        <p>Got it — we can have a tech to you between 4–6 PM today. What's the service address?</p>
+        <div class="t">2:19 PM</div>
+      </div>
+
+      <div class="bubble in">
+        <div class="who">Caller</div>
+        <p>1142 Wynnton Rd. Thank you!!</p>
+        <div class="t">2:20 PM</div>
+      </div>
+
+      <div class="bubble out">
+        <div class="who">Chattahoochee Plumbing</div>
+        <p>You're booked for 4–6 PM today. You'll get a text when our tech is on the way. See you soon! 👍</p>
+        <div class="t">2:21 PM</div>
+      </div>
+
+      <div class="syswrap"><div class="sysnote" style="background:#E7F6EF;color:#059669;">✓ Booked — $740 water-heater replacement</div></div>
+    </div>
+
+    <!-- Recovered leads log -->
+    <div class="sec">
+      <span class="bar"></span><h2>Recovered-Leads Log</h2>
+      <span class="hint">10 of 14 recoveries shown</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:96px">Time of Missed Call</th>
+          <th style="width:96px">Missed Call</th>
+          <th>Auto-Text Sent</th>
+          <th>Caller Response</th>
+          <th class="r" style="width:118px">Outcome</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="win">
+          <td class="time">Jun 17 · 2:14 PM</td>
+          <td class="num">(706) •••-4827</td>
+          <td>Sorry we missed you — how can we help?</td>
+          <td class="resp">"Water heater leaking, need today"</td>
+          <td class="r"><span class="pill won">Booked · $740</span></td>
+        </tr>
+        <tr class="win">
+          <td class="time">Jun 19 · 7:42 AM</td>
+          <td class="num">(706) •••-1190</td>
+          <td>After-hours — we open at 8, can we text?</td>
+          <td class="resp">"Clogged main line"</td>
+          <td class="r"><span class="pill won">Booked · $480</span></td>
+        </tr>
+        <tr class="win">
+          <td class="time">Jun 21 · 11:58 AM</td>
+          <td class="num">(762) •••-3305</td>
+          <td>Sorry we missed you — how can we help?</td>
+          <td class="resp">"Need a quote on repipe"</td>
+          <td class="r"><span class="pill won">Booked · $1,950</span></td>
+        </tr>
+        <tr class="win">
+          <td class="time">Jun 23 · 4:31 PM</td>
+          <td class="num">(706) •••-0072</td>
+          <td>We're on a job — reply and we'll follow up.</td>
+          <td class="resp">"Running toilet, 2 baths"</td>
+          <td class="r"><span class="pill won">Booked · $310</span></td>
+        </tr>
+        <tr>
+          <td class="time">Jun 24 · 9:05 AM</td>
+          <td class="num">(706) •••-5561</td>
+          <td>Sorry we missed you — how can we help?</td>
+          <td class="resp">"Just pricing, will call back"</td>
+          <td class="r"><span class="pill pend">Quoted · pending</span></td>
+        </tr>
+        <tr class="win">
+          <td class="time">Jun 25 · 1:22 PM</td>
+          <td class="num">(334) •••-8814</td>
+          <td>We're out on a call — text us the issue?</td>
+          <td class="resp">"Garbage disposal jammed"</td>
+          <td class="r"><span class="pill won">Booked · $185</span></td>
+        </tr>
+        <tr class="win">
+          <td class="time">Jun 26 · 6:47 PM</td>
+          <td class="num">(706) •••-2238</td>
+          <td>After-hours — emergency? Reply URGENT.</td>
+          <td class="resp">"URGENT — burst pipe"</td>
+          <td class="r"><span class="pill won">Booked · $1,420</span></td>
+        </tr>
+        <tr>
+          <td class="time">Jun 27 · 10:13 AM</td>
+          <td class="num">(706) •••-7704</td>
+          <td>Sorry we missed you — how can we help?</td>
+          <td class="resp">— no reply —</td>
+          <td class="r"><span class="pill lost">No response</span></td>
+        </tr>
+        <tr class="win">
+          <td class="time">Jun 28 · 3:09 PM</td>
+          <td class="num">(762) •••-4490</td>
+          <td>We're on a job — reply and we'll follow up.</td>
+          <td class="resp">"Water heater no hot water"</td>
+          <td class="r"><span class="pill won">Booked · $620</span></td>
+        </tr>
+        <tr class="win">
+          <td class="time">Jun 30 · 8:51 AM</td>
+          <td class="num">(706) •••-6127</td>
+          <td>Sorry we missed you — how can we help?</td>
+          <td class="resp">"Faucet replacement, kitchen"</td>
+          <td class="r"><span class="pill won">Booked · $295</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- The One Thing -->
+    <div class="onething">
+      <span class="badge">The One Thing</span>
+      <div>
+        <h3>Call Catch recovered 37% of your missed calls this month — about $8,420 in booked work.</h3>
+        <p>You missed <span class="dollar">38 calls</span> in June; every one got a text back inside a minute, and <span class="dollar">14 callers</span> wrote back instead of dialing the next plumber. Those replies turned into <span class="dollar">$8,420</span> of booked jobs that would otherwise have walked — for roughly the cost of a single service call. Most recoveries came from after-hours and "line busy on another job" misses, which is exactly when a Columbus homeowner with a leak keeps scrolling. Hold that 37% recovery rate and Call Catch pays for itself many times over every month.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; Call Catch</span>
+    <span>Page 1 of 1 · Confidential</span>
+  </div>
+
+</div>
+</body>
+</html>
