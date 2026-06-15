@@ -22,9 +22,15 @@ from intake_specs import INTAKE_SPECS, build_context
 import store
 import sign
 import emails
+import email_failsafe
 from reminders import run_reminders
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
+
+# App-wide safety net: if any product engine's report delivery fails (unverified
+# domain, mistyped client address, bounce, Resend outage), the report is routed
+# to the owner's inbox instead of being silently lost. Touches no engine code.
+email_failsafe.install()
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
