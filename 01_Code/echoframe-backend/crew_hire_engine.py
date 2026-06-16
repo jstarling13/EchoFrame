@@ -178,7 +178,7 @@ def _email(email, owner, html_bytes, meta):
     import resend
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     role = meta.get("Role", "your role").strip(); biz = meta.get("Business Name", "your business").strip()
-    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <jacob.starling@echoframe.net>"),
         "to": [email], "subject": f"Your Crew Hire shortlist — {role} — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your Crew Hire report for {biz} ({role}) is "
                 f"attached — applicants screened and scored, with the shortlist and who to prioritize.</p><p>— EchoFrame</p>",

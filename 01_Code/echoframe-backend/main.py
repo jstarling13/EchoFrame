@@ -10,7 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from urllib.parse import urlencode
 from fastapi import FastAPI, Request, Form, UploadFile, File, HTTPException, BackgroundTasks
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.concurrency import run_in_threadpool
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -23,6 +23,7 @@ import store
 import sign
 import emails
 import email_failsafe
+import review_gate
 from reminders import run_reminders
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
@@ -31,6 +32,16 @@ load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
 # domain, mistyped client address, bounce, Resend outage), the report is routed
 # to the owner's inbox instead of being silently lost. Touches no engine code.
 email_failsafe.install()
+
+# Human-review gate: every customer-bound REPORT is held and emailed to the owner
+# for one-click approval before it reaches the customer — making the advertised
+# "a real analyst reviews every report" literally true. Installed AFTER the
+# fail-safe so the review copies are themselves fail-safe protected.
+#
+# THE ONE LEVER FOR FULL AUTONOMY: set env REVIEW_MODE=off to disable the gate
+# and return to instant auto-send (planned once enough customer data has proven
+# the reports out — e.g. before going on active duty).
+review_gate.install()
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
@@ -771,3 +782,58 @@ async def cron_reminders(request: Request):
             raise HTTPException(status_code=401, detail="Unauthorized.")
     summary = await run_in_threadpool(run_reminders)
     return JSONResponse({"status": "ok", **summary})
+
+
+# ----- Human review gate (approve / hold a held report) ------------------------
+
+def _review_page(title: str, message: str, tone: str = "ok") -> str:
+    accent = "#0a274f" if tone == "ok" else "#b91c1c"
+    return (
+        "<!doctype html><html><head><meta charset='utf-8'>"
+        "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+        "<title>EchoFrame review</title></head>"
+        "<body style='margin:0;background:#0a274f;font:16px system-ui;'>"
+        "<div style='max-width:520px;margin:14vh auto;background:#fff;border-radius:16px;"
+        "padding:40px 36px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)'>"
+        f"<div style='font:700 22px system-ui;color:{accent};margin-bottom:10px'>{title}</div>"
+        f"<div style='color:#374151;line-height:1.5'>{message}</div>"
+        "<div style='color:#9ca3af;font-size:12px;margin-top:22px'>EchoFrame</div>"
+        "</div></body></html>"
+    )
+
+
+@app.get("/api/review/approve")
+async def review_approve(id: str, t: str):
+    """One-click approval link from the owner's review email. Releases the held
+    report to the real customer."""
+    rec = review_gate.peek(id)
+    if not rec or rec.get("token") != t:
+        raise HTTPException(status_code=404, detail="Review not found or link expired.")
+    if rec.get("status") == "approved":
+        return HTMLResponse(_review_page(
+            "Already sent",
+            f"This report was already delivered to <strong>{rec.get('to','the customer')}</strong>.",
+        ))
+    if rec.get("status") == "held":
+        return HTMLResponse(_review_page(
+            "On hold",
+            "This report was marked held. Edit and resend it manually when ready.",
+        ))
+    await run_in_threadpool(review_gate.release, id)
+    return HTMLResponse(_review_page(
+        "Sent ✓",
+        f"Report approved and delivered to <strong>{rec.get('to','the customer')}</strong>.",
+    ))
+
+
+@app.get("/api/review/hold")
+async def review_hold(id: str, t: str):
+    """Mark a held report as held (owner will edit / resend manually)."""
+    rec = review_gate.peek(id)
+    if not rec or rec.get("token") != t:
+        raise HTTPException(status_code=404, detail="Review not found or link expired.")
+    review_gate.hold(id)
+    return HTMLResponse(_review_page(
+        "Held",
+        "Marked held — nothing was sent to the customer. Edit and resend manually.",
+    ))

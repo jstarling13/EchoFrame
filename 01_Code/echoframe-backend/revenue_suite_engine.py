@@ -139,7 +139,7 @@ def _save(biz, html):
 def _email(email, owner, html_bytes, biz, month):
     import resend
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
-    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <jacob.starling@echoframe.net>"),
         "to": [email], "subject": f"Your {month} Revenue Suite — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Revenue Suite report for {biz} is "
                 f"attached — Call Catch, Quote Revive, and Clear Ledger on one page, with everything you "

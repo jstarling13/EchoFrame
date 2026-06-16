@@ -193,7 +193,7 @@ def _email(email, owner, html_bytes, meta):
     import resend
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your business").strip()
-    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <jacob.starling@echoframe.net>"),
         "to": [email], "subject": f"Your {month} Quote Revive — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Quote Revive report for {biz} is "
                 f"attached — your ghosted quotes, the follow-ups that reopened them, and the one to call.</p><p>— EchoFrame</p>",

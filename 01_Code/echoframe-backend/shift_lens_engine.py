@@ -406,7 +406,7 @@ def _send_report_email(customer_email, owner_name, html_bytes, meta):
     biz   = meta.get("Business Name", "your business").strip() or "your business"
     greet = (owner_name or "").strip() or "there"
     fname = f"EchoFrame_ShiftLens_{month.replace(' ', '_')}.html"
-    email_from = os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>")
+    email_from = os.environ.get("EMAIL_FROM", "EchoFrame <jacob.starling@echoframe.net>")
     body = (
         f"<p>Hi {greet},</p>"
         f"<p>Your {month} Shift Lens report for {biz} is attached and shown below — every shift's "

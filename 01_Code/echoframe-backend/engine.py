@@ -686,7 +686,7 @@ def generate_clarity_report(
 # OVERNIGHT_LOG.md.
 
 # From address for outbound report emails. Override via env in production.
-EMAIL_FROM = os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>")
+EMAIL_FROM = os.environ.get("EMAIL_FROM", "EchoFrame <jacob.starling@echoframe.net>")
 
 
 def _report_slug(business_name: str) -> str:

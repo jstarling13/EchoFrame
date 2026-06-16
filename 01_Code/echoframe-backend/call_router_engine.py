@@ -187,7 +187,7 @@ def _email(email, owner, html_bytes, meta):
     import resend
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     period = meta.get("Period", "").strip(); biz = meta.get("Business Name", "your business").strip()
-    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <jacob.starling@echoframe.net>"),
         "to": [email], "subject": f"Your Call Router report — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your Call Router report for {biz} ({period}) is "
                 f"attached — every inbound call answered, qualified, and routed, plus the after-hours work you'd "
