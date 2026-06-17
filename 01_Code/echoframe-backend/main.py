@@ -888,3 +888,49 @@ async def review_selftest(request: Request, key: str = ""):
         "customer_on_approve": _SELFTEST_CUSTOMER,
         "note": "Check your inbox for the [REVIEW] email, then click Approve & send.",
     })
+
+
+@app.get("/api/review/selftest-real")
+async def review_selftest_real(request: Request, key: str = ""):
+    """Like /selftest, but runs the REAL Auto Ledger engine (real pandas math +
+    real Claude-written narrative) on a bundled sample CSV, then routes the
+    genuine report through the gate. Locked to the owner's own +alias inbox."""
+    if key != _SELFTEST_KEY:
+        raise HTTPException(status_code=404, detail="Not found.")
+    import shutil
+    import auto_ledger_engine as ale
+
+    # selftest_sample.csv ships at the backend root (demo_output/ is gitignored).
+    src = BASE_DIR / "selftest_sample.csv"
+    if not src.exists():
+        src = BASE_DIR / "demo_output" / "auto_ledger_sample_input.csv"
+    if not src.exists():
+        return JSONResponse({"ok": False, "error": f"sample CSV not found at {src}"}, status_code=500)
+
+    # Stage the sample CSV where the engine looks for this customer's upload.
+    try:
+        ale.UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+        dest = ale.UPLOADS_DIR / f"{ale._safe_email(_SELFTEST_CUSTOMER)}.csv"
+        shutil.copyfile(src, dest)
+    except Exception as e:
+        return JSONResponse({"ok": False, "error": f"staging failed: {type(e).__name__}: {e}"}, status_code=500)
+
+    # Point the Approve/Hold links back at this same server.
+    review_gate.set_base_url(str(request.base_url))
+    try:
+        path = await run_in_threadpool(
+            ale.generate_auto_ledger_report, _SELFTEST_CUSTOMER, "Self-Test Co", "starter", True
+        )
+    except Exception as e:
+        return JSONResponse({"ok": False, "error": f"{type(e).__name__}: {e}"}, status_code=500)
+    finally:
+        review_gate.set_base_url(None)
+
+    return JSONResponse({
+        "ok": True,
+        "report_generated": bool(path),
+        "product": "Auto Ledger — Starter (real engine + real narrative)",
+        "review_email_sent_to": review_gate._owner_email(),
+        "customer_on_approve": _SELFTEST_CUSTOMER,
+        "note": "Open the [REVIEW] email (real report attached) and click Approve & send.",
+    })
