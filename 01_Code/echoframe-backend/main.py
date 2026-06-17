@@ -697,6 +697,25 @@ def _invoice_product_id(invoice: dict) -> str:
     return prod or ""
 
 
+def _invoice_product_name(invoice: dict) -> str:
+    """Product NAME from a subscription invoice line — the line description, or
+    the expanded product's name. Lets renewals route by name as a fallback
+    (matching the upload page), so they still resolve when the product id isn't
+    in the map (e.g. test-mode clones, or a re-created product)."""
+    lines = ((invoice.get("lines") or {}).get("data")) or []
+    if not lines:
+        return ""
+    line = lines[0]
+    desc = (line.get("description") or "").strip()
+    if desc:
+        return desc
+    price = line.get("price") or {}
+    prod = price.get("product")
+    if isinstance(prod, dict):
+        return (prod.get("name") or "").strip()
+    return ""
+
+
 def _resolve_invoice_email_name(invoice: dict) -> tuple[str, str]:
     """Resolve client email + name from the invoice, falling back to a Stripe
     Customer lookup and to the durable customer record."""
@@ -741,7 +760,12 @@ def _handle_invoice_paid(invoice: dict) -> None:
         return
 
     # Route the subscription's Stripe product to one of our report products.
-    routed = route_stripe_purchase(product_id=_invoice_product_id(invoice))
+    # Match by Stripe product id, falling back to the product name (same as the
+    # upload page), so renewals resolve even when the id isn't mapped.
+    routed = route_stripe_purchase(
+        product_id=_invoice_product_id(invoice),
+        product_name=_invoice_product_name(invoice),
+    )
     if not routed.get("product"):
         # Never guess — flag for manual review rather than send a wrong report link.
         print(f"[EchoFrame] WEBHOOK FLAG: {routed.get('flag')}")
