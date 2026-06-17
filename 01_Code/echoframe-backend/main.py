@@ -803,9 +803,10 @@ def _review_page(title: str, message: str, tone: str = "ok") -> str:
 
 
 @app.get("/api/review/approve")
-async def review_approve(id: str, t: str):
+async def review_approve(id: str, t: str, delay: int = 0):
     """One-click approval link from the owner's review email. Releases the held
-    report to the real customer."""
+    report to the real customer — immediately by default, or scheduled `delay`
+    minutes out (also honours the REVIEW_SEND_DELAY_MINUTES env default)."""
     rec = review_gate.peek(id)
     if not rec or rec.get("token") != t:
         raise HTTPException(status_code=404, detail="Review not found or link expired.")
@@ -819,11 +820,15 @@ async def review_approve(id: str, t: str):
             "On hold",
             "This report was marked held. Edit and resend it manually when ready.",
         ))
-    await run_in_threadpool(review_gate.release, id)
-    return HTMLResponse(_review_page(
-        "Sent ✓",
-        f"Report approved and delivered to <strong>{rec.get('to','the customer')}</strong>.",
-    ))
+    delay_minutes = delay if delay and delay > 0 else None
+    await run_in_threadpool(review_gate.release, id, delay_minutes)
+    to_label = rec.get("to", "the customer")
+    eff = delay_minutes if delay_minutes is not None else review_gate._default_delay_minutes()
+    if eff and eff > 0:
+        msg = f"Report approved — <strong>scheduled to send to {to_label} in {eff} min</strong>."
+    else:
+        msg = f"Report approved and delivered to <strong>{to_label}</strong>."
+    return HTMLResponse(_review_page("Sent ✓", msg))
 
 
 @app.get("/api/review/hold")
@@ -837,3 +842,49 @@ async def review_hold(id: str, t: str):
         "Held",
         "Marked held — nothing was sent to the customer. Edit and resend manually.",
     ))
+
+
+# ----- Self-test: prove the review gate on the LIVE server ---------------------
+# Token-guarded and hard-wired to email only the owner's own inbox, so it can
+# never be abused to send mail anywhere else. Creates a real held sample report
+# ON this server, so the Approve button in the resulting email actually works.
+_SELFTEST_KEY = "echoframe-selftest-9f3a7c12e8b54d6a"
+_SELFTEST_CUSTOMER = "jacobstarling4313+client@gmail.com"  # a +alias of the owner
+
+@app.get("/api/review/selftest")
+async def review_selftest(request: Request, key: str = ""):
+    if key != _SELFTEST_KEY:
+        raise HTTPException(status_code=404, detail="Not found.")
+    import base64, resend
+    resend.api_key = os.environ.get("RESEND_API_KEY", "")
+    # Point the Approve/Hold links back at whatever host this request came in on,
+    # so the button always reaches this same server.
+    review_gate.set_base_url(str(request.base_url))
+    report_html = (
+        "<!doctype html><h1 style='color:#0a274f;font-family:system-ui'>EchoFrame — Monthly Clarity Report</h1>"
+        "<p style='font-family:system-ui'>Sample self-test report. If you can read this, the held "
+        "report carried its attachment through the gate.</p>"
+    )
+    sample = {
+        "from": os.environ.get("EMAIL_FROM", "EchoFrame <jacob.starling@echoframe.net>"),
+        "to": [_SELFTEST_CUSTOMER],
+        "subject": "Your May 2026 Clarity Report — Self-Test Co",
+        "html": "<p>Hi there,</p><p>Your sample Clarity Report is attached.</p><p>— EchoFrame</p>",
+        "attachments": [{
+            "filename": "EchoFrame_SelfTest.html",
+            "content": base64.b64encode(report_html.encode()).decode(),
+            "content_type": "text/html",
+        }],
+    }
+    try:
+        result = await run_in_threadpool(resend.Emails.send, sample)
+    finally:
+        review_gate.set_base_url(None)
+    held = isinstance(result, dict) and str(result.get("id", "")).startswith("review-held-")
+    return JSONResponse({
+        "ok": True,
+        "held": held,
+        "review_email_sent_to": review_gate._owner_email(),
+        "customer_on_approve": _SELFTEST_CUSTOMER,
+        "note": "Check your inbox for the [REVIEW] email, then click Approve & send.",
+    })

@@ -76,11 +76,31 @@ def _from_address() -> str:
     return os.environ.get("EMAIL_FROM", "EchoFrame <jacob.starling@echoframe.net>")
 
 
+# Optional runtime override for the approve/hold link host (used by the
+# production self-test so the button always points back at the same server).
+_base_override = None
+
+
+def set_base_url(url) -> None:
+    global _base_override
+    _base_override = url.rstrip("/") if url else None
+
+
 def _base_url() -> str:
+    if _base_override:
+        return _base_override
     return (
         os.environ.get("PUBLIC_BASE_URL")
         or "https://echoframe-production.up.railway.app"
     ).rstrip("/")
+
+
+def _default_delay_minutes() -> int:
+    """Global send delay after approval (env REVIEW_SEND_DELAY_MINUTES). 0 = now."""
+    try:
+        return max(0, int(float(os.environ.get("REVIEW_SEND_DELAY_MINUTES", "0"))))
+    except Exception:
+        return 0
 
 
 def _owner_addresses() -> set[str]:
@@ -226,8 +246,14 @@ def peek(review_id: str):
     return store.get_json(f"review:{review_id}")
 
 
-def release(review_id: str):
-    """Deliver a held report to its real customer. Idempotent-ish."""
+def release(review_id: str, delay_minutes=None):
+    """Deliver a held report to its real customer on approval.
+
+    Sends immediately by default. If a delay is configured — either the
+    REVIEW_SEND_DELAY_MINUTES env var or an explicit ``delay_minutes`` (e.g.
+    from an approve link) — the customer send is SCHEDULED that many minutes
+    out via Resend's ``scheduled_at`` instead of going immediately.
+    """
     rec = store.get_json(f"review:{review_id}")
     if not rec or rec.get("status") != "pending":
         return rec
@@ -235,15 +261,26 @@ def release(review_id: str):
     if sender is None:
         import resend
         sender = resend.Emails.send
-    out = sender(rec["params"])
+
+    dmin = _default_delay_minutes() if delay_minutes is None else max(0, int(delay_minutes))
+    params = dict(rec["params"])
+    if dmin > 0:
+        from datetime import datetime, timezone, timedelta
+        params["scheduled_at"] = (
+            datetime.now(timezone.utc) + timedelta(minutes=dmin)
+        ).isoformat()
+
+    out = sender(params)
     rec["status"] = "approved"
     rec["released"] = int(time.time())
+    rec["delay_minutes"] = dmin
     store.set_json(f"review:{review_id}", rec, ex=_ttl_seconds())
     try:
         store.set_remove("review:pending", review_id)
     except Exception:
         pass
-    print(f"[review_gate] report {review_id} approved → delivered to customer.")
+    when = f"scheduled to send in {dmin} min" if dmin else "delivered now"
+    print(f"[review_gate] report {review_id} approved → {when} to customer.")
     return out
 
 
