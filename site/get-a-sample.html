@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Get a Free Sample — EchoFrame</title>
+  <meta name="description" content="Request a free, no-commitment sample built on your actual business. 48-hour turnaround.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="echoframe_logo.png">
+  <style>
+    :root{ --navy:#0A274F; --amber:#94681C; --amber-bright:#E0A93F; --amber-soft:#FDF3E3; --ink:#111827; --ink-soft:#4B5563; --ink-faint:#6B7280; --line:#E5E7EB; --bg:#FFFFFF; --bg-soft:#F9FAFB; }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{ font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:var(--ink); background:var(--bg-soft); line-height:1.6; -webkit-font-smoothing:antialiased; }
+    .bar{ background:#fff; border-bottom:1px solid var(--line); padding:16px 24px; box-shadow:0 1px 4px rgba(10,39,79,.08); }
+    .bar-in{ max-width:680px; margin:0 auto; display:flex; align-items:center; gap:10px; }
+    .bar-logo{ width:36px; height:36px; border-radius:8px; overflow:hidden; background:var(--navy); flex-shrink:0; }
+    .bar-logo img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .bar a{ color:var(--navy); font-weight:700; font-size:18px; letter-spacing:-0.015em; text-decoration:none; }
+    .wrap{ max-width:560px; margin:0 auto; padding:48px 24px 64px; }
+    .eyebrow{ color:var(--amber); font-weight:600; font-size:12px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:12px; }
+    h1{ color:var(--navy); font-size:30px; line-height:1.15; letter-spacing:-0.02em; font-weight:700; margin-bottom:12px; }
+    .lead{ color:var(--ink-soft); font-size:17px; margin-bottom:28px; }
+    .card{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:28px 26px; box-shadow:0 8px 32px rgba(10,39,79,.06); }
+    label{ display:block; font-size:13px; font-weight:600; color:var(--navy); margin-bottom:6px; }
+    .field{ margin-bottom:16px; }
+    input{ width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:8px; font-size:15px; color:var(--ink); font-family:inherit; transition:border-color .15s, box-shadow .15s; }
+    input:focus{ outline:none; border-color:var(--amber); box-shadow:0 0 0 3px var(--amber-soft); }
+    button{ display:block; width:100%; background:var(--amber); color:#fff; font-weight:600; font-size:16px; padding:14px; border:none; border-radius:8px; cursor:pointer; font-family:inherit; margin-top:6px; transition:background .15s; }
+    button:hover{ background:#7E5616; }
+    .note{ text-align:center; font-size:13px; color:var(--ink-faint); margin-top:12px; }
+    .back{ display:inline-block; margin-top:22px; color:var(--ink-faint); font-size:14px; text-decoration:none; }
+    .back:hover{ color:var(--amber); }
+  </style>
+</head>
+<body>
+  <div class="bar"><div class="bar-in">
+    <span class="bar-logo"><img src="echoframe_logo.png" alt="EchoFrame"></span>
+    <a href="index.html">EchoFrame</a>
+  </div></div>
+
+  <div class="wrap">
+    <div class="eyebrow">Free sample &middot; no commitment</div>
+    <h1 id="headline">Get a free sample</h1>
+    <p class="lead" id="lead">Tell us about your business and we'll build a real, redacted sample on your actual numbers &mdash; in 48 hours, no charge, no commitment.</p>
+
+    <div class="card">
+      <form action="https://formspree.io/f/xykvaeyl" method="POST">
+        <input type="hidden" name="product" id="product-field" value="EchoFrame">
+        <input type="hidden" name="_subject" id="subject-field" value="New sample request">
+        <div class="field">
+          <label for="business">Business name</label>
+          <input type="text" id="business" name="business_name" placeholder="e.g. River Road Grille" required>
+        </div>
+        <div class="field">
+          <label for="industry">Industry</label>
+          <input type="text" id="industry" name="industry" placeholder="e.g. Restaurant, HVAC, Salon" required>
+        </div>
+        <div class="field">
+          <label for="revenue">Approximate monthly revenue</label>
+          <input type="text" id="revenue" name="monthly_revenue" placeholder="e.g. $40,000" required>
+        </div>
+        <div class="field">
+          <label for="email">Your email</label>
+          <input type="email" id="email" name="email" placeholder="you@yourbusiness.com" required>
+        </div>
+        <button type="submit" id="submit-btn">Send me my free sample &rarr;</button>
+        <p class="note">48-hour turnaround &mdash; real numbers, real recommendations.</p>
+      </form>
+    </div>
+    <a class="back" href="index.html">&larr; Back to EchoFrame</a>
+  </div>
+
+  <script>
+    (function(){
+      var params = new URLSearchParams(window.location.search);
+      var product = (params.get('product') || '').trim();
+      if (product) {
+        document.getElementById('headline').textContent = 'Get a free sample of ' + product;
+        document.getElementById('lead').textContent = 'Tell us about your business and we’ll build a real ' + product + ' sample on your actual numbers — in 48 hours, no charge, no commitment.';
+        document.getElementById('product-field').value = product;
+        document.getElementById('subject-field').value = 'New sample request: ' + product;
+        document.getElementById('submit-btn').textContent = 'Send me my free ' + product + ' sample →';
+        document.title = 'Get a Free ' + product + ' Sample — EchoFrame';
+      }
+    })();
+  </script>
+  <footer style="border-top:1px solid #e5e7eb;padding:22px 20px;text-align:center;font-size:12px;color:#6B7280;max-width:1100px;margin:48px auto 0;">
+    &copy; 2026 EchoFrame &nbsp;&middot;&nbsp; <a href="index.html" style="color:#6B7280;">Home</a> &nbsp;&middot;&nbsp; <a href="privacy.html" style="color:#6B7280;">Privacy</a> &nbsp;&middot;&nbsp; <a href="terms.html" style="color:#6B7280;">Terms of Service</a>
+    <div style="margin-top:10px;font-size:11px;line-height:1.55;">EchoFrame provides business intelligence and informational analysis only. EchoFrame is not a CPA firm, accounting firm, registered investment adviser, or law firm, and does not provide accounting, audit, tax, legal, or investment advice. Reports are informational and you are solely responsible for the decisions you make. Consult a licensed professional before acting.</div>
+  </footer>
+</body>
+</html>

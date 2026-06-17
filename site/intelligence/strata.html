@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shift Lens — See Exactly Which Shifts Make Money | EchoFrame Intelligence</title>
+  <meta name="description" content="Shift Lens maps every shift's labor cost against its revenue so you can see which schedules are pulling their weight — and which ones to cut or restructure.">
+  <link rel="canonical" href="https://echoframe.co/intelligence/strata.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/echoframe_logo.png">
+  <link rel="apple-touch-icon" href="/echoframe_logo.png">
+  <style>
+    :root {
+      --navy: #0A274F; --amber: #94681C; --amber-soft: #FDF3E3;
+      --ink: #111827; --ink-soft: #4B5563; --ink-faint: #6B7280;
+      --line: #E5E7EB; --bg: #FFFFFF; --bg-soft: #F9FAFB; --bg-deep: #F3F4F6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: var(--ink); }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+    .breadcrumb { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
+    .breadcrumb a { color: var(--ink-faint); }
+    .breadcrumb a:hover { color: var(--amber); text-decoration: none; }
+    .breadcrumb span { margin: 0 8px; }
+    .product-hero { padding: 80px 0 64px; text-align: center; }
+    .eyebrow { display: block; color: var(--amber); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; }
+    .badge-soon { display: inline-block; background: var(--bg-deep); color: var(--ink-faint); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 12px; border-radius: 6px; margin-bottom: 20px; }
+    .product-hero h1 { font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; color: var(--navy); font-weight: 700; margin-bottom: 20px; max-width: 760px; margin-left: auto; margin-right: auto; }
+    .product-hero .subhead { font-size: 21px; color: var(--ink-soft); line-height: 1.55; margin-bottom: 36px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .hero-ctas { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .cta { display: inline-block; background: var(--amber); color: white; font-weight: 600; font-size: 16px; padding: 16px 32px; border-radius: 8px; transition: background 0.15s; }
+    .cta:hover { background: #7E5616; text-decoration: none; color: white; }
+    .problem-strip { background: rgba(10,39,79,0.04); border-left: 4px solid var(--amber); border-radius: 0 12px 12px 0; padding: 24px 28px; max-width: 720px; margin: 0 auto; font-size: 18px; font-weight: 500; font-style: italic; color: var(--ink); line-height: 1.55; }
+    .section { padding: 72px 0; border-top: 1px solid var(--line); }
+    .section-header { margin-bottom: 48px; }
+    .section-eyebrow { color: var(--amber); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: block; }
+    .section-title { font-size: 32px; color: var(--navy); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .section-sub { font-size: 18px; color: var(--ink-soft); max-width: 560px; line-height: 1.55; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .step { display: flex; flex-direction: column; }
+    .step-num { width: 42px; height: 42px; background: var(--amber); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; margin-bottom: 18px; flex-shrink: 0; }
+    .step h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; line-height: 1.3; }
+    .step p { font-size: 15px; color: var(--ink-soft); line-height: 1.65; }
+    .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .feature { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 14px; padding: 28px; }
+    .feature-label { font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
+    .feature h3 { font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .feature p { font-size: 15px; color: var(--ink-soft); line-height: 1.65; }
+    .pricing-wrap { display: flex; justify-content: center; margin-top: 48px; }
+    .pricing-card { background: white; border: 2px solid var(--amber); border-radius: 16px; padding: 40px 44px; max-width: 460px; width: 100%; }
+    .pricing-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+    .pricing-name { font-size: 22px; font-weight: 700; color: var(--navy); }
+    .pricing-badge { background: var(--amber-soft); color: var(--amber); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; }
+    .pricing-price { font-size: 52px; font-weight: 700; color: var(--navy); letter-spacing: -0.03em; line-height: 1; margin-bottom: 4px; }
+    .pricing-price sup { font-size: 24px; font-weight: 600; vertical-align: super; line-height: 0; }
+    .pricing-price sub { font-size: 18px; font-weight: 500; color: var(--ink-faint); }
+    .pricing-note { font-size: 13px; color: var(--ink-faint); margin-bottom: 28px; }
+    .pricing-list { list-style: none; margin-bottom: 32px; }
+    .pricing-list li { font-size: 15px; color: var(--ink-soft); padding: 9px 0; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
+    .pricing-list li:last-child { border-bottom: none; }
+    .check { color: var(--amber); font-weight: 800; font-size: 14px; }
+    .waitlist-section { background: var(--navy); padding: 80px 0; text-align: center; }
+    .waitlist-section h2 { font-size: 34px; font-weight: 700; color: white; letter-spacing: -0.02em; margin-bottom: 14px; }
+    .waitlist-section p { font-size: 18px; color: rgba(255,255,255,0.7); max-width: 480px; margin: 0 auto 36px; line-height: 1.55; }
+    .waitlist-form { display: flex; gap: 10px; max-width: 460px; margin: 0 auto; }
+    .waitlist-form input[type="email"] { flex: 1; padding: 14px 18px; border: none; border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; }
+    .waitlist-form button { background: var(--amber); color: white; font-weight: 600; font-size: 15px; padding: 14px 22px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; transition: background 0.15s; }
+    .waitlist-form button:hover { background: #7E5616; }
+    footer { padding: 36px 0; border-top: 1px solid var(--line); font-size: 12px; color: #6B7280; }
+    .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .footer-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .footer-links a { color: #6B7280; }
+    .footer-links a:hover { color: var(--amber); }
+    @media (max-width: 760px) {
+      .product-hero h1 { font-size: 34px; } .product-hero .subhead { font-size: 18px; } .product-hero { padding: 52px 0 40px; }
+      .section { padding: 48px 0; } .section-title { font-size: 26px; }
+      .steps { grid-template-columns: 1fr; gap: 28px; }
+      .features { grid-template-columns: 1fr; }
+      .pricing-card { padding: 28px 24px; } .pricing-price { font-size: 40px; }
+      .waitlist-section h2 { font-size: 26px; } .waitlist-form { flex-direction: column; }
+      .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+  
+    /* ===== EF navy hero band (matches homepage) ===== */
+    .breadcrumb { background: var(--navy); border-bottom: none; color: #AEBCCF; }
+    .breadcrumb a { color: #C7D2E0; }
+    .breadcrumb a:hover { color: #E0A93F; text-decoration: none; }    .product-hero { background: var(--navy); }
+    .product-hero .eyebrow { color: #E0A93F; }
+    .product-hero h1 { color: #FFFFFF; }
+    .product-hero .subhead { color: #C7D2E0; }
+    .product-hero .badge-soon { background: rgba(255,255,255,0.14); color: #E6EDF5; }
+    .product-hero .cta { background: #E0A93F; color: var(--navy); }
+    .product-hero .cta:hover { background: #D49A2C; color: var(--navy); }
+    /* ===== end EF navy hero band ===== */
+  </style>
+</head>
+<body>
+  <div id="ef-nav"></div>
+  <script src="../nav.js"></script>
+
+  <div class="breadcrumb">
+    <div class="container">
+      <a href="../index.html">EchoFrame</a><span>›</span>
+      <a href="index.html">Intelligence</a><span>›</span>
+      Shift Lens
+    </div>
+  </div>
+
+  <section class="product-hero">
+    <div class="container">
+      <span class="eyebrow">EchoFrame Intelligence</span>
+      <span class="badge-soon" style="background:#E0A93F;color:var(--navy);">Now Live</span>
+      <h1>Shift Lens</h1>
+      <p class="subhead">Some shifts are paying for themselves. Others are quietly bleeding you out. Now you can tell which is which.</p>
+      <div class="hero-ctas">
+        <a class="cta" href="https://buy.stripe.com/4gMfZj1MZ0g19HT6jJcwg09">Subscribe →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0; border-top:none;">
+    <div class="container">
+      <div class="problem-strip">
+        You staff based on gut feel and how busy last week was. You've never actually run the numbers on which shifts bring in more than they cost — and a few of them are quietly eating your margin every single week.
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">How it works</span>
+        <h2 class="section-title">Connect once. Get a weekly read on every shift you run.</h2>
+        <p class="section-sub">No spreadsheets. No manual tracking. Just a clear picture of which shifts earn their keep.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Connect your POS and scheduling</h3>
+          <p>We pull revenue data from your point-of-sale and labor cost data from your scheduling tool. One-time setup — usually takes less than 20 minutes.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>We map every shift</h3>
+          <p>Revenue earned, labor cost incurred, and the net margin for each shift — broken down by day, time slot, and team. The full picture, not a weekly average.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>You get a weekly Shift Report</h3>
+          <p>A plain-English breakdown of which shifts are profitable, which are borderline, and which ones to cut or restructure — delivered before the week starts.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">What's included</span>
+        <h2 class="section-title">The numbers behind every hour you're open.</h2>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-label">Profitability</div>
+          <h3>Shift-by-shift P&amp;L</h3>
+          <p>See the actual profit or loss on every shift — not just weekly or monthly totals that hide where the problems are. Tuesday at 7pm might look fine in aggregate and lose money every single week.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-label">Labor</div>
+          <h3>Actual labor cost tracking</h3>
+          <p>Pulls actual hours worked and wage rates — not scheduled, not estimated. What people actually worked and what it actually cost, matched to the revenue those hours generated.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-label">Alerts</div>
+          <h3>Underperformer flags</h3>
+          <p>Automatic alerts when a shift's labor cost exceeds a set percentage of its revenue — so you don't have to check every week to catch a shift that's gone sideways.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-label">Planning</div>
+          <h3>Schedule recommendations</h3>
+          <p>Suggested adjustments based on your actual revenue patterns — not gut feel. Which shifts to expand, which to trim, and which to cut entirely based on real numbers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- See it before you buy it -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header" style="text-align:center;">
+        <span class="section-eyebrow">See it before you buy it</span>
+        <h2 class="section-title">This is what your Shift Lens report looks like.</h2>
+        <p class="section-sub" style="margin-left:auto;margin-right:auto;">Every shift's labor cost against its revenue, so you can see which schedules pay off and which to cut. Here's a redacted sample.</p>
+      </div>
+      <div style="max-width:420px;margin:0 auto 28px;border-radius:8px;overflow:hidden;box-shadow:0 8px 32px rgba(10,39,79,0.13);border:1px solid #E5E7EB;">
+        <img src="../assets/shift-lens-sample.png" alt="Sample EchoFrame Shift Lens report for a Columbus small business" style="width:100%;height:auto;display:block;" />
+      </div>
+      <div style="text-align:center;">
+        <a class="cta" href="../get-a-sample.html?product=Shift+Lens">Get your free Shift Lens sample &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Pricing</span>
+        <h2 class="section-title">Stop guessing what your schedule costs you.</h2>
+      </div>
+      <div class="pricing-wrap">
+        <div class="pricing-card">
+          <div class="pricing-top">
+            <div class="pricing-name">Shift Lens</div>
+          </div>
+          <div class="pricing-price"><sup>$</sup>149<sub>/mo</sub></div>
+          <ul class="pricing-list">
+            <li><span class="check">✓</span> POS &amp; scheduling tool integration</li>
+            <li><span class="check">✓</span> Shift-by-shift P&amp;L breakdown</li>
+            <li><span class="check">✓</span> Actual labor cost tracking</li>
+            <li><span class="check">✓</span> Underperformer alerts</li>
+            <li><span class="check">✓</span> Weekly Shift Report email</li>
+            <li><span class="check">✓</span> Schedule recommendations</li>
+            <li><span class="check">✓</span> Email &amp; chat support</li>
+          </ul>
+          <a class="cta" href="https://buy.stripe.com/4gMfZj1MZ0g19HT6jJcwg09" style="display:block;text-align:center;">Subscribe →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="waitlist-section" id="waitlist">
+    <div class="container">
+      <h2>Find out which shifts are costing you.</h2>
+      <p>Connect your POS and scheduling and Shift Lens maps every shift's labor cost against its revenue — so you know which shifts to cut or restructure before the week starts.</p>
+      <div class="hero-ctas" style="justify-content:center;">
+        <a class="cta" href="https://buy.stripe.com/4gMfZj1MZ0g19HT6jJcwg09" style="background:#E0A93F;color:var(--navy);">Subscribe →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>&copy; 2026 EchoFrame &mdash; <a href="index.html" style="color:#6B7280;">EchoFrame Intelligence</a></div>
+      <div class="footer-links">
+        <a href="index.html">Back to Intelligence</a>
+        <a href="../index.html">EchoFrame Home</a>
+        <a href="../privacy.html">Privacy</a>
+        <a href="../terms.html">Terms of Service</a>
+      </div>
+    </div>
+    <div class="container"><div class="footer-disclaimer" style="margin-top:14px;font-size:11.5px;color:#6B7280;line-height:1.6;">EchoFrame provides business intelligence and informational analysis only. EchoFrame is not a CPA firm, accounting firm, registered investment adviser, or law firm, and does not provide accounting, audit, tax, legal, or investment advice. Reports are informational and you are solely responsible for the decisions you make. Consult a licensed professional before acting.</div></div>
+  </footer>
+
+</body>
+</html>
