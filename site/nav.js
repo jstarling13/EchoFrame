@@ -98,13 +98,17 @@
     '.ef-dd-item:hover{background:#F9FAFB;color:#0A274F;text-decoration:none}',
     '.ef-dd-all{display:block;padding:10px 12px;font-size:13px;font-weight:600;color:#94681C;border-top:1px solid #E5E7EB;margin-top:4px;text-decoration:none;font-family:Inter,-apple-system,sans-serif;border-radius:0 0 8px 8px}',
     '.ef-dd-all:hover{background:#FDF3E3;text-decoration:none}',
+    /* log in link — outlined secondary, sits left of the Talk to us CTA */
+    '.ef-login{font-size:14px;font-weight:600;color:#0A274F;background:#fff;text-decoration:none;margin-left:12px;padding:8px 15px;border-radius:8px;border:1px solid #D1D5DB;font-family:Inter,-apple-system,sans-serif;white-space:nowrap;transition:background .12s,color .12s,border-color .12s}',
+    '.ef-login:hover{background:#F9FAFB;color:#94681C;border-color:#94681C;text-decoration:none}',
     /* talk link */
-    '.ef-talk{font-size:14px;font-weight:600;color:#fff;background:#94681C;text-decoration:none;margin-left:14px;padding:9px 16px;border-radius:8px;font-family:Inter,-apple-system,sans-serif;white-space:nowrap}',
+    '.ef-talk{font-size:14px;font-weight:600;color:#fff;background:#94681C;text-decoration:none;margin-left:10px;padding:9px 16px;border-radius:8px;font-family:Inter,-apple-system,sans-serif;white-space:nowrap}',
     '.ef-talk:hover{background:#7E5616;color:#fff;text-decoration:none}',
     /* mobile */
     '@media(max-width:760px){',
     '.ef-dd-panel{right:auto;left:0;min-width:200px}',
     '.ef-dd-trigger{padding:8px 8px;font-size:14px}',
+    '.ef-login{margin-left:8px;padding:7px 11px;font-size:13px}',
     '.ef-talk{margin-left:8px;padding:8px 12px;font-size:13px}',
     '}'
   ].join('');
@@ -118,6 +122,7 @@
     + buildMenu('intelligence')
     + buildMenu('revenue')
     + buildMenu('ops')
+    + '<a href="' + rel('/login.html') + '" class="ef-login">Log in</a>'
     + '<a href="mailto:jacobstarling4313@gmail.com" class="ef-talk">Talk to us</a>'
     + '</div></div></nav>';
 

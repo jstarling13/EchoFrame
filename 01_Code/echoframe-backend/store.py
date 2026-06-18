@@ -177,7 +177,9 @@ def set_json(key: str, value: dict, ex: Optional[int] = None) -> None:
 _CUSTOMER_PREFIX = "ef:customer:"        # ef:customer:<safe_email> -> {name, stripe_customer, ...}
 _PERIOD_PREFIX   = "ef:period:"          # ef:period:<safe_email>:<period> -> billing/upload record
 _PENDING_SET     = "ef:pending_periods"  # set of "<safe_email>:<period>" awaiting upload
+_CUST_PERIODS    = "ef:cust_periods:"    # ef:cust_periods:<safe_email> -> set of period keys (portal history)
 _EVENT_PREFIX    = "ef:evt:"             # ef:evt:<event_id> -> "1" (idempotency, TTL'd)
+_LOGIN_NONCE     = "ef:login_nonce:"     # ef:login_nonce:<token_fp> -> email (single-use magic links, TTL'd)
 
 # How long processed-event markers live. Comfortably longer than Stripe's
 # ~3-day automatic retry window so replays after a restart are still caught.
@@ -219,6 +221,47 @@ def mark_period_billed(safe_email: str, period: str, record: dict) -> None:
     """Record that a billing period was charged and is awaiting an upload."""
     save_period(safe_email, period, record)
     set_add(_PENDING_SET, f"{safe_email}:{period}")
+    # Also index the period under the customer so the client portal can list
+    # their full report history (not just the pending ones).
+    set_add(f"{_CUST_PERIODS}{safe_email}", period)
+
+
+def list_customer_periods(safe_email: str) -> list[dict]:
+    """Every billing/report period on record for a customer, newest first.
+
+    Period records self-expire after PERIOD_TTL_SECONDS, so an index entry whose
+    record has aged out is skipped (and the stale member pruned). Used by the
+    client portal's report-history view."""
+    out: list[dict] = []
+    for period in set_members(f"{_CUST_PERIODS}{safe_email}"):
+        rec = load_period(safe_email, period)
+        if rec:
+            out.append(rec)
+        else:
+            set_remove(f"{_CUST_PERIODS}{safe_email}", period)
+    out.sort(key=lambda r: r.get("period", ""), reverse=True)
+    return out
+
+
+# ── Single-use magic-link nonces ───────────────────────────────────────────────
+# A magic link must work exactly once. At mint time we record a nonce keyed by a
+# fingerprint of the token; consuming it deletes the nonce, so a second click (or
+# a leaked/forwarded link replayed later) fails even while the token's own expiry
+# is still in the future.
+
+def register_login_nonce(token_fp: str, email: str, ttl_seconds: int) -> None:
+    kv_set(f"{_LOGIN_NONCE}{token_fp}", email, ex=ttl_seconds)
+
+
+def consume_login_nonce(token_fp: str, email: str) -> bool:
+    """Return True exactly once for a valid, unconsumed nonce matching `email`,
+    then delete it. False if missing, already used, or mismatched."""
+    key = f"{_LOGIN_NONCE}{token_fp}"
+    stored = kv_get(key)
+    if stored is None or stored != email:
+        return False
+    kv_delete(key)
+    return True
 
 
 def mark_period_uploaded(safe_email: str, period: str) -> None:

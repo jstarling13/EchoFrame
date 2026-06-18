@@ -24,6 +24,7 @@ import sign
 import emails
 import email_failsafe
 import review_gate
+import portal
 from reminders import run_reminders
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
@@ -107,6 +108,10 @@ limiter = Limiter(key_func=get_remote_address)
 app     = FastAPI()
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Client portal (passwordless magic-link login + self-serve account area).
+# Mounted here so it reuses this app's rate limiter without a circular import.
+portal.register_portal(app, limiter)
 
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 

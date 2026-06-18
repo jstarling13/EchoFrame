@@ -5,7 +5,7 @@
       "runtime": "@vercel/python@4.3.1",
       "maxDuration": 60,
       "memory": 1024,
-      "includeFiles": "{main.py,registry.py,sign.py,store.py,emails.py,reminders.py,intake_specs.py,engine.py,products/**,templates/**}"
+      "includeFiles": "{main.py,registry.py,sign.py,store.py,emails.py,portal.py,reminders.py,intake_specs.py,engine.py,products/**,templates/**}"
     }
   },
   "rewrites": [

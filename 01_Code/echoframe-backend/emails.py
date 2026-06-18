@@ -96,6 +96,27 @@ def send_reminder(
     _send({"from": EMAIL_FROM, "to": [to_email], "subject": subject, "html": html})
 
 
+def send_login_link(to_email: str, name: str, login_url: str) -> None:
+    """Email a client their one-tap, single-use magic link to sign in to the
+    portal. No password is ever set or stored."""
+    greeting = (name or "").strip() or "there"
+    subject = "Your EchoFrame sign-in link"
+    html = (
+        f"<p>Hi {greeting},</p>"
+        f"<p>Here's your secure link to sign in to your EchoFrame account. It works "
+        f"once and expires in 20 minutes:</p>"
+        f'<p><a href="{login_url}" '
+        f'style="display:inline-block;background:#1E90FF;color:#fff;font-weight:600;'
+        f'padding:12px 22px;border-radius:8px;text-decoration:none;">Sign in to EchoFrame</a></p>'
+        f'<p style="color:#6B7280;font-size:13px;">Or paste this link into your browser:<br>{login_url}</p>'
+        f"<p style=\"color:#6B7280;font-size:13px;\">If you didn't request this, you can safely ignore "
+        f"this email — no one can sign in without this link.</p>"
+        f"<p>— EchoFrame</p>"
+        f"{_DISCLAIMER}"
+    )
+    _send({"from": EMAIL_FROM, "to": [to_email], "subject": subject, "html": html})
+
+
 def send_owner_alert(
     client_email: str,
     client_name: str,
