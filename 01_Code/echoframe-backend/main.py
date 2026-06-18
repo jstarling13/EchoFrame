@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from urllib.parse import urlencode
 from fastapi import FastAPI, Request, Form, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse, RedirectResponse, HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 from fastapi.concurrency import run_in_threadpool
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -112,6 +113,30 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # Client portal (passwordless magic-link login + self-serve account area).
 # Mounted here so it reuses this app's rate limiter without a circular import.
 portal.register_portal(app, limiter)
+
+# CORS — the login/signup page is a static file on echoframe.net (a different
+# origin) and submits in the background so the visitor never leaves the marketing
+# site. Allow exactly those origins to read the JSON reply; nothing else.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://echoframe.net",
+        "https://www.echoframe.net",
+        "https://echoframe.co",
+        "https://www.echoframe.co",
+    ],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Accept"],
+    allow_credentials=False,
+)
+
+
+@app.get("/")
+async def root():
+    """The API has no homepage. Bounce the bare domain to the marketing site so a
+    stray visit (or a Back button) never lands on a raw 'Not Found' JSON."""
+    return RedirectResponse(url="https://echoframe.net/", status_code=302)
+
 
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 

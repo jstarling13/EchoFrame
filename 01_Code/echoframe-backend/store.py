@@ -249,19 +249,22 @@ def list_customer_periods(safe_email: str) -> list[dict]:
 # a leaked/forwarded link replayed later) fails even while the token's own expiry
 # is still in the future.
 
-def register_login_nonce(token_fp: str, email: str, ttl_seconds: int) -> None:
-    kv_set(f"{_LOGIN_NONCE}{token_fp}", email, ex=ttl_seconds)
+def register_login_nonce(token_fp: str, data: dict, ttl_seconds: int) -> None:
+    """Record a single-use nonce for a magic link. `data` carries the email plus
+    the link's intent (sign-in vs. sign-up), so account creation can happen at
+    verified-click time rather than at request time."""
+    set_json(f"{_LOGIN_NONCE}{token_fp}", data, ex=ttl_seconds)
 
 
-def consume_login_nonce(token_fp: str, email: str) -> bool:
-    """Return True exactly once for a valid, unconsumed nonce matching `email`,
-    then delete it. False if missing, already used, or mismatched."""
+def consume_login_nonce(token_fp: str, email: str) -> Optional[dict]:
+    """Return the nonce payload exactly once for a valid, unconsumed nonce whose
+    email matches, then delete it. None if missing, already used, or mismatched."""
     key = f"{_LOGIN_NONCE}{token_fp}"
-    stored = kv_get(key)
-    if stored is None or stored != email:
-        return False
+    data = get_json(key)
+    if not data or data.get("email") != email:
+        return None
     kv_delete(key)
-    return True
+    return data
 
 
 def mark_period_uploaded(safe_email: str, period: str) -> None:

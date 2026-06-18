@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Client Login — EchoFrame</title>
-  <meta name="description" content="Sign in to your EchoFrame account to manage your subscription, business profile, and monthly reports.">
+  <title>Sign in or create your account — EchoFrame</title>
+  <meta name="description" content="Sign in to your EchoFrame account, or create a free account, with a one-tap secure link. No password required.">
   <meta name="robots" content="noindex, follow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,15 +13,9 @@
   <link rel="apple-touch-icon" href="echoframe_logo.png">
   <style>
     :root {
-      --navy: #0A274F;
-      --amber: #94681C;
-      --amber-soft: #FDF3E3;
-      --ink: #111827;
-      --ink-soft: #4B5563;
-      --ink-faint: #6B7280;
-      --line: #E5E7EB;
-      --bg: #FFFFFF;
-      --bg-soft: #F9FAFB;
+      --navy: #0A274F; --amber: #94681C; --amber-soft: #FDF3E3;
+      --ink: #111827; --ink-soft: #4B5563; --ink-faint: #6B7280;
+      --line: #E5E7EB; --bg: #FFFFFF; --bg-soft: #F9FAFB;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -34,28 +28,39 @@
     .card {
       width: 100%; max-width: 440px; background: var(--bg);
       border: 1px solid var(--line); border-radius: 16px;
-      padding: 40px 36px; box-shadow: 0 6px 24px rgba(10,39,79,0.06);
+      padding: 38px 36px; box-shadow: 0 6px 24px rgba(10,39,79,0.06);
     }
-    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
     .brand img { width: 34px; height: 34px; border-radius: 7px; }
     .brand span { font-weight: 700; color: var(--navy); font-size: 19px; }
-    h1 { font-size: 23px; color: var(--navy); margin-bottom: 8px; }
-    p { color: var(--ink-soft); font-size: 15px; margin-bottom: 20px; }
+    h1 { font-size: 22px; color: var(--navy); margin-bottom: 8px; }
+    p.lead { color: var(--ink-soft); font-size: 15px; margin-bottom: 22px; }
+    /* tab toggle */
+    .tabs { display: flex; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 10px; padding: 4px; margin-bottom: 22px; }
+    .tab { flex: 1; text-align: center; padding: 9px 10px; font-size: 14px; font-weight: 600; color: var(--ink-soft); border-radius: 7px; cursor: pointer; border: none; background: transparent; font-family: inherit; transition: background .12s, color .12s; }
+    .tab.active { background: #fff; color: var(--navy); box-shadow: 0 1px 3px rgba(10,39,79,0.10); }
     label { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
     input[type=email] {
       width: 100%; padding: 13px 14px; border: 1px solid var(--line);
-      border-radius: 9px; font-size: 16px; font-family: inherit; margin-bottom: 18px;
+      border-radius: 9px; font-size: 16px; font-family: inherit; margin-bottom: 16px;
     }
     input[type=email]:focus { outline: none; border-color: var(--amber); }
-    button {
+    button.submit {
       width: 100%; background: var(--navy); color: #fff; font-weight: 600;
       font-size: 16px; border: none; padding: 13px; border-radius: 9px;
       cursor: pointer; font-family: inherit;
     }
-    button:hover { background: #0c2f60; }
-    .fine { margin-top: 20px; font-size: 13px; color: var(--ink-faint); margin-bottom: 0; }
-    .back { display: inline-block; margin-top: 24px; font-size: 14px; color: var(--amber); text-decoration: none; }
+    button.submit:hover { background: #0c2f60; }
+    button.submit:disabled { opacity: .6; cursor: default; }
+    .fine { margin-top: 18px; font-size: 13px; color: var(--ink-faint); margin-bottom: 0; }
+    .error { display: none; margin-top: 14px; font-size: 14px; color: #B42318; background: #FEF3F2; border: 1px solid #FECDCA; border-radius: 8px; padding: 10px 12px; }
+    .back { display: inline-block; margin-top: 22px; font-size: 14px; color: var(--amber); text-decoration: none; }
     .back:hover { text-decoration: underline; }
+    /* success state */
+    .success { display: none; text-align: center; }
+    .success .tick { width: 52px; height: 52px; border-radius: 50%; background: #DCFCE7; color: #166534; font-size: 28px; line-height: 52px; margin: 0 auto 16px; }
+    .success h1 { margin-bottom: 10px; }
+    .success p { color: var(--ink-soft); font-size: 15px; margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -64,15 +69,123 @@
       <img src="echoframe_logo.png" alt="EchoFrame">
       <span>EchoFrame</span>
     </div>
-    <h1>Sign in to your account</h1>
-    <p>Enter the email on your subscription and we'll send you a secure, one-tap sign-in link. No password to remember.</p>
-    <form method="post" action="https://echoframe-production.up.railway.app/portal/login">
-      <label for="email">Email address</label>
-      <input type="email" id="email" name="email" autocomplete="email" required placeholder="you@yourbusiness.com">
-      <button type="submit">Email me a sign-in link</button>
-    </form>
-    <p class="fine">The link works once and expires in 20 minutes. We never store a password.</p>
-    <a class="back" href="/">← Back to echoframe.net</a>
+
+    <!-- Form view -->
+    <div id="form-view">
+      <h1 id="title">Sign in to your account</h1>
+      <p class="lead" id="lead">Enter your email and we'll send a secure, one-tap link. No password to remember.</p>
+
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab active" id="tab-signin" role="tab" aria-selected="true">Sign in</button>
+        <button type="button" class="tab" id="tab-signup" role="tab" aria-selected="false">Create account</button>
+      </div>
+
+      <form id="auth-form" method="post" action="https://echoframe-production.up.railway.app/portal/login">
+        <input type="hidden" name="mode" id="mode-field" value="signin">
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" autocomplete="email" required placeholder="you@yourbusiness.com">
+        <button type="submit" class="submit" id="submit-btn">Email me a sign-in link</button>
+        <div class="error" id="error-box"></div>
+      </form>
+
+      <p class="fine" id="fine">The link works once and expires in 20 minutes. We never store a password.</p>
+      <a class="back" href="/">← Back to echoframe.net</a>
+    </div>
+
+    <!-- Success view -->
+    <div id="success-view" class="success">
+      <div class="tick">✓</div>
+      <h1>Check your email</h1>
+      <p>We just sent a secure link to <strong id="sent-to"></strong>.</p>
+      <p>It works once and expires in 20 minutes. Click it to finish.</p>
+      <p class="fine">Didn't get it? Check spam, or <a href="#" id="try-again" class="back" style="margin-top:0;">try again</a>.</p>
+      <a class="back" href="/">← Back to echoframe.net</a>
+    </div>
   </div>
+
+  <script>
+    var API = 'https://echoframe-production.up.railway.app';
+    var mode = 'signin';
+
+    var tabSignin = document.getElementById('tab-signin');
+    var tabSignup = document.getElementById('tab-signup');
+    var title = document.getElementById('title');
+    var lead = document.getElementById('lead');
+    var submitBtn = document.getElementById('submit-btn');
+    var modeField = document.getElementById('mode-field');
+    var fine = document.getElementById('fine');
+
+    function setMode(m) {
+      mode = m;
+      modeField.value = m;
+      var signup = m === 'signup';
+      tabSignin.classList.toggle('active', !signup);
+      tabSignup.classList.toggle('active', signup);
+      tabSignin.setAttribute('aria-selected', String(!signup));
+      tabSignup.setAttribute('aria-selected', String(signup));
+      title.textContent = signup ? 'Create your free account' : 'Sign in to your account';
+      lead.textContent = signup
+        ? "Enter your email and we'll send a link to set up your account. No password, no card required."
+        : "Enter your email and we'll send a secure, one-tap link. No password to remember.";
+      submitBtn.textContent = signup ? 'Create my free account' : 'Email me a sign-in link';
+      fine.textContent = signup
+        ? "We'll create your account when you click the link. No password, no charge."
+        : "The link works once and expires in 20 minutes. We never store a password.";
+    }
+    tabSignin.addEventListener('click', function () { setMode('signin'); });
+    tabSignup.addEventListener('click', function () { setMode('signup'); });
+
+    var form = document.getElementById('auth-form');
+    var emailInput = document.getElementById('email');
+    var errorBox = document.getElementById('error-box');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      errorBox.style.display = 'none';
+      var email = emailInput.value.trim();
+      if (!email) return;
+      submitBtn.disabled = true;
+      var original = submitBtn.textContent;
+      submitBtn.textContent = 'Sending…';
+
+      var body = new URLSearchParams();
+      body.set('email', email);
+      body.set('mode', mode);
+
+      fetch(API + '/portal/login', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: body
+      })
+      .then(function (r) { return r.json().catch(function () { return { ok: r.ok }; }); })
+      .then(function (data) {
+        if (data && data.ok) {
+          document.getElementById('sent-to').textContent = email;
+          document.getElementById('form-view').style.display = 'none';
+          document.getElementById('success-view').style.display = 'block';
+        } else {
+          showError("That doesn't look like a valid email. Please check and try again.");
+        }
+      })
+      .catch(function () {
+        showError("Couldn't reach the server. Check your connection and try again.");
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = original;
+      });
+    });
+
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.style.display = 'block';
+    }
+
+    document.getElementById('try-again').addEventListener('click', function (e) {
+      e.preventDefault();
+      document.getElementById('success-view').style.display = 'none';
+      document.getElementById('form-view').style.display = 'block';
+    });
+  </script>
 </body>
 </html>

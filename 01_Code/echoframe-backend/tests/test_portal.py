@@ -101,14 +101,15 @@ def test_login_token_expiry_and_tamper():
 def test_single_use_nonce():
     tok = sign.make_login_token(CUST)
     fp = sign.token_fingerprint(tok)
-    store.register_login_nonce(fp, CUST, 600)
-    assert store.consume_login_nonce(fp, CUST) is True     # first use
-    assert store.consume_login_nonce(fp, CUST) is False    # already consumed
+    store.register_login_nonce(fp, {"email": CUST, "mode": "signin"}, 600)
+    first = store.consume_login_nonce(fp, CUST)
+    assert first and first["mode"] == "signin"            # first use returns payload
+    assert store.consume_login_nonce(fp, CUST) is None    # already consumed
     # Mismatched email never consumes.
     tok2 = sign.make_login_token(CUST)
     fp2 = sign.token_fingerprint(tok2)
-    store.register_login_nonce(fp2, CUST, 600)
-    assert store.consume_login_nonce(fp2, "someone@else.com") is False
+    store.register_login_nonce(fp2, {"email": CUST, "mode": "signup"}, 600)
+    assert store.consume_login_nonce(fp2, "someone@else.com") is None
 
 
 def test_customer_period_index():
@@ -118,15 +119,16 @@ def test_customer_period_index():
 
 # ── HTTP flow ─────────────────────────────────────────────────────────────────
 
-def test_login_unknown_email_sends_nothing_but_confirms():
-    r = client.post("/portal/login", data={"email": "nobody@nowhere.test"})
+def test_signin_unknown_email_sends_nothing_but_confirms():
+    # sign-in mode for an unknown email: anti-enumeration — same page, no email.
+    r = client.post("/portal/login", data={"email": "nobody@nowhere.test", "mode": "signin"})
     assert r.status_code == 200
     assert "Check your email" in r.text
-    assert _sent == []   # anti-enumeration: no email to a non-customer
+    assert _sent == []
 
 
-def test_login_known_email_sends_link():
-    r = client.post("/portal/login", data={"email": CUST})
+def test_signin_known_email_sends_link():
+    r = client.post("/portal/login", data={"email": CUST, "mode": "signin"})
     assert r.status_code == 200
     assert "Check your email" in r.text
     assert len(_sent) == 1
@@ -134,10 +136,46 @@ def test_login_known_email_sends_link():
     assert "/portal/auth?token=" in _sent[0]["html"]
 
 
+def test_signup_unknown_email_always_sends_link():
+    # sign-up mode always sends, even to a brand-new email (open free accounts).
+    r = client.post("/portal/login", data={"email": "newperson@example.com", "mode": "signup"})
+    assert r.status_code == 200
+    assert len(_sent) == 1
+    assert _sent[0]["to"] == ["newperson@example.com"]
+
+
+def test_login_json_mode_returns_json():
+    # the login page's fetch asks for JSON so the visitor stays on echoframe.net.
+    r = client.post("/portal/login", data={"email": CUST, "mode": "signin"},
+                    headers={"Accept": "application/json"})
+    assert r.status_code == 200
+    assert r.json() == {"ok": True}
+    assert len(_sent) == 1
+
+
 def test_login_invalid_email_rejected():
     r = client.post("/portal/login", data={"email": "not-an-email"})
     assert r.status_code == 400
     assert _sent == []
+
+
+def test_signup_then_auth_creates_free_account():
+    new_email = "brandnew@example.com"
+    assert store.load_customer_record(portal._safe_email(new_email)) is None
+    client.post("/portal/login", data={"email": new_email, "mode": "signup"})
+    token = _sent[-1]["html"].split("/portal/auth?token=")[1].split('"')[0]
+    fresh = TestClient(app, follow_redirects=False)
+    r = fresh.get(f"/portal/auth?token={token}")
+    assert r.status_code == 303 and r.headers["location"] == "/portal"
+    rec = store.load_customer_record(portal._safe_email(new_email))
+    assert rec and rec.get("email") == new_email and rec.get("source") == "portal-signup"
+
+
+def test_root_redirects_to_marketing_site():
+    anon = TestClient(app, follow_redirects=False)
+    r = anon.get("/")
+    assert r.status_code == 302
+    assert "echoframe.net" in r.headers["location"]
 
 
 def _mint_and_send_link() -> str:

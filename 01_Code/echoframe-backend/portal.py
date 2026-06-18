@@ -34,7 +34,7 @@ import traceback
 
 import stripe
 from fastapi import Request, Form, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 
 import store
 import sign
@@ -83,6 +83,12 @@ def _session_email(request: Request) -> str | None:
     if not raw:
         return None
     return sign.verify_session_token(raw)
+
+
+def _wants_json(request: Request) -> bool:
+    """True when the caller (the login page's fetch) expects a JSON reply rather
+    than a full HTML page — lets the visitor stay on echoframe.net."""
+    return "application/json" in (request.headers.get("accept", "").lower())
 
 
 # ── Inline HTML (self-contained; mirrors the look of the intake pages) ────────
@@ -134,55 +140,77 @@ def _esc(v: object) -> str:
 
 # ── Route handlers ────────────────────────────────────────────────────────────
 
-async def _login(request: Request, email: str = Form("")) -> HTMLResponse:
-    """Receive the email from the static login page, email a magic link if the
-    address belongs to a customer, and always show the same confirmation."""
+async def _login(request: Request, email: str = Form(""), mode: str = Form("signin")):
+    """Email a magic link. Two intents:
+
+      • signup — always send; the account is created when the link is clicked.
+      • signin — send only if an account already exists (no account enumeration);
+                 otherwise show the same confirmation but send nothing.
+
+    Replies with JSON when the login page's fetch asks for it (so the visitor
+    never leaves echoframe.net), or a full HTML page as a no-JS fallback.
+    """
+    json_mode = _wants_json(request)
     valid = _valid_email(email)
+    mode = "signup" if (mode or "").strip().lower() == "signup" else "signin"
+
     if not valid:
+        if json_mode:
+            return JSONResponse({"ok": False, "error": "invalid_email"}, status_code=400)
         body = (
             "<div class=card><h1>Sign in to EchoFrame</h1>"
             "<p>That doesn't look like a valid email address. Please go back and try again.</p>"
-            f"<p><a class=link href='{_base_url()}/'>← Back to echoframe.net</a></p></div>"
+            f"<p><a class=link href='{_base_url()}/login.html'>← Back</a></p></div>"
         )
         return HTMLResponse(_page("Sign in — EchoFrame", body), status_code=400)
 
-    # Only mint + send to a known customer, but never reveal which it was.
     try:
         rec = store.load_customer_record(_safe_email(valid))
-        if rec:
+        # Sign-up always sends; sign-in only for a known account (anti-enumeration).
+        if mode == "signup" or rec:
             token = sign.make_login_token(valid, ttl_seconds=LOGIN_TTL)
-            store.register_login_nonce(sign.token_fingerprint(token), valid, LOGIN_TTL)
+            store.register_login_nonce(
+                sign.token_fingerprint(token), {"email": valid, "mode": mode}, LOGIN_TTL
+            )
             login_url = f"{_base_url()}/portal/auth?token={token}"
-            emails.send_login_link(valid, (rec.get("name") or "").strip(), login_url)
-            print("[EchoFrame] Portal sign-in link sent.")  # no PII
+            emails.send_login_link(valid, (rec.get("name") if rec else "") or "", login_url)
+            print(f"[EchoFrame] Portal {mode} link sent.")  # no PII
         else:
-            print("[EchoFrame] Portal sign-in requested for unknown email (no send).")
+            print("[EchoFrame] Portal sign-in for unknown email (no send).")
     except Exception:
         # Never surface internal errors to the visitor; never leak existence.
         print(f"[EchoFrame] PORTAL login error:\n{traceback.format_exc()}", flush=True)
 
+    if json_mode:
+        return JSONResponse({"ok": True})
     body = (
         "<div class=card><h1>Check your email</h1>"
-        "<p>If that address has an EchoFrame account, we just sent a secure sign-in "
-        "link to it. It works once and expires in 20 minutes.</p>"
-        "<p class=muted>Didn't get it? Check spam, or head back and try again.</p>"
-        f"<p><a class=link href='{_base_url()}/'>← Back to echoframe.net</a></p></div>"
+        "<p>We just sent a secure link to that address. It works once and expires "
+        "in 20 minutes.</p>"
+        f"<p><a class=link href='{_base_url()}/login.html'>← Back</a></p></div>"
     )
     return HTMLResponse(_page("Check your email — EchoFrame", body))
 
 
 async def _auth(request: Request, token: str = "") -> RedirectResponse | HTMLResponse:
     """Consume a magic-link token: verify signature/expiry, burn the single-use
-    nonce, set the session cookie, and redirect into the portal."""
+    nonce, create the account on first verified click (free signup), set the
+    session cookie, and redirect into the portal."""
     email = sign.verify_login_token(token)
-    if not email or not store.consume_login_nonce(sign.token_fingerprint(token), email):
+    nonce = store.consume_login_nonce(sign.token_fingerprint(token), email) if email else None
+    if not email or not nonce:
         body = (
             "<div class=card><h1>Link expired</h1>"
-            "<p>This sign-in link is invalid, has expired, or was already used. "
-            "Sign-in links work once and last 20 minutes.</p>"
+            "<p>This link is invalid, has expired, or was already used. "
+            "Magic links work once and last 20 minutes.</p>"
             f"<p><a class=link href='{_base_url()}/login.html'>Request a new link →</a></p></div>"
         )
         return HTMLResponse(_page("Link expired — EchoFrame", body), status_code=400)
+
+    # First verified sign-in for a new email creates their free account. Existing
+    # accounts (incl. paying customers) are left untouched.
+    if not store.load_customer_record(_safe_email(email)):
+        store.save_customer_record(_safe_email(email), {"email": email, "source": "portal-signup"})
 
     resp = RedirectResponse(url="/portal", status_code=303)
     resp.set_cookie(
