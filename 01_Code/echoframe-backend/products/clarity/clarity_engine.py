@@ -786,36 +786,44 @@ def _load_financials(customer_email: str):
         print(f"[EchoFrame] ERROR - no CSV found at: {path}")
         return None, {}
 
-    # header=None so the first row (_Business Name,...) is read as data, not column names
-    raw = pd.read_csv(path, header=None, dtype=str)
-    raw.columns = range(len(raw.columns))   # ensure integer column index
+    # Robust, never-crash parse — tolerates BOMs, encodings, jagged rows, mixed
+    # delimiters and sloppy exports. Build the frame from a label column + up to two
+    # amount columns; extra columns (a stray quote/contact export) are ignored.
+    import csv_utils
+    meta, data = csv_utils.split_meta(csv_utils.read_rows(path.read_bytes()))
 
-    meta_mask = raw.iloc[:, 0].str.strip().str.startswith("_", na=False)
-    meta_df   = raw[meta_mask].copy()
-    fin_df    = raw[~meta_mask].copy()
+    records = []
+    for row in data:
+        label = csv_utils.cell(row, 0)
+        if not label:
+            continue
+        records.append({
+            0: label,
+            "Current": csv_utils.to_amount(csv_utils.cell(row, 1)),
+            "Prior": csv_utils.to_amount(csv_utils.cell(row, 2)),
+        })
 
-    meta = {}
-    for _, row in meta_df.iterrows():
-        key = str(row.iloc[0]).lstrip("_").strip()
-        val = str(row.iloc[1]).strip() if pd.notna(row.iloc[1]) and str(row.iloc[1]) != "nan" else ""
-        meta[key] = val
+    if not records:
+        raise ValueError(
+            "We couldn't read any line items from that file. A Monthly Clarity Report "
+            "needs a financials export — rows of a label and a dollar amount, like "
+            "'Revenue, 42000'."
+        )
 
-    fin_df = fin_df.reset_index(drop=True)
-    fin_df.columns = list(fin_df.columns[:1]) + ["Current"] + (
-        ["Prior"] if len(fin_df.columns) > 2 else []
+    fin_df = pd.DataFrame(records, columns=[0, "Current", "Prior"])
+
+    # Make sure this is actually financials — not a quote list, contact export, etc.
+    has_revenue = bool(
+        ((fin_df[0].astype(str).str.strip().str.lower() == "revenue") & (fin_df["Current"] > 0)).any()
     )
-    fin_df["Current"] = pd.to_numeric(
-        fin_df["Current"].astype(str).str.replace(r"[$,]", "", regex=True), errors="coerce"
-    ).fillna(0)
-    if "Prior" in fin_df.columns:
-        fin_df["Prior"] = pd.to_numeric(
-            fin_df["Prior"].astype(str).str.replace(r"[$,]", "", regex=True), errors="coerce"
-        ).fillna(0)
-    else:
-        fin_df["Prior"] = 0.0
+    if not has_revenue:
+        raise ValueError(
+            "This doesn't look like a financials file — we couldn't find a 'Revenue' row "
+            "with a dollar amount. Quote lists, contact exports and other files won't work "
+            "here; please upload a profit-and-loss / financials export."
+        )
 
-    fin_df = fin_df.reset_index(drop=True)
-    print(f"[EchoFrame] Loaded {len(fin_df)} rows from {path.name}")
+    print(f"[EchoFrame] Loaded {len(fin_df)} financial rows from {path.name}")
     return fin_df, meta
 
 
