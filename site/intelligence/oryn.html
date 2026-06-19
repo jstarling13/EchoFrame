@@ -97,6 +97,8 @@
     .product-hero .badge-soon { background: rgba(255,255,255,0.14); color: #E6EDF5; }
     .product-hero .cta { background: #E0A93F; color: var(--navy); }
     .product-hero .cta:hover { background: #D49A2C; color: var(--navy); }
+    .product-hero .cta-secondary { display:inline-block; color:#E6EDF5; font-weight:600; font-size:16px; padding:15px 18px; }
+    .product-hero .cta-secondary:hover { color:#FFFFFF; text-decoration:none; }
     /* ===== end EF navy hero band ===== */
   </style>
 </head>
@@ -126,7 +128,8 @@
       <h1>Rate Watch</h1>
       <p class="subhead">Every vendor you pay has a market rate. Find out how many of yours are above it.</p>
       <div class="hero-ctas">
-        <a class="cta" href="../get-a-sample.html?product=Rate+Watch">Open Rate Watch →</a>
+        <a class="cta" href="../get-a-sample.html?product=Rate+Watch">Get a free sample →</a>
+        <a class="cta-secondary" href="#pricing">Subscribe →</a>
       </div>
     </div>
   </section>
@@ -221,7 +224,7 @@
         <h2 class="section-title">Simple pricing. Pays for itself the first time you renegotiate.</h2>
         <p class="section-sub">Pick the plan that fits your vendor count. Cancel anytime.</p>
       </div>
-      <div class="pricing-wrap" style="gap:24px;flex-wrap:wrap;align-items:stretch;">
+      <div class="pricing-wrap" id="pricing" style="gap:24px;flex-wrap:wrap;align-items:stretch;">
         <div class="pricing-card" style="max-width:380px;">
           <div class="pricing-top">
             <div class="pricing-name">Core</div>

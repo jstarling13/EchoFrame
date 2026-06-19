@@ -27,7 +27,7 @@
       label: 'Intelligence',
       href: '/intelligence/index.html',
       items: [
-        { name: 'Clarity Report',        href: '/index.html'                   },
+        { name: 'Clarity Report',        href: '/intelligence/clarity.html'    },
         { name: 'Auto Ledger',           href: '/intelligence/vericount.html'  },
         { name: 'Rate Watch',            href: '/intelligence/oryn.html'       },
         { name: 'Rival Scan',            href: '/intelligence/veris.html'      },
@@ -88,6 +88,10 @@
     '.ef-dd-trigger{display:flex;align-items:center;gap:5px;padding:8px 12px;border-radius:8px;font-size:15px;font-weight:500;color:#0A274F;font-family:Inter,-apple-system,sans-serif;text-decoration:none;white-space:nowrap;transition:background .12s,color .12s}',
     '.ef-dd-trigger:hover{background:#F9FAFB;color:#94681C;text-decoration:none}',
     '.ef-dd-trigger.is-active{color:#94681C}',
+    /* plain top-level nav link (e.g. Our Story) */
+    '.ef-navlink{display:flex;align-items:center;padding:8px 12px;border-radius:8px;font-size:15px;font-weight:500;color:#0A274F;font-family:Inter,-apple-system,sans-serif;text-decoration:none;white-space:nowrap;transition:background .12s,color .12s}',
+    '.ef-navlink:hover{background:#F9FAFB;color:#94681C;text-decoration:none}',
+    '.ef-navlink.is-active{color:#94681C}',
     '.ef-caret{font-size:10px;line-height:1;transition:transform .15s;display:inline-block;margin-top:1px}',
     /* panel — hidden by default, shown on hover */
     '.ef-dd-panel{display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:240px;background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:8px;box-shadow:0 12px 36px rgba(10,39,79,.12);z-index:400}',
@@ -108,9 +112,13 @@
     '@media(max-width:760px){',
     '.ef-dd-panel{right:auto;left:0;min-width:200px}',
     '.ef-dd-trigger{padding:8px 8px;font-size:14px}',
+    '.ef-navlink{padding:8px 8px;font-size:14px}',
     '.ef-login{margin-left:8px;padding:7px 11px;font-size:13px}',
     '.ef-talk{margin-left:8px;padding:8px 12px;font-size:13px}',
-    '}'
+    '}',
+    /* Site-wide navy gradient on the hero bands — adds depth (matches brand collateral). */
+    '.breadcrumb{background:#12386a !important}',
+    '.product-hero,.div-hero{background:radial-gradient(140% 120% at 50% -25%,#173f73 0%,#0b2a53 48%,#06182f 100%) !important}'
   ].join('');
 
   var html = '<style>' + css + '</style>'
@@ -122,6 +130,7 @@
     + buildMenu('intelligence')
     + buildMenu('revenue')
     + buildMenu('ops')
+    + '<a href="' + rel('/our-story.html') + '" class="ef-navlink' + (rawPath.indexOf('our-story') !== -1 ? ' is-active' : '') + '">Our Story</a>'
     + '<a href="' + rel('/login.html') + '" class="ef-login">Log in</a>'
     + '<a href="mailto:jacobstarling4313@gmail.com" class="ef-talk">Talk to us</a>'
     + '</div></div></nav>';
