@@ -118,7 +118,10 @@
     '}',
     /* Site-wide navy gradient on the hero bands — adds depth (matches brand collateral). */
     '.breadcrumb{background:#12386a !important}',
-    '.product-hero,.div-hero{background:radial-gradient(140% 120% at 50% -25%,#173f73 0%,#0b2a53 48%,#06182f 100%) !important}'
+    '.product-hero,.div-hero{background:radial-gradient(140% 120% at 50% -25%,#173f73 0%,#0b2a53 48%,#06182f 100%) !important}',
+    /* Depth pass: soft card elevation + hover-lift on cards. */
+    '.feature,.pricing-col,.pricing-card,.pcard,.also-card{box-shadow:0 10px 28px rgba(10,39,79,.08),0 2px 6px rgba(10,39,79,.05);transition:transform .18s ease,box-shadow .18s ease}',
+    '.feature:hover,.pricing-col:hover,.pricing-card:hover,.pcard:hover,.also-card:hover{transform:translateY(-6px);box-shadow:0 24px 50px rgba(10,39,79,.15)}'
   ].join('');
 
   var html = '<style>' + css + '</style>'
