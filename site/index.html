@@ -116,21 +116,22 @@
     /* Introduction band (mirrors the social card) */
     .intro-band { background: radial-gradient(120% 130% at 50% 0%, #173f73 0%, #0b2a53 50%, #06182f 100%); border-top: none; }
     .intro-band .section-eyebrow { color: #E0A93F; text-align: center; }
-    .intro-inner { display: grid; grid-template-columns: 230px 1fr; gap: 44px; align-items: start; max-width: 920px; margin: 26px auto 0; }
-    .intro-aside { text-align: center; }
+    .intro-inner { display: flex; flex-direction: column; align-items: center; max-width: 760px; margin: 28px auto 0; }
+    .intro-main { width: 100%; max-width: 660px; }
+    .intro-aside { text-align: center; margin-bottom: 32px; }
     .intro-photo { width: 150px; height: 150px; border-radius: 50%; overflow: hidden; margin: 0 auto 16px; border: 3px solid #E0A93F; box-shadow: 0 0 0 6px rgba(224,169,63,0.12); }
     .intro-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .intro-name { font-size: 22px; font-weight: 700; color: #fff; }
     .intro-role { font-size: 14px; color: #C7D2E0; }
     .intro-cred { font-size: 12.5px; color: #93A4BC; margin-top: 3px; line-height: 1.5; }
-    .intro-lead { font-size: 18px; line-height: 1.6; color: #E6EDF5; margin-bottom: 26px; }
-    .intro-points { display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px; }
+    .intro-lead { font-size: 18px; line-height: 1.6; color: #E6EDF5; margin-bottom: 28px; text-align: center; }
+    .intro-points { display: flex; flex-direction: column; gap: 16px; margin: 0 auto 28px; max-width: 580px; }
     .intro-point { display: flex; gap: 14px; align-items: flex-start; }
     .intro-num { flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; background: rgba(224,169,63,0.15); color: #E0A93F; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 16px; }
     .intro-point p { font-size: 15px; color: #C7D2E0; line-height: 1.55; margin: 0; }
     .intro-point strong { color: #fff; font-weight: 600; }
-    .intro-cta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-    .intro-share { font-size: 13px; color: #93A4BC; }
+    .intro-cta { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; }
+    .intro-share { font-size: 13px; color: #93A4BC; text-align: center; }
 
     /* FAQ */
     .faq-list { max-width: 760px; }
