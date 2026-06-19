@@ -26,6 +26,7 @@ import emails
 import email_failsafe
 import review_gate
 import portal
+import weekly_quote_revive
 from reminders import run_reminders
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
@@ -531,7 +532,21 @@ async def upload_csv(
     customer_name = _load_customer_name(email)
     fields = {"industry": industry, "location": location, "tier": resolved_tier}
 
-    await _dispatch_report(background_tasks, selected, email, customer_name, fields)
+    # Quote Revive is a WEEKLY product (not a one-off monthly report): persist the open-quote
+    # list durably, send an immediate first chase list, and let the weekly cron pace the
+    # follow-ups from there. No monthly report is generated for this product.
+    if selected.slug == "quote-revive":
+        try:
+            _csv_text = raw_bytes.decode("utf-8", "replace")
+            if len(_csv_text) <= 200_000:
+                _now_ts = int(time.time())
+                store.save_quote_data(_safe_email(email), email, _csv_text, customer_name, _now_ts)
+                background_tasks.add_task(
+                    weekly_quote_revive.send_first_digest, email, _csv_text, customer_name, _now_ts)
+        except Exception:
+            print(f"[EchoFrame] WARN: quote-revive weekly setup failed:\n{traceback.format_exc()}", flush=True)
+    else:
+        await _dispatch_report(background_tasks, selected, email, customer_name, fields)
     tier_note = f" tier='{resolved_tier}'" if resolved_tier else ""
     print(f"[EchoFrame] Dispatched product='{selected.slug}'{tier_note}.")
     return JSONResponse({
@@ -835,6 +850,19 @@ async def cron_reminders(request: Request):
         if request.headers.get("authorization", "") != f"Bearer {secret}":
             raise HTTPException(status_code=401, detail="Unauthorized.")
     summary = await run_in_threadpool(run_reminders)
+    return JSONResponse({"status": "ok", **summary})
+
+
+@app.get("/api/cron/weekly-quote-revive")
+async def cron_weekly_quote_revive(request: Request):
+    """Weekly Quote Revive chase-list job. For every subscriber with a stored open-quote
+    list, emails the few quotes worth following up this week (with ready-to-send messages)
+    and the one to call. Schedule via cron-job.org (weekly). Protected by CRON_SECRET."""
+    secret = os.environ.get("CRON_SECRET", "")
+    if secret:
+        if request.headers.get("authorization", "") != f"Bearer {secret}":
+            raise HTTPException(status_code=401, detail="Unauthorized.")
+    summary = await run_in_threadpool(weekly_quote_revive.run_weekly)
     return JSONResponse({"status": "ok", **summary})
 
 

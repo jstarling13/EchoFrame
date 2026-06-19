@@ -180,6 +180,8 @@ _PENDING_SET     = "ef:pending_periods"  # set of "<safe_email>:<period>" awaiti
 _CUST_PERIODS    = "ef:cust_periods:"    # ef:cust_periods:<safe_email> -> set of period keys (portal history)
 _EVENT_PREFIX    = "ef:evt:"             # ef:evt:<event_id> -> "1" (idempotency, TTL'd)
 _LOGIN_NONCE     = "ef:login_nonce:"     # ef:login_nonce:<token_fp> -> email (single-use magic links, TTL'd)
+_QR_QUOTES       = "ef:qr:quotes:"       # ef:qr:quotes:<safe_email> -> {csv, name, uploaded_at} (Quote Revive weekly digest)
+_QR_SUBSCRIBERS  = "ef:qr:subscribers"   # set of safe_emails with a stored open-quote list
 
 # How long processed-event markers live. Comfortably longer than Stripe's
 # ~3-day automatic retry window so replays after a restart are still caught.
@@ -265,6 +267,31 @@ def consume_login_nonce(token_fp: str, email: str) -> Optional[dict]:
         return None
     kv_delete(key)
     return data
+
+
+# ── Quote Revive: durable open-quote list (powers the weekly chase-list digest) ──
+# The customer uploads their open quotes ~monthly with their billing cycle; we keep
+# that list here so a weekly cron can pace the follow-ups out (escalating each week)
+# instead of sending one monthly recap.
+
+def save_quote_data(safe_email: str, email: str, csv_text: str, name: str, uploaded_at: int) -> None:
+    set_json(f"{_QR_QUOTES}{safe_email}",
+             {"email": email, "csv": csv_text, "name": name, "uploaded_at": int(uploaded_at)})
+    set_add(_QR_SUBSCRIBERS, safe_email)
+
+
+def load_quote_data(safe_email: str) -> Optional[dict]:
+    return get_json(f"{_QR_QUOTES}{safe_email}")
+
+
+def list_qr_subscribers() -> list[str]:
+    return set_members(_QR_SUBSCRIBERS)
+
+
+def clear_quote_data(safe_email: str) -> None:
+    """Stop weekly digests for a subscriber (e.g. on cancellation)."""
+    kv_delete(f"{_QR_QUOTES}{safe_email}")
+    set_remove(_QR_SUBSCRIBERS, safe_email)
 
 
 def mark_period_uploaded(safe_email: str, period: str) -> None:
