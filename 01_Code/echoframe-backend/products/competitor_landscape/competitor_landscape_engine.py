@@ -22,6 +22,8 @@ INPUT CSV (questionnaire + competitor table):
 """
 
 import os, re, csv, base64
+import csv_utils
+import data_quality
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -61,8 +63,7 @@ def load_path(path):
     path = Path(path)
     if not path.exists():
         print(f"[CompetitorLandscape] ERROR - no CSV at {path}"); return None, {}
-    with path.open("r", encoding="utf-8-sig", newline="") as fh:
-        rows = list(csv.reader(fh))
+    rows = csv_utils.read_rows(path.read_bytes())
     meta, lrows, inlist = {}, [], False
     for row in rows:
         if not row:
@@ -73,7 +74,7 @@ def load_path(path):
             continue
         cells = [str(c).strip() for c in row]
         if not inlist:
-            if _HEADER_TOKENS.issubset({c.lower() for c in cells}):
+            if csv_utils.header_matches(cells, _HEADER_TOKENS):
                 inlist = True
             continue
         if not first:
@@ -82,8 +83,16 @@ def load_path(path):
     if not lrows:
         print("[CompetitorLandscape] ERROR - no competitor rows"); return None, meta
     cols = ["Competitor", "Description", "Pricing Position", "Online Presence"]
+    # Rows with MORE cells than columns are the signature of an unquoted thousands
+    # separator: "2,300" splits into "2" + "300" and the trailing cell is dropped.
+    # Count them so the data-quality gate can flag a possibly-mangled row.
+    lrows = [csv_utils.repair_overflow_row(r, len(cols)) for r in lrows]
+    overflow_rows = sum(1 for r in lrows if len(r) > len(cols))
     norm = [(r + [""] * len(cols))[:len(cols)] for r in lrows]
     df = pd.DataFrame(norm, columns=cols).reset_index(drop=True)
+    # Record how many rows the parser SAW so the gate can spot silent drops / mis-splits.
+    df.attrs["dq_rows_in"] = len(lrows)
+    df.attrs["dq_overflow_rows"] = overflow_rows
     print(f"[CompetitorLandscape] Loaded {len(df)} competitors from {path.name}")
     return df, meta
 
@@ -263,19 +272,24 @@ def _save(meta, html):
     p.write_text(html, encoding="utf-8")
     print(f"[CompetitorLandscape] Report saved -> {p.name}"); return str(p)
 
-def _email(email, owner, html_bytes, meta):
+def _email(email, owner, html_bytes, meta, dq_warnings=None):
     import resend
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your business").strip()
-    resend.Emails.send({
+    params = {
         "from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
         "to": [email],
         "subject": f"Your Competitor & Market Landscape Report - {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your Competitor &amp; Market Landscape "
                 f"Report for {biz} is attached - the full picture of who you are up against and exactly "
                 f"how to beat them.</p><p>- EchoFrame</p>",
-        "attachments": [report_attachment(html_bytes, f"EchoFrame_CompetitorLandscape_{_slug(biz)}.html")]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_CompetitorLandscape_{_slug(biz)}.html")]}
+    # Ride-along data-quality notes for the review-email banner. review_gate reads
+    # and strips this internal key before the report reaches the customer.
+    if dq_warnings:
+        params["_dq_warnings"] = list(dq_warnings)
+    resend.Emails.send(params)
     print("[CompetitorLandscape] Report email dispatched.")
 
 
@@ -283,6 +297,18 @@ def generate_competitor_landscape_report(customer_email, customer_name="Client",
     df, meta = _load(customer_email)
     if df is None:
         return ""
+
+    # Data-quality gate (B-1): if the file was too broken to read, produce nothing
+    # so the fulfillment_guard path takes over (human finishes it by hand). If it's
+    # only messy, carry the warnings into the send for the review-email banner.
+    # No numeric/date columns here - the competitor table is all free text, so the
+    # row-count and overflow checks carry the signal.
+    dq = data_quality.assess(df, numeric_cols=[], date_cols=[],
+                             label="Competitor Landscape")
+    if dq.hard_fail:
+        print(f"[Competitor Landscape] Data-quality hard fail: {dq.reason}")
+        return ""
+
     if not meta.get("Owner Name", "").strip():
         meta["Owner Name"] = customer_name.strip() or "Client"
     m = _metrics(df, meta)
@@ -290,7 +316,7 @@ def generate_competitor_landscape_report(customer_email, customer_name="Client",
     ctx = _context(df, meta, m, prose, is_sample=False)
     html = _render(ctx); path = _save(meta, html)
     if send_email:
-        _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta)
+        _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta, dq_warnings=dq.warnings)
     print(f"[CompetitorLandscape] Pipeline complete -> {customer_email}")
     return path
 

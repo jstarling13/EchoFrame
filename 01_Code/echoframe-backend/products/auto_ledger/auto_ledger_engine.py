@@ -44,6 +44,8 @@ import os
 import re
 import json
 import base64
+import csv_utils
+import data_quality
 from pathlib import Path
 from datetime import datetime, date, timedelta
 
@@ -122,8 +124,7 @@ def load_ledger_path(path: Path):
         print(f"[AutoLedger] ERROR - no CSV found at: {path}")
         return None, {}
 
-    with path.open("r", encoding="utf-8-sig", newline="") as fh:
-        rows = list(csv.reader(fh))
+    rows = csv_utils.read_rows(path.read_bytes())
 
     meta = {}
     txn_rows = []
@@ -140,8 +141,7 @@ def load_ledger_path(path: Path):
         cells = [str(c).strip() for c in row]
         # Detect the ledger header row.
         if not in_ledger:
-            lowered = {c.lower() for c in cells[:3]}
-            if _HEADER_TOKENS.issubset(lowered):
+            if csv_utils.header_matches(cells, _HEADER_TOKENS):
                 in_ledger = True
             continue
         if not first:  # skip blank rows
@@ -153,12 +153,21 @@ def load_ledger_path(path: Path):
         return None, meta
 
     cols = ["Date", "Description", "Amount", "Account"]
+    # Rows with MORE cells than columns are the signature of an unquoted thousands
+    # separator: "2,300" splits into "2" + "300", truncation drops the "300", and
+    # the amount reads as $2. Count them so the data-quality gate can flag it.
+    txn_rows = [csv_utils.repair_overflow_row(r, len(cols)) for r in txn_rows]
+    overflow_rows = sum(1 for r in txn_rows if len(r) > len(cols))
     norm = [(r + [""] * len(cols))[:len(cols)] for r in txn_rows]
     df = pd.DataFrame(norm, columns=cols)
     df["Amount"] = pd.to_numeric(
         df["Amount"].astype(str).str.replace(r"[$,]", "", regex=True), errors="coerce"
     ).fillna(0.0)
     df = df.reset_index(drop=True)
+    # Record how many data rows the parser SAW so the data-quality gate can tell
+    # if any were silently dropped or mis-split (e.g. an unquoted "2,300").
+    df.attrs["dq_rows_in"] = len(txn_rows)
+    df.attrs["dq_overflow_rows"] = overflow_rows
     print(f"[AutoLedger] Loaded {len(df)} transactions from {path.name}")
     return df, meta
 
@@ -656,7 +665,7 @@ def _save_report(meta: dict, tier: str, html: str) -> str:
     return str(path)
 
 
-def _send_report_email(customer_email, owner_name, html_bytes, meta, tier):
+def _send_report_email(customer_email, owner_name, html_bytes, meta, tier, dq_warnings=None):
     import resend
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", datetime.now().strftime("%B %Y")).strip()
@@ -692,13 +701,18 @@ def _send_report_email(customer_email, owner_name, html_bytes, meta, tier):
         f"<p>— EchoFrame<br><span style=\"color:#6B7280;font-size:12px;\">Business intelligence, "
         f"not accounting software. Informational only; not accounting, tax, legal, or investment advice.</span></p>"
     )
-    resend.Emails.send({
+    params = {
         "from": email_from,
         "to": [customer_email],
         "subject": f"Your {month} Auto Ledger — {biz}".strip(),
         "html": body,
         "attachments": [attachment],
-    })
+    }
+    # Ride-along data-quality notes for the review-email banner. review_gate reads
+    # and strips this internal key before the report reaches the customer.
+    if dq_warnings:
+        params["_dq_warnings"] = list(dq_warnings)
+    resend.Emails.send(params)
     print("[AutoLedger] Report email dispatched.")  # no PII in logs
 
 
@@ -713,6 +727,16 @@ def generate_auto_ledger_report(
     df, meta = _load_ledger(customer_email)
     if df is None:
         return ""
+
+    # Data-quality gate (B-1): if the file was too broken to read, produce nothing
+    # so the fulfillment_guard path takes over (human finishes it by hand). If it's
+    # only messy, carry the warnings into the send for the review-email banner.
+    dq = data_quality.assess(df, numeric_cols=["Amount"], date_cols=["Date"],
+                             label="Auto Ledger")
+    if dq.hard_fail:
+        print(f"[AutoLedger] Data-quality hard fail: {dq.reason}")
+        return ""
+
     if not meta.get("Owner Name", "").strip():
         meta["Owner Name"] = customer_name.strip() or "Client"
     tier = (tier or meta.get("Tier", "starter")).lower()
@@ -725,7 +749,8 @@ def generate_auto_ledger_report(
 
     if send_email:
         _send_report_email(customer_email, meta["Owner Name"],
-                           Path(path).read_bytes(), meta, ctx["tier"])
+                           Path(path).read_bytes(), meta, ctx["tier"],
+                           dq_warnings=dq.warnings)
     print(f"[AutoLedger] Pipeline complete -> {customer_email} ({ctx['tier']})")
     return path
 

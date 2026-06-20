@@ -134,6 +134,11 @@
       <span class="badge">The One Thing</span>
       <div><h3>{{ one_thing.title }}</h3><p>{{ one_thing.body | safe }}</p></div>
     </div>
+{% if reported_fields %}
+    <p style="margin:14px 40px 0;font-size:9px;color:var(--muted);line-height:1.5;">
+      Figures reported by you (not computed from this upload): {{ reported_fields | join(", ") }}.
+      All other figures are calculated from your uploaded data.</p>
+{% endif %}
   </div>
   <div class="footer">
     <span><span class="ef">EchoFrame</span> &nbsp;·&nbsp; {{ product_name }}</span>

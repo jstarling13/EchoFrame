@@ -81,9 +81,91 @@ def split_meta(rows: list[list[str]]) -> tuple[dict, list[list[str]]]:
     return meta, data
 
 
+def _norm_cell(c) -> str:
+    """Lowercase, strip punctuation to spaces, collapse — for header matching."""
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", str(c or "").lower())).strip()
+
+
+def header_matches(cells: list[str], tokens, quorum: int | None = None) -> bool:
+    """True if a row plausibly IS the wanted header. Tolerant: each token need only
+    appear as a whole word inside some cell, so 'invoice' matches 'Invoice #',
+    'customer' matches 'Customer Name', 'current rate' matches 'Current Rate (%)'.
+
+    Matches when at least `quorum` tokens are found (default: all of them). This
+    replaces the brittle `set.issubset(exact-lowercased-cells)` check that broke the
+    moment a client renamed or annotated a column."""
+    norm_cells = [_norm_cell(c) for c in cells]
+    want = [_norm_cell(t) for t in tokens]
+    found = 0
+    for t in want:
+        tw = t.split()
+        if tw and any(all(w in nc.split() for w in tw) for nc in norm_cells):
+            found += 1
+    need = quorum if quorum is not None else len(want)
+    return found >= need
+
+
+def find_header(rows: list[list[str]], tokens, quorum: int | None = None, limit: int = 40) -> int:
+    """Index of the first row that looks like the wanted header, or -1 if none."""
+    for i, row in enumerate(rows[:limit]):
+        if header_matches(row, tokens, quorum):
+            return i
+    return -1
+
+
 def cell(row: list[str], i: int, default: str = "") -> str:
     """Safe indexed access into a (possibly short) row."""
     return row[i].strip() if row and i < len(row) and row[i] is not None else default
+
+
+# ── repairing comma-split numbers (the unquoted-thousands bug) ───────────────
+# A value like 2,300 written WITHOUT quotes (exactly how QuickBooks exports it)
+# gets split on its own thousands comma by any CSV reader: one cell "2,300"
+# becomes two cells "2" and "300". The row then has more cells than the header
+# has columns, and the amount reads as $2. These patterns let us re-join ONLY the
+# unambiguous case — a 1-3 digit lead followed by exactly-3-digit groups (with an
+# optional decimal/closing-paren tail on the last group). Anything else is left
+# alone for the data-quality gate to flag, so we never "repair" one wrong number
+# into a different wrong number.
+_NUM_LEAD = re.compile(r"^[(\-]?\$?\d{1,3}$")     # 12  -12  (1  $250
+_NUM_MID = re.compile(r"^\d{3}$")                 # interior thousands group: 234
+_NUM_END = re.compile(r"^\d{3}(\.\d+)?\)?$")      # final group: 300  300.00  200)
+
+
+def _merge_thousands(cells: list[str]) -> tuple[list[str], bool]:
+    """Merge the FIRST comma-split number found in `cells`. Returns (cells, merged?)."""
+    n = len(cells)
+    for i in range(n - 1):
+        if not _NUM_LEAD.match(cells[i]):
+            continue
+        j = i + 1
+        while j < n and _NUM_MID.match(cells[j]):       # consume interior 3-digit groups
+            j += 1
+        end = j
+        if j < n and _NUM_END.match(cells[j]) and not _NUM_MID.match(cells[j]):
+            end = j + 1                                  # absorb a decimal/paren final group
+        if end - i >= 2:                                 # lead + at least one group
+            return cells[:i] + ["".join(cells[i:end])] + cells[end:], True
+    return cells, False
+
+
+def repair_overflow_row(row, ncols: int):
+    """Re-join an over-wide row whose extra cells are a comma-split number.
+
+    Only applies when the row has MORE cells than `ncols` (i.e. it's already
+    broken). Merges unambiguous thousands-groups until the row lands exactly on
+    `ncols`; if it can't reach `ncols` cleanly, the ORIGINAL row is returned
+    untouched (the data-quality gate will then flag it). Never raises."""
+    if not row or ncols <= 0 or len(row) <= ncols:
+        return row
+    try:
+        cells = [str(c).strip() for c in row]
+        changed = True
+        while len(cells) > ncols and changed:
+            cells, changed = _merge_thousands(cells)
+        return cells if len(cells) == ncols else row
+    except Exception:
+        return row
 
 
 def to_amount(value) -> float:

@@ -138,7 +138,10 @@ def _should_review(params: dict) -> bool:
         return False
     if params.get("_review_bypass"):
         return False
-    if not params.get("attachments"):          # transactional mail → pass through
+    # Gate anything that carries a report attachment, OR is explicitly flagged for
+    # review (e.g. AI-written Quote Revive digests that have no attachment). Plain
+    # transactional mail (upload links, owner alerts) still passes straight through.
+    if not params.get("attachments") and not params.get("_force_review"):
         return False
     if _FAILSAFE_FROM_MARK in str(params.get("from", "")):
         return False
@@ -160,6 +163,29 @@ def _recipient_label(params: dict) -> str:
     return str(to) if to else "(unknown recipient)"
 
 
+def _dq_banner(params: dict) -> str:
+    """A red 'check the data first' banner for the review email, built from the
+    data-quality warnings the engine rode along in `_dq_warnings`. Empty string
+    when the file looked clean."""
+    warnings = params.get("_dq_warnings") or []
+    if not warnings:
+        return ""
+    items = "".join(
+        f"<li style='margin:2px 0'>{w}</li>" for w in warnings
+    )
+    return (
+        "<div style='border:1px solid #fca5a5;background:#fef2f2;border-radius:8px;"
+        "padding:14px 16px;margin:0 0 18px'>"
+        "<p style='font:700 14px system-ui;color:#b91c1c;margin:0 0 6px'>"
+        "⚠ Check the data before approving</p>"
+        "<p style='font:13px system-ui;color:#7f1d1d;margin:0 0 8px'>"
+        "The uploaded file looked messy. The report was still generated, but these "
+        "may be wrong — verify them against the file before you release it:</p>"
+        f"<ul style='font:13px system-ui;color:#7f1d1d;margin:0;padding-left:18px'>{items}</ul>"
+        "</div>"
+    )
+
+
 def _review_email(review_id: str, token: str, params: dict) -> dict:
     base = _base_url()
     approve = f"{base}/api/review/approve?id={review_id}&t={token}"
@@ -173,6 +199,7 @@ def _review_email(review_id: str, token: str, params: dict) -> dict:
     )
     body = (
         f"<div style='font:14px system-ui;color:#0a274f;max-width:620px'>"
+        f"{_dq_banner(params)}"
         f"<p style='font:700 16px system-ui;color:#0a274f;margin:0 0 4px'>"
         f"Human review — approve to release</p>"
         f"<p style='color:#374151;margin:0 0 16px'>This report is ready and is "
@@ -264,6 +291,7 @@ def release(review_id: str, delay_minutes=None):
 
     dmin = _default_delay_minutes() if delay_minutes is None else max(0, int(delay_minutes))
     params = dict(rec["params"])
+    params.pop("_dq_warnings", None)  # internal review-only note; never to the customer
     if dmin > 0:
         from datetime import datetime, timezone, timedelta
         params["scheduled_at"] = (
@@ -316,6 +344,10 @@ def install() -> None:
                 return _hold_for_review(params)
         except Exception as e:
             print(f"[review_gate] gate error ({e!r}); sending normally.")
+        # Not held for review (gate off, or owner/transactional mail) → strip the
+        # internal review-only note so it never travels with a real send.
+        if isinstance(params, dict) and "_dq_warnings" in params:
+            params = {k: v for k, v in params.items() if k != "_dq_warnings"}
         return current(params, *args, **kwargs)
 
     setattr(gated_send, _INSTALLED_ATTR, True)

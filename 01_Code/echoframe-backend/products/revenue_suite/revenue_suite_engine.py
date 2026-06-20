@@ -16,6 +16,7 @@ Single plan ($199/mo).
 """
 
 import os, re, base64
+import data_quality
 from pathlib import Path
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -136,16 +137,18 @@ def _save(biz, html):
     REPORTS_DIR.mkdir(exist_ok=True)
     p = REPORTS_DIR / f"EchoFrame_RevenueSuite_{_slug(biz)}_{datetime.now():%Y%m%d_%H%M%S}.html"
     p.write_text(html, encoding="utf-8"); print(f"[RevenueSuite] Report saved -> {p.name}"); return str(p)
-def _email(email, owner, html_bytes, biz, month):
+def _email(email, owner, html_bytes, biz, month, dq_warnings=None):
     import resend
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
-    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
         "to": [email], "subject": f"Your {month} Revenue Suite — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Revenue Suite report for {biz} is "
                 f"attached — Call Catch, Quote Revive, and Clear Ledger on one page, with everything you "
                 f"recovered this month and the one move worth making next.</p><p>— EchoFrame</p>",
-        "attachments": [report_attachment(html_bytes, f"EchoFrame_RevenueSuite_{month.replace(' ','_')}.html")]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_RevenueSuite_{month.replace(' ','_')}.html")]}
+    if dq_warnings: params["_dq_warnings"] = list(dq_warnings)
+    resend.Emails.send(params)
     print("[RevenueSuite] Report email dispatched.")
 
 
@@ -156,12 +159,25 @@ def generate_revenue_suite_report(customer_email, customer_name="Client", tier="
                       UPLOADS_DIR / f"{stem}_clearledger.csv")
     if parts is None:
         print("[RevenueSuite] ERROR - missing one or more of the three product CSVs."); return ""
+
+    # Data-quality gate (B-1): each of the three feeds was parsed by its own engine
+    # (which stamped dq signals onto df.attrs). Surface any per-feed trouble as
+    # warnings on the review email so a messy feed can't silently skew the combined
+    # total. We don't hard-fail the whole suite here — the human reviewer decides.
+    dq_warnings = []
+    for key, label, ncols in (("cc", "Call Catch", []), ("qr", "Quote Revive", []),
+                              ("cl", "Clear Ledger", ["Amount"])):
+        sub = data_quality.assess(parts[key]["df"], numeric_cols=ncols,
+                                  label=f"Revenue Suite · {label}")
+        dq_warnings.extend(f"{label}: {line}" for line in sub.banner_lines())
+
     c = _combine(parts, {})
     owner = customer_name.strip() or "Client"
     prose = _narrative(c)
     html = _render(_context(c, prose, is_sample=False))
     path = _save(c["biz"], html)
-    if send_email: _email(customer_email, owner, Path(path).read_bytes(), c["biz"], c["month"])
+    if send_email: _email(customer_email, owner, Path(path).read_bytes(), c["biz"], c["month"],
+                          dq_warnings=dq_warnings)
     print(f"[RevenueSuite] Pipeline complete -> {customer_email}")
     return path
 

@@ -11,6 +11,8 @@ Meta: _Missed Calls, _Auto Texts, _Avg Send, _Leads Recovered, _Recovery Pct, _R
 """
 
 import os, re, csv, base64
+import csv_utils
+import data_quality
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -42,7 +44,7 @@ def _load(email): return load_path(UPLOADS_DIR / f"{_safe_email(email)}.csv")
 def load_path(path):
     path = Path(path)
     if not path.exists(): print(f"[CallCatch] ERROR - no CSV at {path}"); return None, {}
-    with path.open("r", encoding="utf-8-sig", newline="") as fh: rows = list(csv.reader(fh))
+    rows = csv_utils.read_rows(path.read_bytes())
     meta, lrows, inlist = {}, [], False
     for row in rows:
         if not row: continue
@@ -51,35 +53,78 @@ def load_path(path):
             meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
         cells = [str(c).strip() for c in row]
         if not inlist:
-            if _HEADER_TOKENS.issubset({c.lower() for c in cells}): inlist = True
+            if csv_utils.header_matches(cells, _HEADER_TOKENS): inlist = True
             continue
         if not first: continue
         lrows.append(cells)
     if not lrows: print("[CallCatch] ERROR - no log rows"); return None, meta
     cols = ["Time", "Number", "AutoText", "Response", "Outcome", "Amount"]
+    # Rows with MORE cells than columns are the unquoted-thousands signature:
+    # "2,300" splits into "2" + "300", truncation drops the "300", and the amount
+    # reads as $2. Count them so the data-quality gate can flag the junk row.
+    lrows = [csv_utils.repair_overflow_row(r, len(cols)) for r in lrows]
+    overflow_rows = sum(1 for r in lrows if len(r) > len(cols))
     norm = [(r + [""] * len(cols))[:len(cols)] for r in lrows]
     df = pd.DataFrame(norm, columns=cols)
     df["AmountNum"] = df["Amount"].map(_to_float)
     df["OutKey"] = df["Outcome"].map(lambda s: str(s).strip().lower())
     df = df.reset_index(drop=True)
+    df.attrs["dq_rows_in"] = len(lrows)
+    df.attrs["dq_overflow_rows"] = overflow_rows
     print(f"[CallCatch] Loaded {len(df)} log rows from {path.name}")
     return df, meta
 
 
 def _metrics(df, meta):
+    # B-2: each headline number can be COMPUTED from the upload, but the customer
+    # may also TYPE one at intake. We keep the typed value (the export can be
+    # partial) yet record which figures were customer-reported (for the report's
+    # provenance footnote) and flag any that the data materially contradicts (for
+    # the owner's review email). `missed`/`auto` aren't observable from a call log,
+    # so they're inherently customer-reported, not cross-checked.
+    reported, disc = [], []
+    def _has(k): return bool(meta.get(k, "").strip())
+
     won_sum = float(df.loc[df["OutKey"] == "won", "AmountNum"].sum())
-    missed = _int(meta.get("Missed Calls", "")) if meta.get("Missed Calls", "").strip() else len(df)
-    auto = _int(meta.get("Auto Texts", "")) if meta.get("Auto Texts", "").strip() else missed
+    data_recovered = int(df["OutKey"].isin(["won", "pend"]).sum())
+
+    if _has("Missed Calls"):
+        missed = _int(meta.get("Missed Calls", "")); reported.append("Missed Calls")
+    else:
+        missed = len(df)
+    if _has("Auto Texts"):
+        auto = _int(meta.get("Auto Texts", "")); reported.append("Auto-Texts Sent")
+    else:
+        auto = missed
     avg_send = _sanitize(meta.get("Avg Send", "under 60s"), 20)
-    recovered = _int(meta.get("Leads Recovered", "")) if meta.get("Leads Recovered", "").strip() else \
-        int(df["OutKey"].isin(["won", "pend"]).sum())
-    rec_pct = _int(meta.get("Recovery Pct", "")) if meta.get("Recovery Pct", "").strip() else \
-        (round(recovered / missed * 100) if missed else 0)
-    rev_saved = _to_float(meta.get("Revenue Saved", "")) or won_sum
+
+    if _has("Leads Recovered"):
+        recovered = _int(meta.get("Leads Recovered", "")); reported.append("Leads Recovered")
+        n = data_quality.discrepancy_note("Leads Recovered", recovered, data_recovered)
+        if n: disc.append(n)
+    else:
+        recovered = data_recovered
+
+    data_pct = round(recovered / missed * 100) if missed else 0
+    if _has("Recovery Pct"):
+        rec_pct = _int(meta.get("Recovery Pct", "")); reported.append("Recovery %")
+        n = data_quality.discrepancy_note("Recovery %", rec_pct, data_pct)
+        if n: disc.append(n)
+    else:
+        rec_pct = data_pct
+
+    if _to_float(meta.get("Revenue Saved", "")):
+        rev_saved = _to_float(meta.get("Revenue Saved", "")); reported.append("Est. Revenue Saved")
+        n = data_quality.discrepancy_note("Est. Revenue Saved", rev_saved, won_sum, is_money=True)
+        if n: disc.append(n)
+    else:
+        rev_saved = won_sum
+
     print(f"[CallCatch] missed {missed} | auto {auto} | recovered {recovered} ({rec_pct}%) | saved ${rev_saved:,.0f}")
     return {"missed": missed, "auto": auto, "avg_send": avg_send, "recovered": recovered,
             "rec_pct": rec_pct, "rev_saved": rev_saved, "count": len(df),
-            "shown": _int(meta.get("Shown", "")) or len(df)}
+            "shown": _int(meta.get("Shown", "")) or len(df),
+            "_reported": reported, "_discrepancies": disc}
 
 
 CALL_CATCH_TOOL = {
@@ -163,6 +208,7 @@ def _context(df, meta, m, prose, is_sample):
             "product_tagline": PRODUCT_TAGLINE, "month": meta.get("Month", datetime.now().strftime("%B %Y")),
             "location": meta.get("Location", ""), "is_sample": is_sample, "kpis": kpis, "thread": thread,
             "log": log, "log_footnote": f"{m['shown']} of {m['recovered']} recoveries shown",
+            "reported_fields": m.get("_reported", []),
             "one_thing": {"title": prose["one_thing_title"], "body": prose["one_thing_body"]}}
 
 
@@ -173,27 +219,41 @@ def _save(meta, html):
     REPORTS_DIR.mkdir(exist_ok=True)
     p = REPORTS_DIR / f"EchoFrame_CallCatch_{_slug(meta.get('Business Name',''))}_{datetime.now():%Y%m%d_%H%M%S}.html"
     p.write_text(html, encoding="utf-8"); print(f"[CallCatch] Report saved -> {p.name}"); return str(p)
-def _email(email, owner, html_bytes, meta):
+def _email(email, owner, html_bytes, meta, dq_warnings=None):
     import resend
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your business").strip()
-    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
         "to": [email], "subject": f"Your {month} Call Catch — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Call Catch report for {biz} is "
                 f"attached — every missed call, the text that kept the lead warm, and the revenue recovered.</p><p>— EchoFrame</p>",
-        "attachments": [report_attachment(html_bytes, f"EchoFrame_CallCatch_{month.replace(' ','_')}.html")]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_CallCatch_{month.replace(' ','_')}.html")]}
+    # Ride-along data-quality notes for the review-email banner. review_gate reads
+    # and strips this internal key before the report reaches the customer.
+    if dq_warnings: params["_dq_warnings"] = list(dq_warnings)
+    resend.Emails.send(params)
     print("[CallCatch] Report email dispatched.")
 
 
 def generate_call_catch_report(customer_email, customer_name="Client", tier="", send_email=True):
     df, meta = _load(customer_email)
     if df is None: return ""
+    # Data-quality gate (B-1): KPIs come from _meta rows, so the value here is
+    # catching JUNK data rows (overflow / dropped) that would render as fake call
+    # entries — not validating a KPI. numeric_cols=[]: "Amount" is only filled on
+    # 'won' rows, so it's legitimately mostly-zero on clean data. date_cols=[]:
+    # "Time" holds clock times ("2:15 PM"), not calendar dates — no real date col.
+    dq = data_quality.assess(df, numeric_cols=[], date_cols=[], label="Call Catch")
+    if dq.hard_fail:
+        print(f"[Call Catch] Data-quality hard fail: {dq.reason}")
+        return ""
     if not meta.get("Owner Name", "").strip(): meta["Owner Name"] = customer_name.strip() or "Client"
     m = _metrics(df, meta); prose = _narrative(df, meta, m)
     ctx = _context(df, meta, m, prose, is_sample=False)
     html = _render(ctx); path = _save(meta, html)
-    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta)
+    warnings = list(dq.warnings) + list(m.get("_discrepancies", []))  # B-1 gate + B-2 cross-check
+    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta, dq_warnings=warnings)
     print(f"[CallCatch] Pipeline complete -> {customer_email}")
     return path
 

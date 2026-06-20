@@ -15,6 +15,8 @@ Meta: _Calls Answered, _Calls Total, _Prior Answered Pct, _After Hours Captured,
 """
 
 import os, re, csv, base64
+import csv_utils
+import data_quality
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -47,7 +49,7 @@ def _load(email): return load_path(UPLOADS_DIR / f"{_safe_email(email)}.csv")
 def load_path(path):
     path = Path(path)
     if not path.exists(): print(f"[CallRouter] ERROR - no CSV at {path}"); return None, {}
-    with path.open("r", encoding="utf-8-sig", newline="") as fh: rows = list(csv.reader(fh))
+    rows = csv_utils.read_rows(path.read_bytes())
     meta, crows, inlist = {}, [], False
     for row in rows:
         if not row: continue
@@ -56,37 +58,87 @@ def load_path(path):
             meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
         cells = [str(c).strip() for c in row]
         if not inlist:
-            if _HEADER_TOKENS.issubset({c.lower() for c in cells}): inlist = True
+            if csv_utils.header_matches(cells, _HEADER_TOKENS): inlist = True
             continue
         if not first: continue
         crows.append(cells)
     if not crows: print("[CallRouter] ERROR - no call rows"); return None, meta
     cols = ["Time", "Tag", "Need", "Detail", "Qualification", "Routed", "RoutedDetail", "Outcome", "OutcomeType"]
+    # Rows with MORE cells than columns are the unquoted-thousands signature
+    # ("2,300" → "2" + "300"): the extra cell shifts every field, so junk leaks in
+    # as a fake call. Count them before padding so the data-quality gate can flag it.
+    crows = [csv_utils.repair_overflow_row(r, len(cols)) for r in crows]
+    overflow_rows = sum(1 for r in crows if len(r) > len(cols))
     norm = [(r + [""] * len(cols))[:len(cols)] for r in crows]
     df = pd.DataFrame(norm, columns=cols).reset_index(drop=True)
+    df.attrs["dq_rows_in"] = len(crows)
+    df.attrs["dq_overflow_rows"] = overflow_rows
     print(f"[CallRouter] Loaded {len(df)} sample-day calls from {path.name}")
     return df, meta
 
 
 def _metrics(df, meta):
+    # B-2: each headline number can be COMPUTED from the sample-day call log, but the
+    # customer may also TYPE a weekly figure at intake. We keep the typed value (the
+    # export can be partial) yet record which figures were customer-reported (for the
+    # report's provenance footnote) and flag any that the sample-day data materially
+    # contradicts (for the owner's review email). `missed` (defaults to 0) and
+    # `prior_pct` (defaults to None — a prior-period number this upload can't contain)
+    # are inherently customer-reported, so they're marked reported but not cross-checked.
+    reported, disc = [], []
+    def _has(k): return bool(meta.get(k, "").strip())
+
     logged = len(df)
     booked = int((df["OutcomeType"].str.strip().str.lower() == "book").sum())
-    missed = _int(meta.get("Missed", "")) if meta.get("Missed", "").strip() else 0
+    data_afterhours = int(df["Tag"].str.upper().str.contains("AFTER", na=False).sum())
     booked_pct = round(booked / logged * 100) if logged else 0
-    answered = _int(meta.get("Calls Answered", "")) if meta.get("Calls Answered", "").strip() else logged
-    total = _int(meta.get("Calls Total", "")) if meta.get("Calls Total", "").strip() else logged
+
+    if _has("Missed"):
+        missed = _int(meta.get("Missed", "")); reported.append("Missed")
+    else:
+        missed = 0
+    if _has("Calls Answered"):
+        answered = _int(meta.get("Calls Answered", "")); reported.append("Calls Answered")
+        n = data_quality.discrepancy_note("Calls Answered", answered, logged)
+        if n: disc.append(n)
+    else:
+        answered = logged
+    if _has("Calls Total"):
+        total = _int(meta.get("Calls Total", "")); reported.append("Calls Total")
+        n = data_quality.discrepancy_note("Calls Total", total, logged)
+        if n: disc.append(n)
+    else:
+        total = logged
     answered_pct = round(answered / total * 100) if total else 0
-    prior_pct = _int(meta.get("Prior Answered Pct", "")) if meta.get("Prior Answered Pct", "").strip() else None
-    afterhours = _int(meta.get("After Hours Captured", "")) if meta.get("After Hours Captured", "").strip() else \
-        int(df["Tag"].str.upper().str.contains("AFTER", na=False).sum())
-    jobs = _int(meta.get("Jobs Booked", "")) if meta.get("Jobs Booked", "").strip() else booked
-    jobs_pct = _int(meta.get("Booked Pct", "")) if meta.get("Booked Pct", "").strip() else \
-        (round(jobs / answered * 100) if answered else 0)
+    if _has("Prior Answered Pct"):
+        prior_pct = _int(meta.get("Prior Answered Pct", "")); reported.append("Prior Answered %")
+    else:
+        prior_pct = None
+    if _has("After Hours Captured"):
+        afterhours = _int(meta.get("After Hours Captured", "")); reported.append("After-Hours Calls Captured")
+        n = data_quality.discrepancy_note("After-Hours Calls Captured", afterhours, data_afterhours)
+        if n: disc.append(n)
+    else:
+        afterhours = data_afterhours
+    if _has("Jobs Booked"):
+        jobs = _int(meta.get("Jobs Booked", "")); reported.append("Jobs Booked")
+        n = data_quality.discrepancy_note("Jobs Booked", jobs, booked)
+        if n: disc.append(n)
+    else:
+        jobs = booked
+    data_jobs_pct = round(jobs / answered * 100) if answered else 0
+    if _has("Booked Pct"):
+        jobs_pct = _int(meta.get("Booked Pct", "")); reported.append("Booked %")
+        n = data_quality.discrepancy_note("Booked %", jobs_pct, data_jobs_pct)
+        if n: disc.append(n)
+    else:
+        jobs_pct = data_jobs_pct
     print(f"[CallRouter] sample day {logged} logged / {booked} booked ({booked_pct}%) | "
           f"week: answered {answered}/{total} ({answered_pct}%), after-hours {afterhours}, jobs {jobs}")
     return {"logged": logged, "booked": booked, "missed": missed, "booked_pct": booked_pct,
             "answered": answered, "total": total, "answered_pct": answered_pct, "prior_pct": prior_pct,
-            "afterhours": afterhours, "jobs": jobs, "jobs_pct": jobs_pct}
+            "afterhours": afterhours, "jobs": jobs, "jobs_pct": jobs_pct,
+            "_reported": reported, "_discrepancies": disc}
 
 
 CALL_ROUTER_TOOL = {
@@ -173,6 +225,7 @@ def _context(df, meta, m, prose, is_sample):
             "foot_text": f"Sample day — {m['logged']} calls logged · {m['booked']} jobs booked · {m['missed']} missed",
             "booked_pct": f"{m['booked_pct']}%",
             "after_hours_note": prose["after_hours_note"], "source_line": _source_line(meta),
+            "reported_fields": m.get("_reported", []),
             "one_thing": {"title": prose["one_thing_title"], "body": prose["one_thing_body"]}}
 
 
@@ -183,28 +236,41 @@ def _save(meta, html):
     REPORTS_DIR.mkdir(exist_ok=True)
     p = REPORTS_DIR / f"EchoFrame_CallRouter_{_slug(meta.get('Business Name',''))}_{datetime.now():%Y%m%d_%H%M%S}.html"
     p.write_text(html, encoding="utf-8"); print(f"[CallRouter] Report saved -> {p.name}"); return str(p)
-def _email(email, owner, html_bytes, meta):
+def _email(email, owner, html_bytes, meta, dq_warnings=None):
     import resend
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     period = meta.get("Period", "").strip(); biz = meta.get("Business Name", "your business").strip()
-    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
         "to": [email], "subject": f"Your Call Router report — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your Call Router report for {biz} ({period}) is "
                 f"attached — every inbound call answered, qualified, and routed, plus the after-hours work you'd "
                 f"have lost to voicemail.</p><p>— EchoFrame</p>",
-        "attachments": [report_attachment(html_bytes, f"EchoFrame_CallRouter_{period.replace(' ','_').replace(',','')}.html")]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_CallRouter_{period.replace(' ','_').replace(',','')}.html")]}
+    # Ride-along data-quality notes for the review-email banner. review_gate reads
+    # and strips this internal key before the report reaches the customer.
+    if dq_warnings: params["_dq_warnings"] = list(dq_warnings)
+    resend.Emails.send(params)
     print("[CallRouter] Report email dispatched.")
 
 
 def generate_call_router_report(customer_email, customer_name="Client", tier="", send_email=True):
     df, meta = _load(customer_email)
     if df is None: return ""
+    # Data-quality gate (B-1). KPIs here are meta-driven, so the win is catching JUNK
+    # call rows: overflow rows ("2,300"-style splits) and silently dropped lines. No
+    # data column is a money/number expected non-zero, and "Time" holds clock times,
+    # not calendar dates — so numeric_cols/date_cols stay empty to avoid false fails.
+    dq = data_quality.assess(df, numeric_cols=[], date_cols=[], label="Call Router")
+    if dq.hard_fail:
+        print(f"[Call Router] Data-quality hard fail: {dq.reason}")
+        return ""
     if not meta.get("Owner Name", "").strip(): meta["Owner Name"] = customer_name.strip() or "Client"
     m = _metrics(df, meta); prose = _narrative(df, meta, m)
     ctx = _context(df, meta, m, prose, is_sample=False)
     html = _render(ctx); path = _save(meta, html)
-    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta)
+    warnings = list(dq.warnings) + list(m.get("_discrepancies", []))  # B-1 gate + B-2 cross-check
+    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta, dq_warnings=warnings)
     print(f"[CallRouter] Pipeline complete -> {customer_email}")
     return path
 

@@ -14,6 +14,8 @@ Meta: _Collected, _Cleared Count, _Avg Days, _Prior Days.
 """
 
 import os, re, csv, base64
+import csv_utils
+import data_quality
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -54,8 +56,7 @@ def load_path(path):
     path = Path(path)
     if not path.exists():
         print(f"[ClearLedger] ERROR - no CSV at {path}"); return None, {}
-    with path.open("r", encoding="utf-8-sig", newline="") as fh:
-        rows = list(csv.reader(fh))
+    rows = csv_utils.read_rows(path.read_bytes())
     meta, rrows, inlist = {}, [], False
     for row in rows:
         if not row: continue
@@ -64,18 +65,25 @@ def load_path(path):
             meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
         cells = [str(c).strip() for c in row]
         if not inlist:
-            if _HEADER_TOKENS.issubset({c.lower() for c in cells}): inlist = True
+            if csv_utils.header_matches(cells, _HEADER_TOKENS): inlist = True
             continue
         if not first: continue
         rrows.append(cells)
     if not rrows:
         print("[ClearLedger] ERROR - no invoice rows"); return None, meta
     cols = ["Customer", "Detail", "Invoice", "Amount", "Days Overdue", "Next Action", "When"]
+    # Rows with MORE cells than columns are the signature of an unquoted thousands
+    # separator: "2,300" splits into "2" + "300", truncation drops the "300", and
+    # the amount reads as $2. Count them so the data-quality gate can flag it.
+    rrows = [csv_utils.repair_overflow_row(r, len(cols)) for r in rrows]
+    overflow_rows = sum(1 for r in rrows if len(r) > len(cols))
     norm = [(r + [""] * len(cols))[:len(cols)] for r in rrows]
     df = pd.DataFrame(norm, columns=cols)
     df["AmountNum"] = df["Amount"].map(_to_float)
     df["DaysNum"]   = df["Days Overdue"].map(_int)
     df = df.reset_index(drop=True)
+    df.attrs["dq_rows_in"] = len(rrows)
+    df.attrs["dq_overflow_rows"] = overflow_rows
     print(f"[ClearLedger] Loaded {len(df)} invoices from {path.name}")
     return df, meta
 
@@ -87,16 +95,31 @@ def _pill(days):
     return "warn"
 
 def _metrics(df, meta):
+    # B-2: a few headline numbers can be TYPED at intake. We keep the typed value
+    # (the export can be partial) but record which figures were customer-reported
+    # for the report's provenance footnote. NOTE: Clear Ledger's passthrough
+    # figures — Collected, Cleared Count, Avg Days, Prior Days — are prior-period /
+    # historical totals that this single overdue-snapshot upload genuinely CANNOT
+    # compute (its else-branch is 0.0 or None, not a dataframe figure), so they're
+    # marked `reported` but NOT cross-checked. The computed headline numbers
+    # (Total Overdue, open count) are never typed, so nothing to reconcile here.
+    reported, disc = [], []
+    def _has(k): return bool(meta.get(k, "").strip())
+
     total_overdue = float(df["AmountNum"].sum())
     top_i = int(df["DaysNum"].idxmax())
     collected = _to_float(meta.get("Collected", ""))
-    cleared   = _int(meta.get("Cleared Count", "")) if meta.get("Cleared Count", "").strip() else None
-    avg_days  = _int(meta.get("Avg Days", "")) if meta.get("Avg Days", "").strip() else None
-    prior_days = _int(meta.get("Prior Days", "")) if meta.get("Prior Days", "").strip() else None
+    if _has("Collected"): reported.append("Collected This Month")
+    cleared   = _int(meta.get("Cleared Count", "")) if _has("Cleared Count") else None
+    if _has("Cleared Count"): reported.append("Invoices Cleared")
+    avg_days  = _int(meta.get("Avg Days", "")) if _has("Avg Days") else None
+    if _has("Avg Days"): reported.append("Avg Days to Pay")
+    prior_days = _int(meta.get("Prior Days", "")) if _has("Prior Days") else None
+    if _has("Prior Days"): reported.append("Prior Avg Days to Pay")
     print(f"[ClearLedger] overdue ${total_overdue:,.0f} across {len(df)} | collected ${collected:,.0f}")
     return {"total_overdue": total_overdue, "open_count": len(df), "top_i": top_i,
             "collected": collected, "cleared": cleared, "avg_days": avg_days,
-            "prior_days": prior_days}
+            "prior_days": prior_days, "_reported": reported, "_discrepancies": disc}
 
 
 # ── Claude ──
@@ -182,6 +205,7 @@ def _context(df, meta, m, prose, tier, is_sample):
             "product_tagline": PRODUCT_TAGLINE, "month": meta.get("Month", datetime.now().strftime("%B %Y")),
             "location": meta.get("Location", ""), "tier": tier, "tier_label": TIER_LABELS[tier],
             "is_sample": is_sample, "open_count": m["open_count"], "kpis": kpis, "rows": rows,
+            "reported_fields": m.get("_reported", []),
             "total_overdue": _money(m["total_overdue"]), "stages": stages,
             "method_note": prose["method_note"], "source_line": _source_line(meta),
             "one_thing": {"title": prose["one_thing_title"], "body": prose["one_thing_body"]}}
@@ -197,29 +221,41 @@ def _save(meta, tier, html):
     p = REPORTS_DIR / f"EchoFrame_ClearLedger_{tier}_{_slug(meta.get('Business Name',''))}_{datetime.now():%Y%m%d_%H%M%S}.html"
     p.write_text(html, encoding="utf-8"); print(f"[ClearLedger] Report saved -> {p.name}"); return str(p)
 
-def _email(email, owner, html_bytes, meta):
+def _email(email, owner, html_bytes, meta, dq_warnings=None):
     import resend
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your business").strip()
-    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
         "to": [email], "subject": f"Your {month} Clear Ledger — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Clear Ledger report for {biz} is "
                 f"attached — every overdue invoice, where it sits in the follow-up sequence, and the one to act on.</p>"
                 f"<p>— EchoFrame</p>",
-        "attachments": [report_attachment(html_bytes, f"EchoFrame_ClearLedger_{month.replace(' ','_')}.html")]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_ClearLedger_{month.replace(' ','_')}.html")]}
+    # Ride-along data-quality notes for the review-email banner. review_gate reads
+    # and strips this internal key before the report reaches the customer.
+    if dq_warnings: params["_dq_warnings"] = list(dq_warnings)
+    resend.Emails.send(params)
     print("[ClearLedger] Report email dispatched.")
 
 
 def generate_clear_ledger_report(customer_email, customer_name="Client", tier="", send_email=True):
     df, meta = _load(customer_email)
     if df is None: return ""
+    # Data-quality gate (B-1): if the file was too broken to read, produce nothing
+    # so the fulfillment_guard path takes over (human finishes it by hand). If it's
+    # only messy, carry the warnings into the send for the review-email banner.
+    dq = data_quality.assess(df, numeric_cols=["Amount"], date_cols=[], label="Clear Ledger")
+    if dq.hard_fail:
+        print(f"[Clear Ledger] Data-quality hard fail: {dq.reason}")
+        return ""
     if not meta.get("Owner Name", "").strip(): meta["Owner Name"] = customer_name.strip() or "Client"
     tier = (tier or meta.get("Tier", "starter")).lower()
     m = _metrics(df, meta); prose = _narrative(df, meta, m)
     ctx = _context(df, meta, m, prose, tier, is_sample=False)
     html = _render(ctx); path = _save(meta, ctx["tier"], html)
-    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta)
+    warnings = list(dq.warnings) + list(m.get("_discrepancies", []))  # B-1 gate + B-2 cross-check
+    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta, dq_warnings=warnings)
     print(f"[ClearLedger] Pipeline complete -> {customer_email} ({ctx['tier']})")
     return path
 

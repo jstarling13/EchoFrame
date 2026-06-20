@@ -13,6 +13,8 @@ Meta: _ROs Closed, _Paid Before, _Paid Pct, _Avg Time, _Avg Time Sub, _Collected
 """
 
 import os, re, csv, base64
+import csv_utils
+import data_quality
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -46,7 +48,7 @@ def _load(email): return load_path(UPLOADS_DIR / f"{_safe_email(email)}.csv")
 def load_path(path):
     path = Path(path)
     if not path.exists(): print(f"[DrivePay] ERROR - no CSV at {path}"); return None, {}
-    with path.open("r", encoding="utf-8-sig", newline="") as fh: rows = list(csv.reader(fh))
+    rows = csv_utils.read_rows(path.read_bytes())
     meta, lrows, inlist = {}, [], False
     for row in rows:
         if not row: continue
@@ -55,32 +57,79 @@ def load_path(path):
             meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
         cells = [str(c).strip() for c in row]
         if not inlist:
-            if _HEADER_TOKENS.issubset({c.lower() for c in cells}): inlist = True
+            if csv_utils.header_matches(cells, _HEADER_TOKENS): inlist = True
             continue
         if not first: continue
         lrows.append(cells)
     if not lrows: print("[DrivePay] ERROR - no log rows"); return None, meta
     cols = ["Time", "Customer", "Vehicle", "Invoice", "PayLink", "Outcome", "OutType"]
+    # Rows with MORE cells than columns are the signature of an unquoted thousands
+    # separator: "2,300" splits into "2" + "300", truncation drops the "300", and
+    # the amount reads as $2. Count them so the data-quality gate can flag it.
+    lrows = [csv_utils.repair_overflow_row(r, len(cols)) for r in lrows]
+    overflow_rows = sum(1 for r in lrows if len(r) > len(cols))
     norm = [(r + [""] * len(cols))[:len(cols)] for r in lrows]
     df = pd.DataFrame(norm, columns=cols)
     df["InvoiceNum"] = df["Invoice"].map(_to_float)
     df["OutKey"] = df["OutType"].map(lambda s: str(s).strip().lower())
     df = df.reset_index(drop=True)
+    # Record how many data rows the parser SAW so the data-quality gate can tell
+    # if any were silently dropped or mis-split (e.g. an unquoted "2,300").
+    df.attrs["dq_rows_in"] = len(lrows)
+    df.attrs["dq_overflow_rows"] = overflow_rows
     print(f"[DrivePay] Loaded {len(df)} log rows from {path.name}")
     return df, meta
 
 
 def _metrics(df, meta):
-    ros = _int(meta.get("ROs Closed", "")) if meta.get("ROs Closed", "").strip() else len(df)
-    paid_before = _int(meta.get("Paid Before", "")) if meta.get("Paid Before", "").strip() else \
-        int((df["OutKey"] == "won").sum())
-    paid_pct = _int(meta.get("Paid Pct", "")) if meta.get("Paid Pct", "").strip() else \
-        (round(paid_before / ros * 100) if ros else 0)
-    collected = _to_float(meta.get("Collected", "")) or float(df["InvoiceNum"].sum())
+    # B-2: each headline number can be COMPUTED from the upload, but the customer
+    # may also TYPE one at intake. We keep the typed value (the export can be
+    # partial) yet record which figures were customer-reported (for the report's
+    # provenance footnote) and flag any that the data materially contradicts (for
+    # the owner's review email). `Avg Time to Pay` and `before_pickup` aren't
+    # observable from this log (no payment-clear timestamps, no per-RO before/after
+    # flag), so they're inherently customer-reported, not cross-checked.
+    reported, disc = [], []
+    def _has(k): return bool(meta.get(k, "").strip())
+
+    data_ros = len(df)
+    data_paid_before = int((df["OutKey"] == "won").sum())
+    data_collected = float(df["InvoiceNum"].sum())
+
+    if _has("ROs Closed"):
+        ros = _int(meta.get("ROs Closed", "")); reported.append("Repair Orders Closed")
+        n = data_quality.discrepancy_note("Repair Orders Closed", ros, data_ros)
+        if n: disc.append(n)
+    else:
+        ros = data_ros
+
+    if _has("Paid Before"):
+        paid_before = _int(meta.get("Paid Before", "")); reported.append("Paid Before Pickup")
+        n = data_quality.discrepancy_note("Paid Before Pickup", paid_before, data_paid_before)
+        if n: disc.append(n)
+    else:
+        paid_before = data_paid_before
+
+    data_pct = round(data_paid_before / data_ros * 100) if data_ros else 0
+    if _has("Paid Pct"):
+        paid_pct = _int(meta.get("Paid Pct", "")); reported.append("Paid Before Pickup %")
+        n = data_quality.discrepancy_note("Paid Before Pickup %", paid_pct, data_pct)
+        if n: disc.append(n)
+    else:
+        paid_pct = round(paid_before / ros * 100) if ros else 0
+
+    if _has("Collected"):
+        collected = _to_float(meta.get("Collected", "")); reported.append("Collected via Drive Pay")
+        n = data_quality.discrepancy_note("Collected via Drive Pay", collected, data_collected, is_money=True)
+        if n: disc.append(n)
+    else:
+        collected = data_collected
+
     before_pickup = _to_float(meta.get("Before Pickup", ""))
     print(f"[DrivePay] ROs {ros} | paid before {paid_before} ({paid_pct}%) | collected ${collected:,.0f}")
     return {"ros": ros, "paid_before": paid_before, "paid_pct": paid_pct, "collected": collected,
-            "before_pickup": before_pickup, "shown": _int(meta.get("Shown", "")) or len(df), "count": len(df)}
+            "before_pickup": before_pickup, "shown": _int(meta.get("Shown", "")) or len(df), "count": len(df),
+            "_reported": reported, "_discrepancies": disc}
 
 
 DRIVE_PAY_TOOL = {
@@ -172,6 +221,7 @@ def _context(df, meta, m, prose, is_sample):
             "location": meta.get("Location", ""), "is_sample": is_sample,
             "kpis": kpis, "thread": _build_thread(prose), "log": log,
             "log_footnote": f"{m['shown']} of {m['ros']} repair orders shown",
+            "reported_fields": m.get("_reported", []),
             "one_thing": {"title": prose["one_thing_title"], "body": prose["one_thing_body"]}}
 
 
@@ -182,27 +232,42 @@ def _save(meta, html):
     REPORTS_DIR.mkdir(exist_ok=True)
     p = REPORTS_DIR / f"EchoFrame_DrivePay_{_slug(meta.get('Business Name',''))}_{datetime.now():%Y%m%d_%H%M%S}.html"
     p.write_text(html, encoding="utf-8"); print(f"[DrivePay] Report saved -> {p.name}"); return str(p)
-def _email(email, owner, html_bytes, meta):
+def _email(email, owner, html_bytes, meta, dq_warnings=None):
     import resend
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your shop").strip()
-    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
         "to": [email], "subject": f"Your {month} Drive Pay — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Drive Pay report for {biz} is "
                 f"attached — text-to-pay sent at every job close, and what you collected at pickup instead of chasing.</p><p>— EchoFrame</p>",
-        "attachments": [report_attachment(html_bytes, f"EchoFrame_DrivePay_{month.replace(' ','_')}.html")]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_DrivePay_{month.replace(' ','_')}.html")]}
+    # Ride-along data-quality notes for the review-email banner. review_gate reads
+    # and strips this internal key before the report reaches the customer.
+    if dq_warnings: params["_dq_warnings"] = list(dq_warnings)
+    resend.Emails.send(params)
     print("[DrivePay] Report email dispatched.")
 
 
 def generate_drive_pay_report(customer_email, customer_name="Client", tier="", send_email=True):
     df, meta = _load(customer_email)
     if df is None: return ""
+    # Data-quality gate (B-1): if the file was too broken to read, produce nothing
+    # so the fulfillment_guard path takes over (human finishes it by hand). If it's
+    # only messy, carry the warnings into the send for the review-email banner.
+    # InvoiceNum is a real money amount (catches "2,300"→"2" and all-zero columns).
+    # Time is a clock label (e.g. "4:38 PM"), not a calendar date, so date_cols=[].
+    dq = data_quality.assess(df, numeric_cols=["InvoiceNum"], date_cols=[],
+                             label="Drive Pay")
+    if dq.hard_fail:
+        print(f"[Drive Pay] Data-quality hard fail: {dq.reason}")
+        return ""
     if not meta.get("Owner Name", "").strip(): meta["Owner Name"] = customer_name.strip() or "Client"
     m = _metrics(df, meta); prose = _narrative(df, meta, m)
     ctx = _context(df, meta, m, prose, is_sample=False)
     html = _render(ctx); path = _save(meta, html)
-    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta)
+    warnings = list(dq.warnings) + list(m.get("_discrepancies", []))  # B-1 gate + B-2 cross-check
+    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta, dq_warnings=warnings)
     print(f"[DrivePay] Pipeline complete -> {customer_email}")
     return path
 

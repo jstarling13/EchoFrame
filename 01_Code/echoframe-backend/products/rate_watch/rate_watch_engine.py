@@ -40,6 +40,8 @@ Example:
 import os
 import re
 import csv
+import csv_utils
+import data_quality
 import base64
 from pathlib import Path
 from datetime import datetime
@@ -108,8 +110,7 @@ def load_vendors_path(path: Path):
         print(f"[RateWatch] ERROR - no CSV found at: {path}")
         return None, {}
 
-    with path.open("r", encoding="utf-8-sig", newline="") as fh:
-        rows = list(csv.reader(fh))
+    rows = csv_utils.read_rows(path.read_bytes())
 
     meta, vrows, in_list = {}, [], False
     for row in rows:
@@ -121,8 +122,7 @@ def load_vendors_path(path: Path):
             continue
         cells = [str(c).strip() for c in row]
         if not in_list:
-            lowered = {c.lower() for c in cells}
-            if _HEADER_TOKENS.issubset(lowered):
+            if csv_utils.header_matches(cells, _HEADER_TOKENS):
                 in_list = True
             continue
         if not first:
@@ -134,11 +134,20 @@ def load_vendors_path(path: Path):
         return None, meta
 
     cols = ["Vendor", "Detail", "Current Rate", "Market Rate", "Annual Spend", "Overpayment", "Renewal"]
+    # Rows with MORE cells than columns are the signature of an unquoted thousands
+    # separator: "2,300" splits into "2" + "300", truncation drops the "300", and
+    # the amount reads as $2. Count them so the data-quality gate can flag it.
+    vrows = [csv_utils.repair_overflow_row(r, len(cols)) for r in vrows]
+    overflow_rows = sum(1 for r in vrows if len(r) > len(cols))
     norm = [(r + [""] * len(cols))[:len(cols)] for r in vrows]
     df = pd.DataFrame(norm, columns=cols)
     df["Annual Spend"] = df["Annual Spend"].map(_to_float)
     df["Overpayment"]  = df["Overpayment"].map(_to_float)
     df = df.reset_index(drop=True)
+    # Record how many data rows the parser SAW so the data-quality gate can tell
+    # if any were silently dropped or mis-split (e.g. an unquoted "2,300").
+    df.attrs["dq_rows_in"] = len(vrows)
+    df.attrs["dq_overflow_rows"] = overflow_rows
     print(f"[RateWatch] Loaded {len(df)} vendors from {path.name}")
     return df, meta
 
@@ -406,7 +415,7 @@ def _save_report(meta, tier, html) -> str:
     return str(path)
 
 
-def _send_report_email(customer_email, owner_name, html_bytes, meta, tier):
+def _send_report_email(customer_email, owner_name, html_bytes, meta, tier, dq_warnings=None):
     import resend
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
@@ -424,12 +433,17 @@ def _send_report_email(customer_email, owner_name, html_bytes, meta, tier):
         f"<p>— EchoFrame<br><span style=\"color:#6B7280;font-size:12px;\">Business intelligence, "
         f"not accounting software. Benchmark estimates are starting points, not guaranteed savings.</span></p>"
     )
-    resend.Emails.send({
+    params = {
         "from": email_from, "to": [customer_email],
         "subject": f"Your {month} Rate Watch — {biz}".strip(),
         "html": body,
         "attachments": [report_attachment(html_bytes, fname)],
-    })
+    }
+    # Ride-along data-quality notes for the review-email banner. review_gate reads
+    # and strips this internal key before the report reaches the customer.
+    if dq_warnings:
+        params["_dq_warnings"] = list(dq_warnings)
+    resend.Emails.send(params)
     print("[RateWatch] Report email dispatched.")  # no PII in logs
 
 
@@ -444,6 +458,16 @@ def generate_rate_watch_report(
     df, meta = _load_vendors(customer_email)
     if df is None:
         return ""
+
+    # Data-quality gate (B-1): if the file was too broken to read, produce nothing
+    # so the fulfillment_guard path takes over (human finishes it by hand). If it's
+    # only messy, carry the warnings into the send for the review-email banner.
+    dq = data_quality.assess(df, numeric_cols=["Annual Spend"], date_cols=[],
+                             label="Rate Watch")
+    if dq.hard_fail:
+        print(f"[Rate Watch] Data-quality hard fail: {dq.reason}")
+        return ""
+
     if not meta.get("Owner Name", "").strip():
         meta["Owner Name"] = customer_name.strip() or "Client"
     tier = (tier or meta.get("Tier", "core")).lower()
@@ -457,7 +481,8 @@ def generate_rate_watch_report(
 
     if send_email:
         _send_report_email(customer_email, meta["Owner Name"],
-                           Path(path).read_bytes(), meta, ctx["tier"])
+                           Path(path).read_bytes(), meta, ctx["tier"],
+                           dq_warnings=dq.warnings)
     print(f"[RateWatch] Pipeline complete -> {customer_email} ({ctx['tier']})")
     return path
 

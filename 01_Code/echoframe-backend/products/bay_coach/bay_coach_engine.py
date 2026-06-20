@@ -16,6 +16,8 @@ Meta: _Vehicle Name, _Vehicle Meta, _Odometer, _RO Hint, _Glance Hint,
 """
 
 import os, re, csv, base64
+import csv_utils
+import data_quality
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -48,7 +50,7 @@ def _load(email): return load_path(UPLOADS_DIR / f"{_safe_email(email)}.csv")
 def load_path(path):
     path = Path(path)
     if not path.exists(): print(f"[BayCoach] ERROR - no CSV at {path}"); return None, None, {}
-    with path.open("r", encoding="utf-8-sig", newline="") as fh: rows = list(csv.reader(fh))
+    rows = csv_utils.read_rows(path.read_bytes())
     meta, hist, recs, mode = {}, [], [], None
     for row in rows:
         if not row: continue
@@ -56,9 +58,8 @@ def load_path(path):
         if first.startswith("_"):
             meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
         cells = [str(c).strip() for c in row]
-        low = {c.lower() for c in cells}
-        if _HIST_TOKENS.issubset(low): mode = "hist"; continue
-        if _REC_TOKENS.issubset(low): mode = "rec"; continue
+        if csv_utils.header_matches(cells, _HIST_TOKENS): mode = "hist"; continue
+        if csv_utils.header_matches(cells, _REC_TOKENS): mode = "rec"; continue
         if not first: continue
         if mode == "hist": hist.append(cells)
         elif mode == "rec": recs.append(cells)
@@ -66,10 +67,16 @@ def load_path(path):
         print("[BayCoach] ERROR - no recommendation rows"); return None, None, meta
     hist_df = pd.DataFrame([(r + ["", ""])[:2] for r in hist], columns=["Service Performed", "When"])
     rcols = ["Service", "Interval", "Status", "Price"]
+    # Recommendation rows with more cells than columns are the unquoted-thousands
+    # signature ("2,300"→"2"+"300") and the audit's "EXTRA/JUNK rendered" case.
+    recs = [csv_utils.repair_overflow_row(r, len(rcols)) for r in recs]
+    overflow_rows = sum(1 for r in recs if len(r) > len(rcols))
     rec_df = pd.DataFrame([(r + [""] * len(rcols))[:len(rcols)] for r in recs], columns=rcols)
     rec_df["PriceNum"] = rec_df["Price"].map(_to_float)
     rec_df["StatusKey"] = rec_df["Status"].map(lambda s: str(s).strip().lower())
     rec_df = rec_df.reset_index(drop=True)
+    rec_df.attrs["dq_rows_in"] = len(recs)
+    rec_df.attrs["dq_overflow_rows"] = overflow_rows
     print(f"[BayCoach] Loaded {len(hist_df)} history + {len(rec_df)} recommendations from {path.name}")
     return hist_df, rec_df, meta
 
@@ -176,27 +183,34 @@ def _save(meta, html):
     REPORTS_DIR.mkdir(exist_ok=True)
     p = REPORTS_DIR / f"EchoFrame_BayCoach_{_slug(meta.get('Business Name',''))}_{datetime.now():%Y%m%d_%H%M%S}.html"
     p.write_text(html, encoding="utf-8"); print(f"[BayCoach] Report saved -> {p.name}"); return str(p)
-def _email(email, owner, html_bytes, meta):
+def _email(email, owner, html_bytes, meta, dq_warnings=None):
     import resend
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your shop").strip()
-    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
         "to": [email], "subject": f"Your {month} Bay Coach — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Bay Coach report for {biz} is "
                 f"attached — the right recommendation at write-up, based on the vehicle's real history and mileage.</p><p>— EchoFrame</p>",
-        "attachments": [report_attachment(html_bytes, f"EchoFrame_BayCoach_{month.replace(' ','_')}.html")]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_BayCoach_{month.replace(' ','_')}.html")]}
+    if dq_warnings: params["_dq_warnings"] = list(dq_warnings)
+    resend.Emails.send(params)
     print("[BayCoach] Report email dispatched.")
 
 
 def generate_bay_coach_report(customer_email, customer_name="Client", tier="", send_email=True):
     hist_df, rec_df, meta = _load(customer_email)
     if rec_df is None: return ""
+    # Data-quality gate (B-1): junk/mis-split recommendation rows → hand to a human
+    # rather than render garbage as a real maintenance recommendation.
+    dq = data_quality.assess(rec_df, numeric_cols=[], date_cols=[], label="Bay Coach")
+    if dq.hard_fail:
+        print(f"[Bay Coach] Data-quality hard fail: {dq.reason}"); return ""
     if not meta.get("Owner Name", "").strip(): meta["Owner Name"] = customer_name.strip() or "Client"
     m = _metrics(rec_df, meta); prose = _narrative(hist_df, rec_df, meta, m)
     ctx = _context(hist_df, rec_df, meta, m, prose, is_sample=False)
     html = _render(ctx); path = _save(meta, html)
-    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta)
+    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta, dq_warnings=dq.warnings)
     print(f"[BayCoach] Pipeline complete -> {customer_email}")
     return path
 

@@ -13,9 +13,12 @@ Meta: _Open Value, _Cold Count, _Quotes Revived, _Reply Pct, _Jobs Closed,
 
 import os, re, csv, base64
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+import csv_utils
+import data_quality
 
 BASE_DIR = Path(__file__).resolve().parent
 UPLOADS_DIR = Path(os.environ.get("ECHOFRAME_UPLOADS_DIR") or BASE_DIR.parent.parent / "uploads"); REPORTS_DIR = Path(os.environ.get("ECHOFRAME_REPORTS_DIR") or BASE_DIR.parent.parent / "reports"); TEMPLATES_DIR = BASE_DIR
@@ -42,58 +45,255 @@ def _int(s): return int(_to_float(s))
 
 
 def _load(email): return load_path(UPLOADS_DIR / f"{_safe_email(email)}.csv")
+
+
+# ── Robust real-world CSV mapping ───────────────────────────────────────────────
+# Clients export from QuickBooks, Jobber, Housecall Pro, or a spreadsheet they typed
+# by hand — the columns are never named the same way twice. We map by meaning, not by
+# position, and derive "days cold" from a date column when there's no days column.
+
+def _norm(s):
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", str(s).lower())).strip()
+
+_FIELD_ALIASES = {
+    "value":     ["value", "amount", "quote amount", "quote value", "quoted amount", "price",
+                  "total", "estimate amount", "estimate value", "job value", "cost", "subtotal",
+                  "grand total", "quoted", "amount due", "total amount"],
+    "date":      ["date sent", "sent", "date", "quote date", "date quoted", "quoted date", "created",
+                  "created date", "date created", "issued", "date issued", "estimate date", "sent date"],
+    "days":      ["days cold", "days", "age", "days old", "days since", "aging", "days outstanding", "cold days"],
+    "status":    ["status", "stage", "state", "outcome", "result", "disposition"],
+    "followups": ["followups", "follow ups", "follow up", "followup", "touches", "contacts",
+                  "times contacted", "attempts", "outreach", "num followups", "no of followups"],
+    "quote":     ["quote", "quote id", "quote number", "quote no", "id", "ref", "reference",
+                  "estimate", "estimate id", "estimate number", "job number", "job no", "invoice", "number"],
+    "detail":    ["detail", "details", "description", "job description", "job", "service", "services",
+                  "work", "scope", "line item", "item", "project"],
+}
+_FIELD_ORDER = ["value", "date", "days", "status", "followups", "quote", "detail"]  # specific → broad
+
+
+def _contains_alias(name, aliases):
+    words = name.split()
+    for a in aliases:
+        aw = a.split()
+        if aw and all(w in words for w in aw):
+            return True
+    return False
+
+
+def _map_header(cells):
+    """Map a candidate header row to field→column-index by meaning. Two passes:
+    exact alias match first, then whole-word containment for anything still open."""
+    norm = [_norm(c) for c in cells]
+    assigned, used = {}, set()
+    for field in _FIELD_ORDER:
+        for i, name in enumerate(norm):
+            if i in used or not name: continue
+            if name in _FIELD_ALIASES[field]:
+                assigned[field] = i; used.add(i); break
+    for field in _FIELD_ORDER:
+        if field in assigned: continue
+        for i, name in enumerate(norm):
+            if i in used or not name: continue
+            if _contains_alias(name, _FIELD_ALIASES[field]):
+                assigned[field] = i; used.add(i); break
+    return assigned
+
+
+def _detect_header(rows):
+    """Find the header row (the first that maps ≥2 fields incl. a value/status/quote)."""
+    for i, row in enumerate(rows[:25]):
+        m = _map_header(row)
+        if len(m) >= 2 and ("value" in m or "status" in m or "quote" in m):
+            return i, m
+    return -1, {}
+
+
+_DATE_FORMATS = ["%Y-%m-%d", "%Y/%m/%d", "%m/%d/%Y", "%m/%d/%y", "%m-%d-%Y", "%m-%d-%y",
+                 "%d %b %Y", "%d %B %Y", "%b %d %Y", "%B %d %Y", "%d-%b-%Y", "%d-%b-%y"]
+
+def _parse_date(s):
+    t = str(s).strip()
+    if not t: return None
+    try:
+        return datetime.fromisoformat(t).replace(tzinfo=timezone.utc)
+    except ValueError:
+        pass
+    t = re.sub(r"\s+", " ", t.replace(",", " ")).strip()
+    for fmt in _DATE_FORMATS:
+        try:
+            return datetime.strptime(t, fmt).replace(tzinfo=timezone.utc)
+        except ValueError:
+            continue
+    return None
+
+
+def _status_key(s):
+    """Map any real-world status word to one of: won / warm / active / dead."""
+    n = _norm(s)
+    if not n: return "active"
+    if n in {"no", "n", "x", "lost", "dead"}: return "dead"
+    if n in {"yes", "y", "won", "sold"}: return "won"
+    if any(w in n for w in ["won", "sold", "accept", "approv", "sign", "book", "schedul",
+                            "paid", "complete", "success", "closed won"]): return "won"
+    if any(w in n for w in ["lost", "declin", "reject", "cancel", "void", "expire",
+                            "not interested", "unqualified", "closed lost"]): return "dead"
+    if any(w in n for w in ["warm", "repl", "interest", "hot", "engag", "negoti", "callback"]): return "warm"
+    return "active"
+
+
+# What counts as a "typo" depends entirely on the company's OWN numbers — there is no
+# fixed dollar ceiling. A $250k quote is normal for a $2M-scale shop and absurd for one
+# that quotes $500 jobs. So we flag a value only when it dwarfs the company's next-largest
+# quote by this multiple — i.e. it's detached from the real range by an order of magnitude
+# (an extra few zeros, or a 9,999,999,999 sentinel). Tune SUSPECT_MULT to taste.
+SUSPECT_MULT = 50
+
+def _flag_suspects(values):
+    """Per-value bools marking likely data-entry typos, RELATIVE to the company's own
+    quotes — never an absolute dollar amount. A value is suspect only if it exceeds
+    SUSPECT_MULT× the next-largest quote. With fewer than 3 quotes there's nothing to
+    compare against, so nothing is flagged."""
+    pos = sorted(v for v in values if v > 0)
+    if len(pos) < 3:
+        return [False] * len(values)
+    second_largest = pos[-2]                       # the top legitimate comparator
+    threshold = SUSPECT_MULT * second_largest
+    return [v > threshold for v in values]
+
+
 def load_path(path):
     path = Path(path)
     if not path.exists(): print(f"[QuoteRevive] ERROR - no CSV at {path}"); return None, {}
-    with path.open("r", encoding="utf-8-sig", newline="") as fh: rows = list(csv.reader(fh))
-    meta, qrows, inlist = {}, [], False
-    for row in rows:
-        if not row: continue
-        first = str(row[0]).strip()
-        if first.startswith("_"):
-            meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
-        cells = [str(c).strip() for c in row]
-        if not inlist:
-            if _HEADER_TOKENS.issubset({c.lower() for c in cells}): inlist = True
-            continue
-        if not first: continue
-        qrows.append(cells)
-    if not qrows: print("[QuoteRevive] ERROR - no quote rows"); return None, meta
-    cols = ["Quote", "Detail", "Value", "Days Cold", "Followups", "Status"]
-    norm = [(r + [""] * len(cols))[:len(cols)] for r in qrows]
-    df = pd.DataFrame(norm, columns=cols)
-    df["ValueNum"] = df["Value"].map(_to_float); df["DaysNum"] = df["Days Cold"].map(_int)
-    df["StatusKey"] = df["Status"].map(lambda s: str(s).strip().lower())
-    df = df.reset_index(drop=True)
-    print(f"[QuoteRevive] Loaded {len(df)} quotes from {path.name}")
+    rows = csv_utils.read_rows(path.read_bytes())        # any encoding / delimiter / BOM, never raises
+    meta, data = csv_utils.split_meta(rows)              # peel the _Key,value meta off the top
+    h, mp = _detect_header(data)
+    if h < 0:
+        print("[QuoteRevive] ERROR - couldn't recognize quote columns"); return None, meta
+    qi, di, vi = mp.get("quote"), mp.get("detail"), mp.get("value")
+    dyi, dti, fi, si = mp.get("days"), mp.get("date"), mp.get("followups"), mp.get("status")
+    now = datetime.now(timezone.utc)
+    recs = []
+    for row in data[h + 1:]:
+        if not row or not any((c or "").strip() for c in row): continue
+        quote  = csv_utils.cell(row, qi) if qi is not None else ""
+        detail = csv_utils.cell(row, di) if di is not None else ""
+        value  = csv_utils.to_amount(csv_utils.cell(row, vi)) if vi is not None else 0.0
+        if not quote and not detail and value == 0.0: continue        # blank / junk row
+        dated = False
+        if dyi is not None and csv_utils.cell(row, dyi):              # explicit "days cold" wins
+            days = int(csv_utils.to_amount(csv_utils.cell(row, dyi)))
+        elif dti is not None and csv_utils.cell(row, dti):            # else derive from a date
+            d = _parse_date(csv_utils.cell(row, dti))
+            if d is not None: days, dated = max(0, (now - d).days), True
+            else: days = 0
+        else:
+            days = 0
+        followups = csv_utils.cell(row, fi) if fi is not None else ""
+        rawstatus = csv_utils.cell(row, si) if si is not None else ""
+        if not quote: quote = detail or "Quote"
+        if not detail: detail = quote
+        recs.append((quote, detail, float(value), int(days), followups,
+                     rawstatus, _status_key(rawstatus), dated))
+    if not recs:
+        print("[QuoteRevive] ERROR - no quote rows"); return None, meta
+    df = pd.DataFrame(recs, columns=["Quote", "Detail", "ValueNum", "DaysNum",
+                                     "Followups", "Status", "StatusKey", "Dated"]).reset_index(drop=True)
+    # Data-quality gate inputs. Unlike a fixed-width ledger, this parser reads cells by
+    # MAPPED column index (csv_utils.cell(row, idx)) rather than padding/truncating to a
+    # fixed column list, so there's no single "expected column count" to compare each raw
+    # row's width against — the unquoted-thousands "2,300"→"2"+"300" overflow signature
+    # can't be detected safely here. Set 0 rather than invent a count; the gate still
+    # catches dropped rows, all-zero columns, and junk dates from dq_rows_in below.
+    df.attrs["dq_rows_in"] = len(recs)
+    df.attrs["dq_overflow_rows"] = 0
+    df["Suspect"] = _flag_suspects(list(df["ValueNum"]))
+    n_sus = int(df["Suspect"].sum())
+    print(f"[QuoteRevive] Loaded {len(df)} quotes from {path.name} (mapped: {sorted(mp)}"
+          + (f", {n_sus} flagged as likely typos)" if n_sus else ")"))
     return df, meta
 
 
 def _metrics(df, meta):
+    # B-2: each headline number can be COMPUTED from the upload, but the customer
+    # may also TYPE one at intake. We keep the typed value (the export can be
+    # partial) yet record which figures were customer-reported (for the report's
+    # provenance footnote) and flag any that the data materially contradicts (for
+    # the owner's review email). Compute the data value even when a figure is typed
+    # — the old `or`/short-circuit form skipped the cross-check on reported figures.
+    reported, disc = [], []
+    def _has(k): return bool(meta.get(k, "").strip())
+
+    not_suspect = (~df["Suspect"]) if "Suspect" in df.columns else pd.Series(True, index=df.index)
     won_value = float(df.loc[df["StatusKey"] == "won", "ValueNum"].sum())
     jobs_closed = int((df["StatusKey"] == "won").sum())
-    open_value = _to_float(meta.get("Open Value", "")) or float(df["ValueNum"].sum())
-    cold_count = _int(meta.get("Cold Count", "")) if meta.get("Cold Count", "").strip() else len(df)
-    revived = _int(meta.get("Quotes Revived", "")) if meta.get("Quotes Revived", "").strip() else \
-        int(df["StatusKey"].isin(["won", "warm"]).sum())
-    reply_pct = _int(meta.get("Reply Pct", "")) if meta.get("Reply Pct", "").strip() else \
-        (round(revived / cold_count * 100) if cold_count else 0)
-    rev_react = _to_float(meta.get("Revenue Reactivated", "")) or won_value
-    jobs = _int(meta.get("Jobs Closed", "")) if meta.get("Jobs Closed", "").strip() else jobs_closed
-    recovered_pct = _int(meta.get("Recovered Pct", "")) if meta.get("Recovered Pct", "").strip() else \
-        (round(rev_react / open_value * 100) if open_value else 0)
+
+    data_open_value = float(df.loc[not_suspect, "ValueNum"].sum())
+    if _to_float(meta.get("Open Value", "")):
+        open_value = _to_float(meta.get("Open Value", "")); reported.append("Open Quote Value")
+        n = data_quality.discrepancy_note("Open Quote Value", open_value, data_open_value, is_money=True)
+        if n: disc.append(n)
+    else:
+        open_value = data_open_value
+
+    if _has("Cold Count"):
+        cold_count = _int(meta.get("Cold Count", "")); reported.append("Cold Count")
+    else:
+        cold_count = len(df)
+
+    data_revived = int(df["StatusKey"].isin(["won", "warm"]).sum())
+    if _has("Quotes Revived"):
+        revived = _int(meta.get("Quotes Revived", "")); reported.append("Quotes Revived")
+        n = data_quality.discrepancy_note("Quotes Revived", revived, data_revived)
+        if n: disc.append(n)
+    else:
+        revived = data_revived
+
+    data_reply_pct = round(revived / cold_count * 100) if cold_count else 0
+    if _has("Reply Pct"):
+        reply_pct = _int(meta.get("Reply Pct", "")); reported.append("Reply %")
+        n = data_quality.discrepancy_note("Reply %", reply_pct, data_reply_pct)
+        if n: disc.append(n)
+    else:
+        reply_pct = data_reply_pct
+
+    if _to_float(meta.get("Revenue Reactivated", "")):
+        rev_react = _to_float(meta.get("Revenue Reactivated", "")); reported.append("Revenue Reactivated")
+        n = data_quality.discrepancy_note("Revenue Reactivated", rev_react, won_value, is_money=True)
+        if n: disc.append(n)
+    else:
+        rev_react = won_value
+
+    if _has("Jobs Closed"):
+        jobs = _int(meta.get("Jobs Closed", "")); reported.append("Jobs Closed")
+        n = data_quality.discrepancy_note("Jobs Closed", jobs, jobs_closed)
+        if n: disc.append(n)
+    else:
+        jobs = jobs_closed
+
+    data_recovered_pct = round(rev_react / open_value * 100) if open_value else 0
+    if _has("Recovered Pct"):
+        recovered_pct = _int(meta.get("Recovered Pct", "")); reported.append("Recovered %")
+        n = data_quality.discrepancy_note("Recovered %", recovered_pct, data_recovered_pct)
+        if n: disc.append(n)
+    else:
+        recovered_pct = data_recovered_pct
     # Highlight the oldest LIVE quote (dead quotes never get the top spotlight).
     live = df[df["StatusKey"] != "dead"]
     top_i = int((live if len(live) else df)["DaysNum"].idxmax())
-    # The One Thing targets the largest-value engaged-but-unclosed quote (active/warm).
-    engaged = df[df["StatusKey"].isin(["active", "warm"])]
-    one_thing_i = int((engaged if len(engaged) else (live if len(live) else df))["ValueNum"].idxmax())
+    # The One Thing targets the largest-value engaged-but-unclosed quote (active/warm),
+    # skipping any value flagged as a likely typo so a bogus number never headlines.
+    engaged = df[df["StatusKey"].isin(["active", "warm"]) & not_suspect]
+    fallback = df[not_suspect] if len(df[not_suspect]) else df
+    one_thing_i = int((engaged if len(engaged) else (live if len(live) else fallback))["ValueNum"].idxmax())
     print(f"[QuoteRevive] {len(df)} quotes | revived {revived}/{cold_count} | closed {jobs} | "
           f"reactivated ${rev_react:,.0f} ({recovered_pct}%)")
     return {"won_value": won_value, "open_value": open_value, "cold_count": cold_count,
             "revived": revived, "reply_pct": reply_pct, "rev_react": rev_react, "jobs": jobs,
             "recovered_pct": recovered_pct, "top_i": top_i, "one_thing_i": one_thing_i,
-            "count": len(df), "shown": _int(meta.get("Shown", "")) or len(df)}
+            "count": len(df), "shown": _int(meta.get("Shown", "")) or len(df),
+            "_reported": reported, "_discrepancies": disc}
 
 
 QUOTE_REVIVE_TOOL = {
@@ -179,6 +379,7 @@ def _context(df, meta, m, prose, is_sample):
             "worklist_footnote": f"{m['shown']} of {m['cold_count']} shown · {_money(m['open_value'])} open at month start",
             "won_value": _money(m["rev_react"]), "recovered_pct": f"{m['recovered_pct']}%",
             "method_note": prose["method_note"], "source_line": _source_line(meta),
+            "reported_fields": m.get("_reported", []),
             "one_thing": {"title": prose["one_thing_title"], "body": prose["one_thing_body"]}}
 
 
@@ -189,27 +390,42 @@ def _save(meta, html):
     REPORTS_DIR.mkdir(exist_ok=True)
     p = REPORTS_DIR / f"EchoFrame_QuoteRevive_{_slug(meta.get('Business Name',''))}_{datetime.now():%Y%m%d_%H%M%S}.html"
     p.write_text(html, encoding="utf-8"); print(f"[QuoteRevive] Report saved -> {p.name}"); return str(p)
-def _email(email, owner, html_bytes, meta):
+def _email(email, owner, html_bytes, meta, dq_warnings=None):
     import resend
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your business").strip()
-    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
         "to": [email], "subject": f"Your {month} Quote Revive — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Quote Revive report for {biz} is "
                 f"attached — your ghosted quotes, the follow-ups that reopened them, and the one to call.</p><p>— EchoFrame</p>",
-        "attachments": [report_attachment(html_bytes, f"EchoFrame_QuoteRevive_{month.replace(' ','_')}.html")]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_QuoteRevive_{month.replace(' ','_')}.html")]}
+    # Ride-along data-quality notes for the review-email banner. review_gate reads and
+    # strips this internal key before the report reaches the customer.
+    if dq_warnings: params["_dq_warnings"] = list(dq_warnings)
+    resend.Emails.send(params)
     print("[QuoteRevive] Report email dispatched.")
 
 
 def generate_quote_revive_report(customer_email, customer_name="Client", tier="", send_email=True):
     df, meta = _load(customer_email)
     if df is None: return ""
+    # Data-quality gate (B-1): hard-fail on a file too broken to trust (engine returns ""
+    # so fulfillment_guard hands it to a human); carry warnings into the send otherwise.
+    # numeric_cols=[]: ValueNum (a $0 quote) and DaysNum (a fresh / no-date row reads 0)
+    # are both legitimately zero on normal rows, so neither is a reliable "column missing"
+    # signal here. date_cols=[]: dates are consumed into DaysNum — there's no date column
+    # left on the frame. The gate still guards overflow / dropped rows via df.attrs.
+    dq = data_quality.assess(df, numeric_cols=[], date_cols=[], label="Quote Revive")
+    if dq.hard_fail:
+        print(f"[Quote Revive] Data-quality hard fail: {dq.reason}")
+        return ""
     if not meta.get("Owner Name", "").strip(): meta["Owner Name"] = customer_name.strip() or "Client"
     m = _metrics(df, meta); prose = _narrative(df, meta, m)
+    warnings = list(dq.warnings) + list(m.get("_discrepancies", []))  # B-1 gate + B-2 cross-check
     ctx = _context(df, meta, m, prose, is_sample=False)
     html = _render(ctx); path = _save(meta, html)
-    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta)
+    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta, dq_warnings=warnings)
     print(f"[QuoteRevive] Pipeline complete -> {customer_email}")
     return path
 

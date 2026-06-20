@@ -14,6 +14,8 @@ Meta: _Role, _Requisition, _Applicants, _Screened Out, _Qualified, _Interviews,
 """
 
 import os, re, csv, base64
+import csv_utils
+import data_quality
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -45,7 +47,7 @@ def _load(email): return load_path(UPLOADS_DIR / f"{_safe_email(email)}.csv")
 def load_path(path):
     path = Path(path)
     if not path.exists(): print(f"[CrewHire] ERROR - no CSV at {path}"); return None, {}
-    with path.open("r", encoding="utf-8-sig", newline="") as fh: rows = list(csv.reader(fh))
+    rows = csv_utils.read_rows(path.read_bytes())
     meta, crows, inlist = {}, [], False
     for row in rows:
         if not row: continue
@@ -54,35 +56,80 @@ def load_path(path):
             meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
         cells = [str(c).strip() for c in row]
         if not inlist:
-            if _HEADER_TOKENS.issubset({c.lower() for c in cells}): inlist = True
+            if csv_utils.header_matches(cells, _HEADER_TOKENS): inlist = True
             continue
         if not first: continue
         crows.append(cells)
     if not crows: print("[CrewHire] ERROR - no candidate rows"); return None, meta
     cols = ["Candidate", "CandDetail", "Skills", "Score", "Status", "Slot", "SlotDetail"]
+    # Rows with MORE cells than columns are the signature of an unquoted thousands
+    # separator ("2,300" splits into "2" + "300") or literal overflow junk (EXTRA/
+    # JUNK cells) leaking in. Count them before padding so the data-quality gate
+    # can flag the row as untrustworthy.
+    crows = [csv_utils.repair_overflow_row(r, len(cols)) for r in crows]
+    overflow_rows = sum(1 for r in crows if len(r) > len(cols))
     norm = [(r + [""] * len(cols))[:len(cols)] for r in crows]
     df = pd.DataFrame(norm, columns=cols)
     df["ScoreNum"] = df["Score"].map(_int)
     df["StatusKey"] = df["Status"].map(lambda s: str(s).strip().lower())
     df = df.reset_index(drop=True)
+    # Record how many candidate rows the parser SAW and how many overflowed so the
+    # data-quality gate can catch silently dropped or mis-split rows.
+    df.attrs["dq_rows_in"] = len(crows)
+    df.attrs["dq_overflow_rows"] = overflow_rows
     print(f"[CrewHire] Loaded {len(df)} scorecard rows from {path.name}")
     return df, meta
 
 
 def _metrics(df, meta):
+    # B-2: each headline count can be COMPUTED from the scorecard, but the customer
+    # may also TYPE one at intake. We keep the typed value (the scorecard the owner
+    # uploads is often a top-N slice, so the true totals can be larger) yet record
+    # which figures were customer-reported (for the report's provenance footnote)
+    # and flag any that the data materially contradicts (for the owner's review
+    # email). `Applicants` falls back to the rows shown (a partial slice, not a real
+    # applicant total) and `Screened Out` falls back to a derived applicants−qualified
+    # subtraction — neither is an independent scorecard observation, so they're
+    # reported-only, not cross-checked. `Qualified` and `Interviews Scheduled` each
+    # have a genuine df count to check against.
+    reported, disc = [], []
+    def _has(k): return bool(meta.get(k, "").strip())
+
     shown = len(df)
-    applicants = _int(meta.get("Applicants", "")) or shown
-    qualified = _int(meta.get("Qualified", "")) if meta.get("Qualified", "").strip() else \
-        int((df["StatusKey"].isin(["qualified", "qual"])).sum())
-    screened = _int(meta.get("Screened Out", "")) if meta.get("Screened Out", "").strip() else max(applicants - qualified, 0)
-    interviews = _int(meta.get("Interviews", "")) if meta.get("Interviews", "").strip() else \
-        int((df["Slot"].str.strip() != "").sum())
+    data_qualified = int((df["StatusKey"].isin(["qualified", "qual"])).sum())
+    data_interviews = int((df["Slot"].str.strip() != "").sum())
+
+    if _has("Applicants"):
+        applicants = _int(meta.get("Applicants", "")); reported.append("Applicants")
+    else:
+        applicants = shown
+
+    if _has("Qualified"):
+        qualified = _int(meta.get("Qualified", "")); reported.append("Qualified")
+        n = data_quality.discrepancy_note("Qualified", qualified, data_qualified)
+        if n: disc.append(n)
+    else:
+        qualified = data_qualified
+
+    if _has("Screened Out"):
+        screened = _int(meta.get("Screened Out", "")); reported.append("Screened Out")
+    else:
+        screened = max(applicants - qualified, 0)
+
+    if _has("Interviews"):
+        interviews = _int(meta.get("Interviews", "")); reported.append("Interviews Scheduled")
+        n = data_quality.discrepancy_note("Interviews Scheduled", interviews, data_interviews)
+        if n: disc.append(n)
+    else:
+        interviews = data_interviews
+
     screened_pct = round(screened / applicants * 100) if applicants else 0
     top_i = int(df["ScoreNum"].idxmax())
     print(f"[CrewHire] applicants {applicants} | screened {screened} ({screened_pct}%) | "
           f"qualified {qualified} | interviews {interviews} | shown {shown}")
     return {"shown": shown, "applicants": applicants, "qualified": qualified, "screened": screened,
-            "screened_pct": screened_pct, "interviews": interviews, "top_i": top_i}
+            "screened_pct": screened_pct, "interviews": interviews, "top_i": top_i,
+            "_reported": reported, "_discrepancies": disc}
 
 
 CREW_HIRE_TOOL = {
@@ -163,7 +210,7 @@ def _context(df, meta, m, prose, is_sample):
             "scorecard_hint": f"top {m['shown']} of {m['qualified']} qualified candidates",
             "kpis": kpis, "candidates": cands,
             "screening_note": prose["screening_note"], "criteria": prose["criteria"],
-            "source_line": _source_line(meta),
+            "source_line": _source_line(meta), "reported_fields": m.get("_reported", []),
             "one_thing": {"title": prose["one_thing_title"], "body": prose["one_thing_body"]}}
 
 
@@ -174,27 +221,42 @@ def _save(meta, html):
     REPORTS_DIR.mkdir(exist_ok=True)
     p = REPORTS_DIR / f"EchoFrame_CrewHire_{_slug(meta.get('Business Name',''))}_{datetime.now():%Y%m%d_%H%M%S}.html"
     p.write_text(html, encoding="utf-8"); print(f"[CrewHire] Report saved -> {p.name}"); return str(p)
-def _email(email, owner, html_bytes, meta):
+def _email(email, owner, html_bytes, meta, dq_warnings=None):
     import resend
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     role = meta.get("Role", "your role").strip(); biz = meta.get("Business Name", "your business").strip()
-    resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
         "to": [email], "subject": f"Your Crew Hire shortlist — {role} — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your Crew Hire report for {biz} ({role}) is "
                 f"attached — applicants screened and scored, with the shortlist and who to prioritize.</p><p>— EchoFrame</p>",
-        "attachments": [report_attachment(html_bytes, f"EchoFrame_CrewHire_{_slug(role)}.html")]})
+        "attachments": [report_attachment(html_bytes, f"EchoFrame_CrewHire_{_slug(role)}.html")]}
+    # Ride-along data-quality notes for the review-email banner. review_gate reads
+    # and strips this internal key before the report reaches the customer.
+    if dq_warnings: params["_dq_warnings"] = list(dq_warnings)
+    resend.Emails.send(params)
     print("[CrewHire] Report email dispatched.")
 
 
 def generate_crew_hire_report(customer_email, customer_name="Client", tier="", send_email=True):
     df, meta = _load(customer_email)
     if df is None: return ""
+
+    # Data-quality gate (B-1): KPIs come from _meta, so the gate's job here is to
+    # catch junk candidate rows (overflow/dropped/literal EXTRA/JUNK cells). Scores
+    # can legitimately be 0 for screened-out candidates and there is no date column,
+    # so numeric_cols/date_cols stay empty — overflow detection is the real win.
+    dq = data_quality.assess(df, numeric_cols=[], date_cols=[], label="Crew Hire")
+    if dq.hard_fail:
+        print(f"[Crew Hire] Data-quality hard fail: {dq.reason}")
+        return ""
+
     if not meta.get("Owner Name", "").strip(): meta["Owner Name"] = customer_name.strip() or "Client"
     m = _metrics(df, meta); prose = _narrative(df, meta, m)
     ctx = _context(df, meta, m, prose, is_sample=False)
     html = _render(ctx); path = _save(meta, html)
-    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta)
+    warnings = list(dq.warnings) + list(m.get("_discrepancies", []))  # B-1 gate + B-2 cross-check
+    if send_email: _email(customer_email, meta["Owner Name"], Path(path).read_bytes(), meta, dq_warnings=warnings)
     print(f"[CrewHire] Pipeline complete -> {customer_email}")
     return path
 
