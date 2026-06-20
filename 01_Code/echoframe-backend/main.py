@@ -24,7 +24,10 @@ import store
 import sign
 import emails
 import email_failsafe
+import fulfillment_guard
 import review_gate
+import data_quality
+from customer_errors import CustomerInputError
 import portal
 import weekly_quote_revive
 from reminders import run_reminders
@@ -252,11 +255,46 @@ def _claim_event(event_id: str) -> bool:
 IS_SERVERLESS = bool(os.environ.get("VERCEL"))
 
 
-def _run_report_sync(generate, email: str, name: str, fields: dict, slug: str) -> None:
+def _run_report_sync(generate, email: str, name: str, fields: dict, slug: str,
+                     product_label: str = "") -> None:
+    # Track delivery attempts so we can catch the silent-failure case: an engine
+    # that couldn't read the file (or crashed) and therefore never emailed anything.
+    email_failsafe.reset_calls()
+    data_quality.reset()
+    err = None
+    customer_message = ""
     try:
-        generate(email, name, fields)
-    except Exception:
+        result = generate(email, name, fields)
+        if not result and email_failsafe.calls() == 0:
+            err = RuntimeError("engine produced no report")
+    except CustomerInputError as e:
+        # The engine flagged a problem the customer can fix, with a safe message.
+        err = e
+        customer_message = e.customer_message
+        print(f"[EchoFrame] CUSTOMER INPUT ({slug}): {e}", flush=True)
+    except Exception as e:
+        err = e
         print(f"[EchoFrame] REPORT ERROR ({slug}):\n{traceback.format_exc()}", flush=True)
+
+    # If nothing was ever sent, the customer would be left empty-handed. Reassure
+    # them and hand the file to the owner — a paid upload must never vanish.
+    if email_failsafe.calls() == 0:
+        reason = f"{type(err).__name__}: {err}" if err else "engine produced no report"
+        # B-5: show the customer a specific, helpful reason when we have one — from
+        # an engine's explicit CustomerInputError, or stashed by a data-quality hard
+        # fail (engines just `return ""` there). Otherwise the calm generic note.
+        if not customer_message:
+            customer_message = data_quality.last_customer_message()
+        raw = None
+        try:
+            p = UPLOADS_DIR / f"{_safe_email(email)}.csv"
+            if p.exists():
+                raw = p.read_bytes()
+        except Exception:
+            raw = None
+        fulfillment_guard.notify_unreadable(email, name, product_label or slug,
+                                            reason=reason, raw=raw, filename=f"{slug}.csv",
+                                            customer_message=customer_message)
 
 
 async def _dispatch_report(background_tasks: BackgroundTasks, selected, email: str,
@@ -270,9 +308,11 @@ async def _dispatch_report(background_tasks: BackgroundTasks, selected, email: s
     original fire-after-response background behaviour for a snappy upload UX.
     """
     if IS_SERVERLESS:
-        await run_in_threadpool(_run_report_sync, selected.generate, email, name, fields, selected.slug)
+        await run_in_threadpool(_run_report_sync, selected.generate, email, name, fields,
+                                selected.slug, selected.label)
     else:
-        background_tasks.add_task(_run_report_sync, selected.generate, email, name, fields, selected.slug)
+        background_tasks.add_task(_run_report_sync, selected.generate, email, name, fields,
+                                  selected.slug, selected.label)
 
 
 def _verify_stripe_session(session_id: str, email: str) -> None:

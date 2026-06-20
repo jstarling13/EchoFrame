@@ -36,6 +36,7 @@ import re
 import json
 import resend
 import anthropic
+from customer_errors import CustomerInputError
 import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
@@ -804,7 +805,7 @@ def _load_financials(customer_email: str):
         })
 
     if not records:
-        raise ValueError(
+        raise CustomerInputError(
             "We couldn't read any line items from that file. A Monthly Clarity Report "
             "needs a financials export — rows of a label and a dollar amount, like "
             "'Revenue, 42000'."
@@ -817,7 +818,7 @@ def _load_financials(customer_email: str):
         ((fin_df[0].astype(str).str.strip().str.lower() == "revenue") & (fin_df["Current"] > 0)).any()
     )
     if not has_revenue:
-        raise ValueError(
+        raise CustomerInputError(
             "This doesn't look like a financials file — we couldn't find a 'Revenue' row "
             "with a dollar amount. Quote lists, contact exports and other files won't work "
             "here; please upload a profit-and-loss / financials export."
@@ -837,7 +838,10 @@ def _calculate_metrics(df: pd.DataFrame, meta: dict, benchmarks: dict) -> dict:
     revenue       = row_val("Revenue")
     revenue_prior = row_val("Revenue", "Prior")
     if revenue <= 0:
-        raise ValueError("[EchoFrame] Revenue is zero — cannot calculate ratios.")
+        raise CustomerInputError(
+            "We found your financials, but the Revenue row is zero — so there's nothing "
+            "to analyze yet. Please double-check you uploaded the right month's export.",
+            internal="Revenue is zero — cannot calculate ratios.")
 
     revenue_change     = revenue - revenue_prior
     revenue_change_pct = (revenue_change / revenue_prior * 100) if revenue_prior > 0 else 0.0
