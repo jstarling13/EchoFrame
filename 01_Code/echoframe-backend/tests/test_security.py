@@ -21,8 +21,18 @@ import pytest
 import pytest_asyncio
 import re
 from io import BytesIO
+from types import SimpleNamespace
 from unittest.mock import patch, MagicMock
 from httpx import AsyncClient, ASGITransport
+
+
+def _complete_session(email="user@example.com"):
+    """A completed Stripe Checkout Session shaped like the real SDK object
+    (attribute access), so _verify_stripe_session's getattr() checks pass and the
+    request proceeds to file validation. A plain dict would read as status=None
+    under getattr() and wrongly 403 before the file checks run."""
+    return SimpleNamespace(status="complete",
+                           customer_details=SimpleNamespace(email=email))
 
 # These must all be non-empty BEFORE main.py is imported — main.py validates all four at startup.
 # Use explicit assignment (not setdefault) so that empty-string env vars (e.g. from system
@@ -214,10 +224,7 @@ class TestUploadEndpoint:
     async def test_non_csv_extension_returns_400(self, client):
         """Renaming an .exe to .csv is caught by extension check."""
         with patch("main.stripe.checkout.Session.retrieve") as mock_retrieve:
-            mock_retrieve.return_value = {
-                "status": "complete",
-                "customer_details": {"email": "user@example.com"},
-            }
+            mock_retrieve.return_value = _complete_session("user@example.com")
             response = await client.post(
                 "/api/upload",
                 data={
@@ -234,10 +241,7 @@ class TestUploadEndpoint:
         """Files > 5 MB are rejected before being written to disk."""
         oversized = b"a" * (5 * 1024 * 1024 + 1)
         with patch("main.stripe.checkout.Session.retrieve") as mock_retrieve:
-            mock_retrieve.return_value = {
-                "status": "complete",
-                "customer_details": {"email": "user@example.com"},
-            }
+            mock_retrieve.return_value = _complete_session("user@example.com")
             response = await client.post(
                 "/api/upload",
                 data={
@@ -254,10 +258,7 @@ class TestUploadEndpoint:
         """Binary (non-UTF-8) file content is rejected."""
         binary_content = bytes(range(256))
         with patch("main.stripe.checkout.Session.retrieve") as mock_retrieve:
-            mock_retrieve.return_value = {
-                "status": "complete",
-                "customer_details": {"email": "user@example.com"},
-            }
+            mock_retrieve.return_value = _complete_session("user@example.com")
             response = await client.post(
                 "/api/upload",
                 data={
