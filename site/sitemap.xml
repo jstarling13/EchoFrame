@@ -2,28 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <!-- EchoFrame Parent -->
-  <url><loc>https://echoframe.co/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://echoframe.co/privacy.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://echoframe.net/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://echoframe.net/privacy.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
 
   <!-- EchoFrame Intelligence -->
-  <url><loc>https://echoframe.co/intelligence/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://echoframe.co/intelligence/vericount</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://echoframe.co/intelligence/oryn</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://echoframe.co/intelligence/veris</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://echoframe.co/intelligence/strata</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/intelligence/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://echoframe.net/intelligence/auto-ledger</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/intelligence/rate-watch</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/intelligence/rival-scan</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/intelligence/shift-lens</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/intelligence/competitor-landscape</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/intelligence/business-audit</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
   <!-- EchoFrame Revenue -->
-  <url><loc>https://echoframe.co/revenue/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://echoframe.co/revenue/missedcall</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://echoframe.co/revenue/quoterevive</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://echoframe.co/revenue/clearledger</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/revenue/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://echoframe.net/revenue/revenue-suite</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/revenue/call-catch</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/revenue/quote-revive</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/revenue/clear-ledger</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
   <!-- EchoFrame Ops -->
-  <url><loc>https://echoframe.co/ops/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://echoframe.co/ops/traderelay</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://echoframe.co/ops/permitwatch</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://echoframe.co/ops/ironhire</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://echoframe.co/ops/baysignal</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://echoframe.co/ops/hydropay</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/ops/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://echoframe.net/ops/call-router</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/ops/permit-watch</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/ops/crew-hire</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/ops/bay-coach</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://echoframe.net/ops/drive-pay</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
 </urlset>

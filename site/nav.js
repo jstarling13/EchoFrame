@@ -28,30 +28,33 @@
       href: '/intelligence/index.html',
       items: [
         { name: 'Clarity Report',        href: '/intelligence/clarity.html'    },
-        { name: 'Auto Ledger',           href: '/intelligence/vericount.html'  },
-        { name: 'Rate Watch',            href: '/intelligence/oryn.html'       },
-        { name: 'Rival Scan',            href: '/intelligence/veris.html'      },
-        { name: 'Shift Lens',            href: '/intelligence/strata.html'     },
+        { name: 'Auto Ledger',           href: '/intelligence/auto-ledger.html'  },
+        { name: 'Rate Watch',            href: '/intelligence/rate-watch.html'       },
+        { name: 'Rival Scan',            href: '/intelligence/rival-scan.html'      },
+        { name: 'Shift Lens',            href: '/intelligence/shift-lens.html'     },
+        { name: 'Competitor Landscape',  href: '/intelligence/competitor-landscape.html' },
+        { name: 'Business Audit',        href: '/intelligence/business-audit.html' },
       ]
     },
     revenue: {
       label: 'Revenue',
       href: '/revenue/index.html',
       items: [
-        { name: 'Call Catch',            href: '/revenue/missedcall.html'                   },
-        { name: 'Quote Revive',          href: '/revenue/quoterevive.html'     },
-        { name: 'Clear Ledger',          href: '/revenue/clearledger.html'     },
+        { name: 'Revenue Suite',         href: '/revenue/revenue-suite.html'    },
+        { name: 'Call Catch',            href: '/revenue/call-catch.html'                   },
+        { name: 'Quote Revive',          href: '/revenue/quote-revive.html'     },
+        { name: 'Clear Ledger',          href: '/revenue/clear-ledger.html'     },
       ]
     },
     ops: {
       label: 'Ops',
       href: '/ops/index.html',
       items: [
-        { name: 'Call Router',           href: '/ops/traderelay.html'          },
-        { name: 'Permit Watch',          href: '/ops/permitwatch.html'         },
-        { name: 'Crew Hire',             href: '/ops/ironhire.html'            },
-        { name: 'Bay Coach',             href: '/ops/baysignal.html'           },
-        { name: 'Drive Pay',             href: '/ops/hydropay.html'                         },
+        { name: 'Call Router',           href: '/ops/call-router.html'          },
+        { name: 'Permit Watch',          href: '/ops/permit-watch.html'         },
+        { name: 'Crew Hire',             href: '/ops/crew-hire.html'            },
+        { name: 'Bay Coach',             href: '/ops/bay-coach.html'           },
+        { name: 'Drive Pay',             href: '/ops/drive-pay.html'                         },
       ]
     }
   };
