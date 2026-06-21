@@ -134,7 +134,7 @@ def _metrics(df, meta):
     # E-1: clamp impossible derived figures (can't pay before pickup more than ROs; %≤100)
     # and flag an order-of-magnitude collected overstatement so generate() holds for review.
     paid_before = min(paid_before, ros) if ros else paid_before
-    paid_pct = data_quality.clamp_pct(paid_pct)
+    paid_pct = data_quality.clamp_pct(paid_pct, hi=100)  # share ratio (paid_before/ros) → ≤100
     severe = data_quality.is_severe_overstatement(collected, data_collected)
     print(f"[DrivePay] ROs {ros} | paid before {paid_before} ({paid_pct}%) | collected ${collected:,.0f}")
     return {"ros": ros, "paid_before": paid_before, "paid_pct": paid_pct, "collected": collected,

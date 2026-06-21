@@ -134,7 +134,7 @@ def _metrics(df, meta):
     qualified = min(qualified, applicants) if applicants else qualified
     interviews = min(interviews, qualified)
     screened = max(screened, 0)
-    screened_pct = data_quality.clamp_pct(round(screened / applicants * 100) if applicants else 0)
+    screened_pct = data_quality.clamp_pct(round(screened / applicants * 100) if applicants else 0, hi=100)  # share ratio → ≤100
     top_i = int(df["ScoreNum"].idxmax())
     print(f"[CrewHire] applicants {applicants} | screened {screened} ({screened_pct}%) | "
           f"qualified {qualified} | interviews {interviews} | shown {shown}")

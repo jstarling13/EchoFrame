@@ -128,7 +128,7 @@ def _metrics(df, meta):
     # E-1: clamp impossible derived figures (can't recover more than were missed; %≤100)
     # and flag an order-of-magnitude revenue overstatement so generate() holds for review.
     recovered = min(recovered, missed) if missed else recovered
-    rec_pct = data_quality.clamp_pct(rec_pct)
+    rec_pct = data_quality.clamp_pct(rec_pct, hi=100)  # share ratio (recovered/missed) → ≤100
     severe = data_quality.is_severe_overstatement(rev_saved, won_sum)
     print(f"[CallCatch] missed {missed} | auto {auto} | recovered {recovered} ({rec_pct}%) | saved ${rev_saved:,.0f}")
     return {"missed": missed, "auto": auto, "avg_send": avg_send, "recovered": recovered,

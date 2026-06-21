@@ -286,7 +286,7 @@ def _metrics(df, meta):
     # overstatement so generate() can route it to manual review instead of one-click send.
     revived = min(revived, cold_count)
     jobs = min(jobs, revived)
-    reply_pct = data_quality.clamp_pct(reply_pct)                  # share ratio → ≤100
+    reply_pct = data_quality.clamp_pct(reply_pct, hi=100)         # share ratio → ≤100
     recovered_pct = data_quality.clamp_pct(recovered_pct, hi=150)  # reactivation can exceed 100
     severe = (data_quality.is_severe_overstatement(open_value, data_open_value)
               or data_quality.is_severe_overstatement(rev_react, won_value))
