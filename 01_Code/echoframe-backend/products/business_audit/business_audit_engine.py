@@ -56,7 +56,10 @@ def _slug(b):
     s = re.sub(r"[^a-z0-9]+", "_", (b or "").lower()).strip("_"); return s or "report"
 
 def _to_float(s):
-    return csv_utils.to_amount(str(s).replace("k", "000").replace("K", "000"))
+    # Expand "k" shorthand properly: "5k"->5000 AND "1.5k"->1500 (the old blind
+    # .replace("k","000") turned 1.5k into 1.5000 -> 1.5). Then parse via to_amount.
+    s = re.sub(r"(\d+(?:\.\d+)?)\s*[kK]\b", lambda m: str(int(round(float(m.group(1)) * 1000))), str(s))
+    return csv_utils.to_amount(s)
 
 def _money(n): return f"${n:,.0f}"
 

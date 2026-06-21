@@ -127,7 +127,14 @@ def _metrics(df, meta):
     else:
         interviews = data_interviews
 
-    screened_pct = round(screened / applicants * 100) if applicants else 0
+    # N-3: clamp logically-impossible counts — can't qualify more than applied, or
+    # interview more than were qualified. No severe hold: the scorecard is a top-N SLICE,
+    # so typed pipeline totals legitimately exceed the rows shown (a >=10x hold would
+    # false-positive). `applicants` stays owner-reported (uncomputable from a slice).
+    qualified = min(qualified, applicants) if applicants else qualified
+    interviews = min(interviews, qualified)
+    screened = max(screened, 0)
+    screened_pct = data_quality.clamp_pct(round(screened / applicants * 100) if applicants else 0)
     top_i = int(df["ScoreNum"].idxmax())
     print(f"[CrewHire] applicants {applicants} | screened {screened} ({screened_pct}%) | "
           f"qualified {qualified} | interviews {interviews} | shown {shown}")

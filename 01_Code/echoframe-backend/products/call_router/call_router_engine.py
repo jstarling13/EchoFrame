@@ -138,6 +138,13 @@ def _metrics(df, meta):
         if n: disc.append(n)
     else:
         jobs_pct = data_jobs_pct
+    # N-3: clamp percentages that can't logically exceed a sane ceiling (a typed "Booked %"
+    # of 900 is nonsense). We do NOT add a severe-overstatement hard-hold here: Call Router's
+    # data is a SAMPLE-DAY log while the typed figures are WEEKLY, so a typed weekly total
+    # legitimately dwarfs the sample day — a >=10x hold would false-positive on real shops.
+    booked_pct = data_quality.clamp_pct(booked_pct)
+    answered_pct = data_quality.clamp_pct(answered_pct)
+    jobs_pct = data_quality.clamp_pct(jobs_pct)
     print(f"[CallRouter] sample day {logged} logged / {booked} booked ({booked_pct}%) | "
           f"week: answered {answered}/{total} ({answered_pct}%), after-hours {afterhours}, jobs {jobs}")
     return {"logged": logged, "booked": booked, "missed": missed, "booked_pct": booked_pct,

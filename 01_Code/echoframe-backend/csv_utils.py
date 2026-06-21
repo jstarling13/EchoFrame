@@ -113,20 +113,35 @@ def find_header(rows: list[list[str]], tokens, quorum: int | None = None, limit:
     return -1
 
 
-_TOTALS_LABELS = {
-    "total", "totals", "sum", "subtotal", "grand total", "total amount",
-    "totals row", "running total", "balance",
-}
+# Unambiguous totals labels only. Deliberately EXCLUDES "balance"/"running total" —
+# those are common in real ledger/A-R rows and over-matched legitimate data.
+_TOTALS_LABELS = {"total", "totals", "sum", "subtotal", "grand total", "total amount"}
+
+
+def _is_numericish(s) -> bool:
+    """A cell that's a number/money (has a digit, no letters) — e.g. '3,050', '$500',
+    '(120)', '12%'. Used to tell a real TOTAL row from a data row that starts with 'Total'."""
+    t = str(s).strip()
+    return bool(re.search(r"\d", t)) and not re.search(r"[A-Za-z]", t)
 
 
 def looks_like_totals_row(row, label_idx: int = 0) -> bool:
-    """True if a row is a spreadsheet totals/summary row (e.g. ``TOTAL,,3050``) rather
-    than a real data row — so an engine can skip it instead of summing it as a
-    transaction (which would double-count the month)."""
-    if not row:
+    """True ONLY for a genuine spreadsheet totals row: the label cell is a totals word
+    AND every other non-empty cell is numeric — a real ``TOTAL,,3050,`` has empty
+    neighbours except the money. A real data row that merely starts with 'Total'/
+    'Balance' (e.g. ``Balance,job,INV1,1200,...``) has text neighbours and is NOT
+    skipped, so legitimate money rows can't silently vanish. Never raises."""
+    try:
+        cells = [str(c).strip() for c in row]
+        if not cells:
+            return False
+        label = _norm_cell(cells[label_idx]) if label_idx < len(cells) else ""
+        if label not in _TOTALS_LABELS:
+            return False
+        others = [c for i, c in enumerate(cells) if i != label_idx and c]
+        return bool(others) and all(_is_numericish(c) for c in others)
+    except Exception:
         return False
-    label = _norm_cell(row[label_idx]) if label_idx < len(row) else ""
-    return label in _TOTALS_LABELS
 
 
 def column_index_map(header_cells, canonical_cols) -> list[int]:

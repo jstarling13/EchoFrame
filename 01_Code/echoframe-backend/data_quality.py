@@ -158,9 +158,12 @@ def is_severe_overstatement(reported, computed, factor: float = 10.0) -> bool:
         return False
 
 
-def clamp_pct(value, lo: int = 0, hi: int = 100):
+def clamp_pct(value, lo: int = 0, hi: int = 150):
     """Clamp a percentage into a sane range so a typed/derived figure can't print an
-    absurd value like 7500%. Returns an int. Never raises."""
+    absurd value like 7500%. The ceiling is 150 (not 100) on purpose: a real month can
+    legitimately exceed 100% — e.g. revenue reactivated above the month-start pipeline
+    because new quotes arrived mid-month — so we bound only the truly absurd. Returns an
+    int. Never raises."""
     try:
         v = int(round(float(value)))
         return max(lo, min(hi, v))
