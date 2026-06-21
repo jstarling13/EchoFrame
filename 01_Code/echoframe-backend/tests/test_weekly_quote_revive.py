@@ -53,17 +53,19 @@ def _env(monkeypatch):
 
 def test_digest_selects_open_quotes_top3_by_value():
     d = wqr.build_digest(CSV, "Sam", 0, NOW)
-    assert [i["quote"] for i in d["items"]] == ["Q-104", "Q-102", "Q-101"]  # won/dead excluded
-    assert d["call"]["quote"] == "Q-104"          # biggest open opportunity
+    assert d["call"]["quote"] == "Q-104"          # biggest open opportunity = the one to call
+    # Written follow-ups = next biggest open quotes, EXCLUDING the call pick (no
+    # point texting a quote we just told you to phone). won/dead excluded too.
+    assert [i["quote"] for i in d["items"]] == ["Q-102", "Q-101", "Q-103"]
     assert d["open_count"] == 4                    # Q-101..104 open; Q-105 dead, Q-106 won
     assert all(i.get("message") for i in d["items"])
 
 
 def test_touch_escalates_with_weeks():
     t0 = {i["quote"]: i["touch_no"] for i in wqr.build_digest(CSV, "Sam", 0, NOW)["items"]}
-    assert t0["Q-101"] == 1 and t0["Q-104"] == 2   # 3 days → touch 1, 6 days → touch 2
+    assert t0["Q-101"] == 1 and t0["Q-102"] == 2   # 3 days → touch 1, 9 days → touch 2
     t1 = {i["quote"]: i["touch_no"] for i in wqr.build_digest(CSV, "Sam", 1, NOW)["items"]}
-    assert t1["Q-101"] == 2 and t1["Q-104"] == 3   # +7 days each → escalated
+    assert t1["Q-101"] == 2 and t1["Q-102"] == 3   # +7 days each → escalated
 
 
 def test_render_email_has_content():

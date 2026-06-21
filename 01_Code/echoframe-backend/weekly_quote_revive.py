@@ -30,6 +30,7 @@ from pathlib import Path
 from typing import Optional
 
 import store
+import fulfillment_guard
 
 WEEK = 7 * 24 * 3600
 MAX_ITEMS = 3                      # quotes featured per weekly email
@@ -52,6 +53,8 @@ def _parse(csv_text: str):
         except OSError: pass
     if df is None:
         return [], (meta or {})
+    has_dated = "Dated" in df.columns
+    has_suspect = "Suspect" in df.columns
     rows = []
     for _, r in df.iterrows():
         rows.append({
@@ -61,6 +64,11 @@ def _parse(csv_text: str):
             "days": int(r["DaysNum"]),
             "followups": str(r["Followups"]).strip(),
             "status": str(r["StatusKey"]).strip().lower(),
+            # True when "days cold" came from a real date — it already ages by wall-clock,
+            # so the weekly pacing must NOT add weeks_elapsed on top (that would double-count).
+            "dated": bool(r["Dated"]) if has_dated else False,
+            # True when the amount looks like a data-entry typo (kept, but never headlined).
+            "suspect": bool(r["Suspect"]) if has_suspect else False,
         })
     return rows, (meta or {})
 
@@ -97,23 +105,31 @@ def build_digest(csv_text: str, name: str, weeks_elapsed: int, now: int) -> Opti
     biz = (meta.get("Business Name") or "your business").strip()
     owner = (meta.get("Owner Name") or name or "there").strip()
 
-    # Age every quote by the weeks elapsed since the upload.
+    # Age every quote for this week's pacing. Date-derived quotes already age by
+    # wall-clock (the date is fixed, "now" advances), so we don't add weeks on top;
+    # fixed "days cold" integers get paced forward a week at a time.
     for r in rows:
-        r["eff_days"] = r["days"] + weeks_elapsed * 7
+        r["eff_days"] = r["days"] if r.get("dated") else r["days"] + weeks_elapsed * 7
 
     open_rows = [r for r in rows if r["status"] not in _CLOSED]
-    open_value = sum(r["value_num"] for r in open_rows)
+    # Quotes with an implausible amount are kept but never headline the list — they're
+    # almost always typos, and a $9B "biggest opportunity" makes the digest look broken.
+    flagged = [r for r in open_rows if r.get("suspect")]
+    clean = [r for r in open_rows if not r.get("suspect")]
+    open_value = sum(r["value_num"] for r in clean)
 
-    # This week's featured quotes: still in range, ranked by value (biggest first).
-    active = [r for r in open_rows if r["eff_days"] <= STALE_DAYS]
+    active = [r for r in clean if r["eff_days"] <= STALE_DAYS]
     active.sort(key=lambda r: r["value_num"], reverse=True)
-    featured = active[:MAX_ITEMS]
+
+    # The one to call yourself: biggest open opportunity overall (even past the window).
+    call = max(clean, key=lambda r: r["value_num"]) if clean else None
+
+    # This week's written follow-ups: top quotes by value, EXCLUDING the one we just
+    # told you to phone — no point also handing you a text for that same quote.
+    featured = [r for r in active if r is not call][:MAX_ITEMS]
     for r in featured:
         no, label, channel, goal = _touch_for(r["eff_days"])
         r["touch_no"], r["touch_label"], r["channel"], r["goal"] = no, label, channel, goal
-
-    # The one to call: biggest open opportunity overall (even if past the touch window).
-    call = max(open_rows, key=lambda r: r["value_num"]) if open_rows else None
 
     messages = _write_messages(featured, biz, owner)
     for r, msg in zip(featured, messages):
@@ -128,6 +144,7 @@ def build_digest(csv_text: str, name: str, weeks_elapsed: int, now: int) -> Opti
         "open_value": _money(open_value),
         "items": featured,
         "call": call,
+        "flagged": flagged,
     }
 
 
@@ -223,6 +240,15 @@ def render_email(d: dict) -> str:
             f'Call this one yourself</div>'
             f'<div style="font-size:16px;font-weight:700;margin:4px 0;">{html.escape(c["quote"])} · {_money(c["value_num"])}</div>'
             f'<div style="font-size:14px;color:#C7D2E0;">Your biggest open opportunity — a 2-minute call beats any text.</div></div>')
+    flagged_html = ""
+    if d.get("flagged"):
+        lis = "".join(f'<li>{html.escape(r["quote"])} — {_money(r["value_num"])}</li>' for r in d["flagged"])
+        flagged_html = (
+            f'<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:12px 16px;margin:0 0 14px;">'
+            f'<div style="font-size:13px;color:#9A3412;font-weight:700;">Double-check these amounts</div>'
+            f'<div style="font-size:13px;color:#7C2D12;margin:4px 0 2px;">These look like data-entry typos, so we left '
+            f'them out of this week\'s list — fix the amount and re-upload to include them:</div>'
+            f'<ul style="font-size:13px;color:#7C2D12;margin:6px 0 0;padding-left:18px;">{lis}</ul></div>')
     intro = (f'<p style="font-size:15px;color:#4B5563;">Hi {html.escape(d["owner"])}, here are the quotes worth '
              f'chasing this week. Send these today — they\'re written and ready.</p>') if d["items"] else (
              f'<p style="font-size:15px;color:#4B5563;">Hi {html.escape(d["owner"])}, nothing urgent to chase this week. '
@@ -232,7 +258,7 @@ def render_email(d: dict) -> str:
         f'<div style="font-size:12px;color:#94681C;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">'
         f'Quote Revive · {html.escape(d["week_label"])}</div>'
         f'<h2 style="font-size:22px;color:#0A274F;margin:6px 0 14px;">This week\'s chase list</h2>'
-        f'{intro}{call_html}{"".join(cards)}'
+        f'{intro}{call_html}{"".join(cards)}{flagged_html}'
         f'<p style="font-size:13px;color:#6B7280;margin-top:8px;">{d["open_count"]} open quotes · {d["open_value"]} on the table. '
         f'Added new quotes? Drop them in anytime to keep next week sharp.</p>{_DISCLAIMER}</div>')
 
@@ -244,7 +270,11 @@ def send_digest(to_email: str, d: dict) -> None:
                if d["items"] else "Quote Revive — nothing urgent this week")
     resend.Emails.send({
         "from": os.environ.get("EMAIL_FROM", "EchoFrame <jacob.starling@echoframe.net>"),
-        "to": [to_email], "subject": subject, "html": render_email(d)})
+        "to": [to_email], "subject": subject, "html": render_email(d),
+        # These are AI-written messages bound for a real customer — route them through
+        # the owner-approval gate (when REVIEW_MODE is on) even though there's no
+        # attachment. Approve from your inbox to release to the client.
+        "_force_review": True})
 
 
 # ── Weekly run (called by the cron endpoint) ────────────────────────────────────
@@ -254,13 +284,28 @@ def send_first_digest(email: str, csv_text: str, name: str, now: int) -> None:
     value — then the weekly cron takes over. No-ops cleanly if there's nothing to chase."""
     try:
         digest = build_digest(csv_text, name, 0, int(now))
-        if digest and digest.get("items"):
-            send_digest(email, digest)
-            print("[QRWeekly] First digest sent on upload.")
-        else:
-            print("[QRWeekly] Upload had no open quotes — no first digest.")
+        if digest is None:
+            # We couldn't recognize any quotes in the file — never leave a paying
+            # customer silent. Reassure them and hand the file to the owner.
+            fulfillment_guard.notify_unreadable(
+                email, name, "Quote Revive",
+                reason="couldn't recognize any quotes in the uploaded file",
+                raw=csv_text, filename="quote-revive.csv")
+            print("[QRWeekly] Upload unreadable — customer reassured, owner alerted.")
+            return
+        # Send even when there's nothing urgent yet, so the first upload always gets a
+        # confirmation (render_email handles the empty-list case gracefully).
+        send_digest(email, digest)
+        print(f"[QRWeekly] First digest sent on upload (items={len(digest.get('items', []))}).")
     except Exception:
         print(f"[QRWeekly] First-digest ERROR:\n{traceback.format_exc()}", flush=True)
+        try:
+            fulfillment_guard.notify_unreadable(
+                email, name, "Quote Revive",
+                reason="error while building the first chase list",
+                raw=csv_text, filename="quote-revive.csv")
+        except Exception:
+            pass
 
 
 def run_weekly(*, _now: Optional[int] = None) -> dict:

@@ -32,6 +32,20 @@ Config (env):
 from __future__ import annotations
 
 import os
+import threading
+
+# Per-thread count of delivery ATTEMPTS (calls into resend.Emails.send) since the
+# last reset. The fulfilment runner uses this to detect the silent-failure case:
+# an engine that raised or returned before ever trying to send anything.
+_scope = threading.local()
+
+
+def reset_calls() -> None:
+    _scope.calls = 0
+
+
+def calls() -> int:
+    return int(getattr(_scope, "calls", 0))
 
 # onboarding@resend.dev is Resend's shared sender; it delivers ONLY to the
 # Resend account owner's address, with no domain verification required — which
@@ -89,6 +103,10 @@ def install() -> None:
         return  # already wrapped
 
     def resilient_send(params, *args, **kwargs):
+        try:
+            _scope.calls = int(getattr(_scope, "calls", 0)) + 1  # count the attempt
+        except Exception:
+            pass
         try:
             return original(params, *args, **kwargs)
         except Exception as error:  # primary delivery failed
