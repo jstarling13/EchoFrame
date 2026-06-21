@@ -33,6 +33,7 @@
   .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:11px; margin-top:14px; }
   .kpi { background:var(--slate); border-radius:8px; padding:12px 13px; border-top:3px solid var(--amber); }
   .kpi .label { font-size:8px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:.5px; }
+  .rep-mark { font-size:7px; font-weight:700; letter-spacing:.3px; text-transform:uppercase; color:var(--muted); margin-left:5px; white-space:nowrap; vertical-align:middle; }
   .kpi .value { font-size:22px; font-weight:800; color:var(--navy); margin:5px 0 2px; letter-spacing:-.5px; }
   .kpi .value small { font-size:11px; font-weight:700; color:var(--muted); letter-spacing:0; }
   .kpi .delta { font-size:8.5px; font-weight:600; line-height:1.35; }
@@ -101,7 +102,7 @@
     <div class="kpis">
       {% for k in kpis %}
       <div class="kpi">
-        <div class="label">{{ k.label }}</div>
+        <div class="label">{{ k.label }}{% if reported_fields and k.label in reported_fields %}<span class="rep-mark" title="Reported by you — not computed from this upload">· reported</span>{% endif %}</div>
         <div class="value">{{ k.value }}{% if k.unit %}<small> {{ k.unit }}</small>{% endif %}</div>
         <div class="delta {{ k.delta_class }}">{{ k.delta_text | clean }}</div>
       </div>

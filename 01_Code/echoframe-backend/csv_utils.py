@@ -125,6 +125,14 @@ def _is_numericish(s) -> bool:
     return bool(re.search(r"\d", t)) and not re.search(r"[A-Za-z]", t)
 
 
+def _is_totals_neighbour(s) -> bool:
+    """A cell allowed beside a totals label: a number/money, OR a short uppercase
+    currency/unit code (USD, EUR, GBP). A real data row's text neighbour ('job',
+    'Summary', a customer name) is NOT allowed, so it's kept rather than skipped."""
+    t = str(s).strip()
+    return _is_numericish(t) or (1 <= len(t) <= 4 and t.isalpha() and t.isupper())
+
+
 def looks_like_totals_row(row, label_idx: int = 0) -> bool:
     """True ONLY for a genuine spreadsheet totals row: the label cell is a totals word
     AND every other non-empty cell is numeric — a real ``TOTAL,,3050,`` has empty
@@ -139,7 +147,7 @@ def looks_like_totals_row(row, label_idx: int = 0) -> bool:
         if label not in _TOTALS_LABELS:
             return False
         others = [c for i, c in enumerate(cells) if i != label_idx and c]
-        return bool(others) and all(_is_numericish(c) for c in others)
+        return bool(others) and all(_is_totals_neighbour(c) for c in others)
     except Exception:
         return False
 

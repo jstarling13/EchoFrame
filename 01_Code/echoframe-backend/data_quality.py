@@ -158,12 +158,13 @@ def is_severe_overstatement(reported, computed, factor: float = 10.0) -> bool:
         return False
 
 
-def clamp_pct(value, lo: int = 0, hi: int = 150):
+def clamp_pct(value, lo: int = 0, hi: int = 100):
     """Clamp a percentage into a sane range so a typed/derived figure can't print an
-    absurd value like 7500%. The ceiling is 150 (not 100) on purpose: a real month can
-    legitimately exceed 100% — e.g. revenue reactivated above the month-start pipeline
-    because new quotes arrived mid-month — so we bound only the truly absurd. Returns an
-    int. Never raises."""
+    absurd value. Default ceiling is 100 — correct for SHARE ratios that are ≤100 by
+    definition (answered/total, booked/answered, screened/applicants). RECOVERY/
+    reactivation ratios that can legitimately exceed 100 (e.g. reactivated revenue above
+    the month-start pipeline because new quotes arrived mid-month) should pass hi=150
+    explicitly. Returns an int. Never raises."""
     try:
         v = int(round(float(value)))
         return max(lo, min(hi, v))

@@ -195,7 +195,11 @@ def _context(df, meta, m, prose, tier, is_sample):
         {"label": "Total Overdue", "value": _money(m["total_overdue"]), "unit": "",
          "delta_class": "down", "delta_text": f"▲ across {m['open_count']} past-due invoices"},
         {"label": "Collected This Month", "value": _money(m["collected"]), "unit": "",
-         "delta_class": "up", "delta_text": f"▲ {m['cleared'] or 0} invoices cleared by the sequence"},
+         "delta_class": "up",
+         # R3-A: "Collected" is owner-reported (not computable from an open-A/R snapshot) —
+         # don't credit a typed figure to EchoFrame's mechanism ("by the sequence").
+         "delta_text": (f"▲ {m['cleared']} invoices cleared this month" if m["cleared"]
+                        else "as reported for this month")},
         {"label": "Avg Days to Pay", "value": str(m["avg_days"] or "—"), "unit": "days",
          "delta_class": "up",
          "delta_text": (f"▼ down from {m['prior_days']} before Clear Ledger" if m["prior_days"] else "since Clear Ledger")},
