@@ -146,6 +146,28 @@ def discrepancy_note(label, reported, computed, *, is_money: bool = False,
         return None
 
 
+def is_severe_overstatement(reported, computed, factor: float = 10.0) -> bool:
+    """True when a customer-TYPED figure dwarfs what the uploaded data shows by at
+    least `factor` (an order-of-magnitude gap, e.g. typed $90,000 vs data $500).
+    Such a report shouldn't be one-click-approvable — the engine routes it to the
+    manual/owner path instead (E-1). Never raises."""
+    try:
+        r, c = float(reported), float(computed)
+        return r >= factor * max(c, 1.0) and (r - c) > 100
+    except Exception:
+        return False
+
+
+def clamp_pct(value, lo: int = 0, hi: int = 100):
+    """Clamp a percentage into a sane range so a typed/derived figure can't print an
+    absurd value like 7500%. Returns an int. Never raises."""
+    try:
+        v = int(round(float(value)))
+        return max(lo, min(hi, v))
+    except Exception:
+        return lo
+
+
 def _coerce_numeric_series(series):
     import pandas as pd
     return pd.to_numeric(

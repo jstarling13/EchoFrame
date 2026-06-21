@@ -19,6 +19,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 import csv_utils
 import data_quality
+import html_safe
 
 BASE_DIR = Path(__file__).resolve().parent
 UPLOADS_DIR = Path(os.environ.get("ECHOFRAME_UPLOADS_DIR") or BASE_DIR.parent.parent / "uploads"); REPORTS_DIR = Path(os.environ.get("ECHOFRAME_REPORTS_DIR") or BASE_DIR.parent.parent / "reports"); TEMPLATES_DIR = BASE_DIR
@@ -38,8 +39,7 @@ def _sanitize(v, n=300):
     v = _CTRL.sub('', str(v)); v = _DELIM.sub('', v); return v[:n].strip()
 def _slug(b): s = re.sub(r"[^a-z0-9]+", "_", (b or "").lower()).strip("_"); return s or "report"
 def _to_float(s):
-    try: return float(str(s).replace("$", "").replace(",", "").strip())
-    except (ValueError, AttributeError): return 0.0
+    return csv_utils.to_amount(s)
 def _money(n): return f"${n:,.0f}"
 def _int(s): return int(_to_float(s))
 
@@ -173,10 +173,13 @@ def load_path(path):
         print("[QuoteRevive] ERROR - couldn't recognize quote columns"); return None, meta
     qi, di, vi = mp.get("quote"), mp.get("detail"), mp.get("value")
     dyi, dti, fi, si = mp.get("days"), mp.get("date"), mp.get("followups"), mp.get("status")
+    ncols = len(data[h]) or 1                              # detected header width = expected columns
     now = datetime.now(timezone.utc)
-    recs = []
+    recs, overflow_rows, bad_dates = [], 0, 0
     for row in data[h + 1:]:
         if not row or not any((c or "").strip() for c in row): continue
+        row = csv_utils.repair_overflow_row(row, ncols)    # re-join unquoted thousands ("2,300"→"2300")
+        if len(row) > ncols: overflow_rows += 1            # still over-wide after repair → shifted/junk row
         quote  = csv_utils.cell(row, qi) if qi is not None else ""
         detail = csv_utils.cell(row, di) if di is not None else ""
         value  = csv_utils.to_amount(csv_utils.cell(row, vi)) if vi is not None else 0.0
@@ -187,7 +190,7 @@ def load_path(path):
         elif dti is not None and csv_utils.cell(row, dti):            # else derive from a date
             d = _parse_date(csv_utils.cell(row, dti))
             if d is not None: days, dated = max(0, (now - d).days), True
-            else: days = 0
+            else: days = 0; bad_dates += 1                 # date present but unreadable → wrongly "fresh"
         else:
             days = 0
         followups = csv_utils.cell(row, fi) if fi is not None else ""
@@ -200,14 +203,13 @@ def load_path(path):
         print("[QuoteRevive] ERROR - no quote rows"); return None, meta
     df = pd.DataFrame(recs, columns=["Quote", "Detail", "ValueNum", "DaysNum",
                                      "Followups", "Status", "StatusKey", "Dated"]).reset_index(drop=True)
-    # Data-quality gate inputs. Unlike a fixed-width ledger, this parser reads cells by
-    # MAPPED column index (csv_utils.cell(row, idx)) rather than padding/truncating to a
-    # fixed column list, so there's no single "expected column count" to compare each raw
-    # row's width against — the unquoted-thousands "2,300"→"2"+"300" overflow signature
-    # can't be detected safely here. Set 0 rather than invent a count; the gate still
-    # catches dropped rows, all-zero columns, and junk dates from dq_rows_in below.
+    # Data-quality gate inputs. We repair unquoted-thousands splits ("2,300"→"2300") per
+    # row against the detected header width, then count any row STILL over-wide (shifted/
+    # junk) so the gate flags the C-1 case. dq_bad_dates counts mapped-but-unreadable dates
+    # (which silently became "0 days cold / fresh") so generate can warn on them.
     df.attrs["dq_rows_in"] = len(recs)
-    df.attrs["dq_overflow_rows"] = 0
+    df.attrs["dq_overflow_rows"] = overflow_rows
+    df.attrs["dq_bad_dates"] = bad_dates
     df["Suspect"] = _flag_suspects(list(df["ValueNum"]))
     n_sus = int(df["Suspect"].sum())
     print(f"[QuoteRevive] Loaded {len(df)} quotes from {path.name} (mapped: {sorted(mp)}"
@@ -279,6 +281,15 @@ def _metrics(df, meta):
         if n: disc.append(n)
     else:
         recovered_pct = data_recovered_pct
+    # E-1: clamp impossible derived figures so a customer-typed number can't print an
+    # absurd report (e.g. "40 of 3 revived / 7500% recovered"); flag an order-of-magnitude
+    # overstatement so generate() can route it to manual review instead of one-click send.
+    revived = min(revived, cold_count)
+    jobs = min(jobs, revived)
+    reply_pct = data_quality.clamp_pct(reply_pct)
+    recovered_pct = data_quality.clamp_pct(recovered_pct)
+    severe = (data_quality.is_severe_overstatement(open_value, data_open_value)
+              or data_quality.is_severe_overstatement(rev_react, won_value))
     # Highlight the oldest LIVE quote (dead quotes never get the top spotlight).
     live = df[df["StatusKey"] != "dead"]
     top_i = int((live if len(live) else df)["DaysNum"].idxmax())
@@ -293,7 +304,7 @@ def _metrics(df, meta):
             "revived": revived, "reply_pct": reply_pct, "rev_react": rev_react, "jobs": jobs,
             "recovered_pct": recovered_pct, "top_i": top_i, "one_thing_i": one_thing_i,
             "count": len(df), "shown": _int(meta.get("Shown", "")) or len(df),
-            "_reported": reported, "_discrepancies": disc}
+            "_reported": reported, "_discrepancies": disc, "_severe": severe}
 
 
 QUOTE_REVIVE_TOOL = {
@@ -385,6 +396,7 @@ def _context(df, meta, m, prose, is_sample):
 
 def _render(ctx):
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html", "j2"]))
+    env.filters["clean"] = html_safe.clean
     return env.get_template("quote_revive.html.j2").render(**ctx)
 def _save(meta, html):
     REPORTS_DIR.mkdir(exist_ok=True)
@@ -395,7 +407,7 @@ def _email(email, owner, html_bytes, meta, dq_warnings=None):
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your business").strip()
-    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.net>"),
         "to": [email], "subject": f"Your {month} Quote Revive — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Quote Revive report for {biz} is "
                 f"attached — your ghosted quotes, the follow-ups that reopened them, and the one to call.</p><p>— EchoFrame</p>",
@@ -412,16 +424,25 @@ def generate_quote_revive_report(customer_email, customer_name="Client", tier=""
     if df is None: return ""
     # Data-quality gate (B-1): hard-fail on a file too broken to trust (engine returns ""
     # so fulfillment_guard hands it to a human); carry warnings into the send otherwise.
-    # numeric_cols=[]: ValueNum (a $0 quote) and DaysNum (a fresh / no-date row reads 0)
-    # are both legitimately zero on normal rows, so neither is a reliable "column missing"
-    # signal here. date_cols=[]: dates are consumed into DaysNum — there's no date column
-    # left on the frame. The gate still guards overflow / dropped rows via df.attrs.
-    dq = data_quality.assess(df, numeric_cols=[], date_cols=[], label="Quote Revive")
+    # numeric_cols=["ValueNum"]: a file where EVERY quote value is 0/blank is indistinguishable
+    # from a value column that didn't read, so it hard-fails. date_cols=[]: dates are consumed
+    # into DaysNum (no date column survives on the frame) — instead we warn below from
+    # dq_bad_dates, which counts mapped-but-unreadable dates that silently became "0 days cold".
+    dq = data_quality.assess(df, numeric_cols=["ValueNum"], date_cols=[], label="Quote Revive")
     if dq.hard_fail:
         print(f"[Quote Revive] Data-quality hard fail: {dq.reason}")
         return ""
+    _bad_dates = df.attrs.get("dq_bad_dates", 0)
+    if _bad_dates:
+        dq.warnings.append(
+            f"{_bad_dates} quote(s) had an unreadable date — treated as 0 days cold (fresh). "
+            f"Verify their age before chasing.")
     if not meta.get("Owner Name", "").strip(): meta["Owner Name"] = customer_name.strip() or "Client"
-    m = _metrics(df, meta); prose = _narrative(df, meta, m)
+    m = _metrics(df, meta)
+    if m.get("_severe"):  # E-1: typed figure dwarfs the data by ≥10× — hard hold, owner does it by hand
+        print("[Quote Revive] Severe typed-vs-data overstatement — routing to manual review.")
+        return ""
+    prose = _narrative(df, meta, m)
     warnings = list(dq.warnings) + list(m.get("_discrepancies", []))  # B-1 gate + B-2 cross-check
     ctx = _context(df, meta, m, prose, is_sample=False)
     html = _render(ctx); path = _save(meta, html)

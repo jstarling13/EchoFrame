@@ -103,7 +103,7 @@
       <div class="kpi">
         <div class="label">{{ k.label }}</div>
         <div class="value">{{ k.value }}{% if k.unit %}<small> {{ k.unit }}</small>{% endif %}</div>
-        <div class="delta {{ k.delta_class }}">{{ k.delta_text | safe }}</div>
+        <div class="delta {{ k.delta_class }}">{{ k.delta_text | clean }}</div>
       </div>
       {% endfor %}
     </div>
@@ -113,7 +113,7 @@
       {% for s in steps %}
       <div class="step">
         <div class="cap"><span class="day">{{ s.day }}</span><span class="chan">{{ s.channel }}</span></div>
-        <div class="msg">{{ s.message | safe }}</div>
+        <div class="msg">{{ s.message | clean }}</div>
         <div class="why"><b>Goal:</b> {{ s.goal }}</div>
       </div>
       {% endfor %}
@@ -147,13 +147,13 @@
 
     <div class="card">
       <div class="ttl">How Quote Revive Works</div>
-      <p>{{ method_note | safe }}</p>
+      <p>{{ method_note | clean }}</p>
       <p class="src">{{ source_line }}</p>
     </div>
 
     <div class="onething">
       <span class="badge">The One Thing</span>
-      <div><h3>{{ one_thing.title }}</h3><p>{{ one_thing.body | safe }}</p></div>
+      <div><h3>{{ one_thing.title }}</h3><p>{{ one_thing.body | clean }}</p></div>
     </div>
   </div>
   {% if reported_fields %}

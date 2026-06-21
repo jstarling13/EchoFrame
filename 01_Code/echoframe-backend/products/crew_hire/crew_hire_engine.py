@@ -16,6 +16,7 @@ Meta: _Role, _Requisition, _Applicants, _Screened Out, _Qualified, _Interviews,
 import os, re, csv, base64
 import csv_utils
 import data_quality
+import html_safe
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -48,7 +49,7 @@ def load_path(path):
     path = Path(path)
     if not path.exists(): print(f"[CrewHire] ERROR - no CSV at {path}"); return None, {}
     rows = csv_utils.read_rows(path.read_bytes())
-    meta, crows, inlist = {}, [], False
+    meta, crows, inlist, header_row = {}, [], False, []
     for row in rows:
         if not row: continue
         first = str(row[0]).strip()
@@ -56,9 +57,10 @@ def load_path(path):
             meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
         cells = [str(c).strip() for c in row]
         if not inlist:
-            if csv_utils.header_matches(cells, _HEADER_TOKENS): inlist = True
+            if csv_utils.header_matches(cells, _HEADER_TOKENS): header_row = cells; inlist = True
             continue
         if not first: continue
+        if csv_utils.looks_like_totals_row(cells): continue  # skip a spreadsheet TOTAL row (don't sum it)
         crows.append(cells)
     if not crows: print("[CrewHire] ERROR - no candidate rows"); return None, meta
     cols = ["Candidate", "CandDetail", "Skills", "Score", "Status", "Slot", "SlotDetail"]
@@ -66,9 +68,11 @@ def load_path(path):
     # separator ("2,300" splits into "2" + "300") or literal overflow junk (EXTRA/
     # JUNK cells) leaking in. Count them before padding so the data-quality gate
     # can flag the row as untrustworthy.
-    crows = [csv_utils.repair_overflow_row(r, len(cols)) for r in crows]
-    overflow_rows = sum(1 for r in crows if len(r) > len(cols))
-    norm = [(r + [""] * len(cols))[:len(cols)] for r in crows]
+    idx_map = csv_utils.column_index_map(header_row, cols)
+    ncols = len(header_row) or len(cols)
+    crows = [csv_utils.repair_overflow_row(r, ncols) for r in crows]
+    overflow_rows = sum(1 for r in crows if len(r) > ncols)
+    norm = [[csv_utils.cell(r, idx_map[k]) for k in range(len(cols))] for r in crows]
     df = pd.DataFrame(norm, columns=cols)
     df["ScoreNum"] = df["Score"].map(_int)
     df["StatusKey"] = df["Status"].map(lambda s: str(s).strip().lower())
@@ -216,6 +220,7 @@ def _context(df, meta, m, prose, is_sample):
 
 def _render(ctx):
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html", "j2"]))
+    env.filters["clean"] = html_safe.clean
     return env.get_template("crew_hire.html.j2").render(**ctx)
 def _save(meta, html):
     REPORTS_DIR.mkdir(exist_ok=True)
@@ -226,7 +231,7 @@ def _email(email, owner, html_bytes, meta, dq_warnings=None):
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     role = meta.get("Role", "your role").strip(); biz = meta.get("Business Name", "your business").strip()
-    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.net>"),
         "to": [email], "subject": f"Your Crew Hire shortlist — {role} — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your Crew Hire report for {biz} ({role}) is "
                 f"attached — applicants screened and scored, with the shortlist and who to prioritize.</p><p>— EchoFrame</p>",

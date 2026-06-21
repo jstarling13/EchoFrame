@@ -16,6 +16,7 @@ Meta: _Collected, _Cleared Count, _Avg Days, _Prior Days.
 import os, re, csv, base64
 import csv_utils
 import data_quality
+import html_safe
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -43,8 +44,7 @@ def _sanitize(v, n=300):
     v = _CTRL_CHARS_RE.sub('', str(v)); v = _PROMPT_DELIMITER_RE.sub('', v); return v[:n].strip()
 def _slug(b): s = re.sub(r"[^a-z0-9]+", "_", (b or "").lower()).strip("_"); return s or "report"
 def _to_float(s):
-    try: return float(str(s).replace("$", "").replace(",", "").strip())
-    except (ValueError, AttributeError): return 0.0
+    return csv_utils.to_amount(s)
 def _money(n): return f"{'−' if n < 0 else ''}${abs(n):,.0f}"
 def _int(s): return int(_to_float(s))
 
@@ -57,7 +57,7 @@ def load_path(path):
     if not path.exists():
         print(f"[ClearLedger] ERROR - no CSV at {path}"); return None, {}
     rows = csv_utils.read_rows(path.read_bytes())
-    meta, rrows, inlist = {}, [], False
+    meta, rrows, inlist, header_row = {}, [], False, []
     for row in rows:
         if not row: continue
         first = str(row[0]).strip()
@@ -65,19 +65,24 @@ def load_path(path):
             meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
         cells = [str(c).strip() for c in row]
         if not inlist:
-            if csv_utils.header_matches(cells, _HEADER_TOKENS): inlist = True
+            if csv_utils.header_matches(cells, _HEADER_TOKENS): header_row = cells; inlist = True
             continue
         if not first: continue
+        if csv_utils.looks_like_totals_row(cells): continue  # skip a spreadsheet TOTAL row (don't sum it)
         rrows.append(cells)
     if not rrows:
         print("[ClearLedger] ERROR - no invoice rows"); return None, meta
     cols = ["Customer", "Detail", "Invoice", "Amount", "Days Overdue", "Next Action", "When"]
-    # Rows with MORE cells than columns are the signature of an unquoted thousands
+    # Map canonical columns to the ACTUAL header positions, so a reordered or renamed
+    # column is read from the right slot, not by blind position (finding D-2).
+    idx_map = csv_utils.column_index_map(header_row, cols)
+    ncols = len(header_row) or len(cols)
+    # Rows with MORE cells than the header are the signature of an unquoted thousands
     # separator: "2,300" splits into "2" + "300", truncation drops the "300", and
     # the amount reads as $2. Count them so the data-quality gate can flag it.
-    rrows = [csv_utils.repair_overflow_row(r, len(cols)) for r in rrows]
-    overflow_rows = sum(1 for r in rrows if len(r) > len(cols))
-    norm = [(r + [""] * len(cols))[:len(cols)] for r in rrows]
+    rrows = [csv_utils.repair_overflow_row(r, ncols) for r in rrows]
+    overflow_rows = sum(1 for r in rrows if len(r) > ncols)
+    norm = [[csv_utils.cell(r, idx_map[k]) for k in range(len(cols))] for r in rrows]
     df = pd.DataFrame(norm, columns=cols)
     df["AmountNum"] = df["Amount"].map(_to_float)
     df["DaysNum"]   = df["Days Overdue"].map(_int)
@@ -214,6 +219,7 @@ def _context(df, meta, m, prose, tier, is_sample):
 # ── render / persist / deliver ──
 def _render(ctx):
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html", "j2"]))
+    env.filters["clean"] = html_safe.clean
     return env.get_template("clear_ledger.html.j2").render(**ctx)
 
 def _save(meta, tier, html):
@@ -226,7 +232,7 @@ def _email(email, owner, html_bytes, meta, dq_warnings=None):
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your business").strip()
-    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.net>"),
         "to": [email], "subject": f"Your {month} Clear Ledger — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Clear Ledger report for {biz} is "
                 f"attached — every overdue invoice, where it sits in the follow-up sequence, and the one to act on.</p>"

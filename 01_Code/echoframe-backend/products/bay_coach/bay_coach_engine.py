@@ -18,6 +18,7 @@ Meta: _Vehicle Name, _Vehicle Meta, _Odometer, _RO Hint, _Glance Hint,
 import os, re, csv, base64
 import csv_utils
 import data_quality
+import html_safe
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -41,8 +42,7 @@ def _sanitize(v, n=300):
     v = _CTRL.sub('', str(v)); v = _DELIM.sub('', v); return v[:n].strip()
 def _slug(b): s = re.sub(r"[^a-z0-9]+", "_", (b or "").lower()).strip("_"); return s or "report"
 def _to_float(s):
-    try: return float(str(s).replace("$", "").replace(",", "").strip())
-    except (ValueError, AttributeError): return 0.0
+    return csv_utils.to_amount(s)
 def _money(n): return f"${n:,.0f}"
 
 
@@ -52,26 +52,33 @@ def load_path(path):
     if not path.exists(): print(f"[BayCoach] ERROR - no CSV at {path}"); return None, None, {}
     rows = csv_utils.read_rows(path.read_bytes())
     meta, hist, recs, mode = {}, [], [], None
+    hist_header, rec_header = [], []
     for row in rows:
         if not row: continue
         first = str(row[0]).strip()
         if first.startswith("_"):
             meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
         cells = [str(c).strip() for c in row]
-        if csv_utils.header_matches(cells, _HIST_TOKENS): mode = "hist"; continue
-        if csv_utils.header_matches(cells, _REC_TOKENS): mode = "rec"; continue
+        if csv_utils.header_matches(cells, _HIST_TOKENS): mode = "hist"; hist_header = cells; continue
+        if csv_utils.header_matches(cells, _REC_TOKENS): mode = "rec"; rec_header = cells; continue
         if not first: continue
+        if csv_utils.looks_like_totals_row(cells): continue  # skip a spreadsheet TOTAL row
         if mode == "hist": hist.append(cells)
         elif mode == "rec": recs.append(cells)
     if not recs:
         print("[BayCoach] ERROR - no recommendation rows"); return None, None, meta
-    hist_df = pd.DataFrame([(r + ["", ""])[:2] for r in hist], columns=["Service Performed", "When"])
+    hcols = ["Service Performed", "When"]
+    h_idx = csv_utils.column_index_map(hist_header, hcols)
+    hist_df = pd.DataFrame([[csv_utils.cell(r, h_idx[k]) for k in range(len(hcols))] for r in hist], columns=hcols)
     rcols = ["Service", "Interval", "Status", "Price"]
-    # Recommendation rows with more cells than columns are the unquoted-thousands
-    # signature ("2,300"→"2"+"300") and the audit's "EXTRA/JUNK rendered" case.
-    recs = [csv_utils.repair_overflow_row(r, len(rcols)) for r in recs]
-    overflow_rows = sum(1 for r in recs if len(r) > len(rcols))
-    rec_df = pd.DataFrame([(r + [""] * len(rcols))[:len(rcols)] for r in recs], columns=rcols)
+    # Map canonical columns to the ACTUAL header positions so a reordered/renamed column
+    # (e.g. Price) is read from the right slot, not by blind position (finding D-2). Repair
+    # unquoted-thousands splits against the header width, then count any row still over-wide.
+    r_idx = csv_utils.column_index_map(rec_header, rcols)
+    r_ncols = len(rec_header) or len(rcols)
+    recs = [csv_utils.repair_overflow_row(r, r_ncols) for r in recs]
+    overflow_rows = sum(1 for r in recs if len(r) > r_ncols)
+    rec_df = pd.DataFrame([[csv_utils.cell(r, r_idx[k]) for k in range(len(rcols))] for r in recs], columns=rcols)
     rec_df["PriceNum"] = rec_df["Price"].map(_to_float)
     rec_df["StatusKey"] = rec_df["Status"].map(lambda s: str(s).strip().lower())
     rec_df = rec_df.reset_index(drop=True)
@@ -178,6 +185,7 @@ def _context(hist_df, rec_df, meta, m, prose, is_sample):
 
 def _render(ctx):
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html", "j2"]))
+    env.filters["clean"] = html_safe.clean
     return env.get_template("bay_coach.html.j2").render(**ctx)
 def _save(meta, html):
     REPORTS_DIR.mkdir(exist_ok=True)
@@ -188,7 +196,7 @@ def _email(email, owner, html_bytes, meta, dq_warnings=None):
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your shop").strip()
-    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.net>"),
         "to": [email], "subject": f"Your {month} Bay Coach — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Bay Coach report for {biz} is "
                 f"attached — the right recommendation at write-up, based on the vehicle's real history and mileage.</p><p>— EchoFrame</p>",

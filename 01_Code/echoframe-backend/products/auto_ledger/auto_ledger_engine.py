@@ -46,6 +46,7 @@ import json
 import base64
 import csv_utils
 import data_quality
+import html_safe
 from pathlib import Path
 from datetime import datetime, date, timedelta
 
@@ -128,6 +129,7 @@ def load_ledger_path(path: Path):
 
     meta = {}
     txn_rows = []
+    header_row = []
     in_ledger = False
     for row in rows:
         if not row:
@@ -139,12 +141,15 @@ def load_ledger_path(path: Path):
             meta[key] = val
             continue
         cells = [str(c).strip() for c in row]
-        # Detect the ledger header row.
+        # Detect the ledger header row (and keep it, for column mapping).
         if not in_ledger:
             if csv_utils.header_matches(cells, _HEADER_TOKENS):
+                header_row = cells
                 in_ledger = True
             continue
         if not first:  # skip blank rows
+            continue
+        if csv_utils.looks_like_totals_row(cells):  # skip a spreadsheet TOTAL row (don't sum it)
             continue
         txn_rows.append(cells)
 
@@ -153,16 +158,18 @@ def load_ledger_path(path: Path):
         return None, meta
 
     cols = ["Date", "Description", "Amount", "Account"]
-    # Rows with MORE cells than columns are the signature of an unquoted thousands
-    # separator: "2,300" splits into "2" + "300", truncation drops the "300", and
-    # the amount reads as $2. Count them so the data-quality gate can flag it.
-    txn_rows = [csv_utils.repair_overflow_row(r, len(cols)) for r in txn_rows]
-    overflow_rows = sum(1 for r in txn_rows if len(r) > len(cols))
-    norm = [(r + [""] * len(cols))[:len(cols)] for r in txn_rows]
+    # Map canonical columns to the ACTUAL header positions, so a reordered or renamed
+    # column is read from the right slot, not by blind position (finding D-2).
+    idx_map = csv_utils.column_index_map(header_row, cols)
+    ncols = len(header_row) or len(cols)
+    # Rows with MORE cells than the header are the unquoted-thousands signature ("2,300"
+    # → "2"+"300"); repair re-joins them so the amount reads right, then count any row
+    # still over-wide so the data-quality gate can flag it.
+    txn_rows = [csv_utils.repair_overflow_row(r, ncols) for r in txn_rows]
+    overflow_rows = sum(1 for r in txn_rows if len(r) > ncols)
+    norm = [[csv_utils.cell(r, idx_map[k]) for k in range(len(cols))] for r in txn_rows]
     df = pd.DataFrame(norm, columns=cols)
-    df["Amount"] = pd.to_numeric(
-        df["Amount"].astype(str).str.replace(r"[$,]", "", regex=True), errors="coerce"
-    ).fillna(0.0)
+    df["Amount"] = df["Amount"].map(csv_utils.to_amount)
     df = df.reset_index(drop=True)
     # Record how many data rows the parser SAW so the data-quality gate can tell
     # if any were silently dropped or mis-split (e.g. an unquoted "2,300").
@@ -256,10 +263,7 @@ def _calculate_metrics(df: pd.DataFrame, meta: dict) -> dict:
 
 
 def _to_float(s) -> float:
-    try:
-        return float(str(s).replace("$", "").replace(",", "").strip())
-    except (ValueError, AttributeError):
-        return 0.0
+    return csv_utils.to_amount(s)
 
 
 def _quarterly_tax(metrics: dict, meta: dict) -> dict:
@@ -652,6 +656,7 @@ def _render_html(ctx: dict) -> str:
         loader=FileSystemLoader(str(TEMPLATES_DIR)),
         autoescape=select_autoescape(["html", "j2"]),
     )
+    env.filters["clean"] = html_safe.clean
     return env.get_template("auto_ledger.html.j2").render(**ctx)
 
 
@@ -691,7 +696,7 @@ def _send_report_email(customer_email, owner_name, html_bytes, meta, tier, dq_wa
             "content": base64.b64encode(html_bytes).decode("ascii"),
             "content_type": "text/html",
         }
-    email_from = os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>")
+    email_from = os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.net>")
     body = (
         f"<p>Hi {greet},</p>"
         f"<p>Your {month} Auto Ledger report for {biz} is attached and shown below — every "

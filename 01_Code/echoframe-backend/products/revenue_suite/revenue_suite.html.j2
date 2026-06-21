@@ -98,14 +98,14 @@
         <div class="l">Total Revenue Recovered</div>
         <div class="v">{{ total_recovered }}<small> this month</small></div>
       </div>
-      <div class="r">{{ intro_note | safe }}</div>
+      <div class="r">{{ intro_note | clean }}</div>
     </div>
     <div class="kpis">
       {% for k in kpis %}
       <div class="kpi">
         <div class="label">{{ k.label }}</div>
         <div class="value">{{ k.value }}</div>
-        <div class="delta">{{ k.delta_text | safe }}</div>
+        <div class="delta">{{ k.delta_text | clean }}</div>
       </div>
       {% endfor %}
     </div>
@@ -116,7 +116,7 @@
       <div class="module">
         <div class="cap"><span class="mname">{{ m.name }}</span><span class="price">{{ m.price }}</span></div>
         <div class="stat">{{ m.stat }}<small> {{ m.stat_label }}</small></div>
-        <ul>{% for li in m.lines %}<li>{{ li | safe }}</li>{% endfor %}</ul>
+        <ul>{% for li in m.lines %}<li>{{ li | clean }}</li>{% endfor %}</ul>
         <div class="top"><b>{{ m.top_label }}</b> {{ m.top_value }}</div>
       </div>
       {% endfor %}
@@ -124,12 +124,12 @@
 
     <div class="card">
       <div class="ttl">How the Suite Works</div>
-      <p>{{ suite_note | safe }}</p>
+      <p>{{ suite_note | clean }}</p>
     </div>
 
     <div class="onething">
       <span class="badge">The One Thing</span>
-      <div><h3>{{ one_thing.title }}</h3><p>{{ one_thing.body | safe }}</p></div>
+      <div><h3>{{ one_thing.title }}</h3><p>{{ one_thing.body | clean }}</p></div>
     </div>
   </div>
   <div class="footer">

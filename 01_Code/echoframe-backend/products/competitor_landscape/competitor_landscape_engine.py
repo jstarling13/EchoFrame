@@ -24,6 +24,7 @@ INPUT CSV (questionnaire + competitor table):
 import os, re, csv, base64
 import csv_utils
 import data_quality
+import html_safe
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -65,6 +66,7 @@ def load_path(path):
         print(f"[CompetitorLandscape] ERROR - no CSV at {path}"); return None, {}
     rows = csv_utils.read_rows(path.read_bytes())
     meta, lrows, inlist = {}, [], False
+    header_row = []
     for row in rows:
         if not row:
             continue
@@ -75,9 +77,12 @@ def load_path(path):
         cells = [str(c).strip() for c in row]
         if not inlist:
             if csv_utils.header_matches(cells, _HEADER_TOKENS):
+                header_row = cells
                 inlist = True
             continue
         if not first:
+            continue
+        if csv_utils.looks_like_totals_row(cells):
             continue
         lrows.append(cells)
     if not lrows:
@@ -86,9 +91,11 @@ def load_path(path):
     # Rows with MORE cells than columns are the signature of an unquoted thousands
     # separator: "2,300" splits into "2" + "300" and the trailing cell is dropped.
     # Count them so the data-quality gate can flag a possibly-mangled row.
-    lrows = [csv_utils.repair_overflow_row(r, len(cols)) for r in lrows]
-    overflow_rows = sum(1 for r in lrows if len(r) > len(cols))
-    norm = [(r + [""] * len(cols))[:len(cols)] for r in lrows]
+    idx_map = csv_utils.column_index_map(header_row, cols)
+    ncols = len(header_row) or len(cols)
+    lrows = [csv_utils.repair_overflow_row(r, ncols) for r in lrows]
+    overflow_rows = sum(1 for r in lrows if len(r) > ncols)
+    norm = [[csv_utils.cell(r, idx_map[k]) for k in range(len(cols))] for r in lrows]
     df = pd.DataFrame(norm, columns=cols).reset_index(drop=True)
     # Record how many rows the parser SAW so the gate can spot silent drops / mis-splits.
     df.attrs["dq_rows_in"] = len(lrows)
@@ -264,6 +271,7 @@ def _context(df, meta, m, prose, is_sample):
 def _render(ctx):
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)),
                       autoescape=select_autoescape(["html", "j2"]))
+    env.filters["clean"] = html_safe.clean
     return env.get_template("competitor_landscape.html.j2").render(**ctx)
 
 def _save(meta, html):
@@ -278,7 +286,7 @@ def _email(email, owner, html_bytes, meta, dq_warnings=None):
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your business").strip()
     params = {
-        "from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+        "from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.net>"),
         "to": [email],
         "subject": f"Your Competitor & Market Landscape Report - {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your Competitor &amp; Market Landscape "

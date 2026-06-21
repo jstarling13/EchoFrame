@@ -204,8 +204,8 @@
       {% for k in kpis %}
       <div class="kpi">
         <div class="label">{{ k.label }}</div>
-        <div class="value{% if k.value_sm %} sm{% endif %}">{{ k.value | safe }}</div>
-        <div class="delta {{ k.delta_class }}">{{ k.delta_text | safe }}</div>
+        <div class="value{% if k.value_sm %} sm{% endif %}">{{ k.value | clean }}</div>
+        <div class="delta {{ k.delta_class }}">{{ k.delta_text | clean }}</div>
       </div>
       {% endfor %}
     </div>
@@ -233,8 +233,8 @@
           <td class="r">{{ s.revenue }}</td>
           <td class="r">{{ s.labor }}</td>
           <td class="r"><span class="pill {{ s.pill_class }}">{{ s.labor_pct }}</span></td>
-          <td class="r">{{ s.margin | safe }}</td>
-          <td>{{ s.flag | safe }}</td>
+          <td class="r">{{ s.margin | clean }}</td>
+          <td>{{ s.flag | clean }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -244,7 +244,7 @@
           <td class="r">{{ totals.revenue }}</td>
           <td class="r">{{ totals.labor }}</td>
           <td class="r"><span class="pill {{ totals.pill_class }}">{{ totals.labor_pct }}</span></td>
-          <td class="r">{{ totals.margin | safe }}</td>
+          <td class="r">{{ totals.margin | clean }}</td>
           <td></td>
         </tr>
       </tfoot>
@@ -253,7 +253,7 @@
     <!-- Pattern note -->
     <div class="card">
       <div class="ttl">Pattern Note</div>
-      <p>{{ pattern_note | safe }}</p>
+      <p>{{ pattern_note | clean }}</p>
       <p class="src">{{ method_line }}</p>
     </div>
 
@@ -262,7 +262,7 @@
       <span class="badge">The One Thing</span>
       <div>
         <h3>{{ one_thing.title }}</h3>
-        <p>{{ one_thing.body | safe }}</p>
+        <p>{{ one_thing.body | clean }}</p>
       </div>
     </div>
 

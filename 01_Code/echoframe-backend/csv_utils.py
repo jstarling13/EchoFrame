@@ -113,6 +113,53 @@ def find_header(rows: list[list[str]], tokens, quorum: int | None = None, limit:
     return -1
 
 
+_TOTALS_LABELS = {
+    "total", "totals", "sum", "subtotal", "grand total", "total amount",
+    "totals row", "running total", "balance",
+}
+
+
+def looks_like_totals_row(row, label_idx: int = 0) -> bool:
+    """True if a row is a spreadsheet totals/summary row (e.g. ``TOTAL,,3050``) rather
+    than a real data row — so an engine can skip it instead of summing it as a
+    transaction (which would double-count the month)."""
+    if not row:
+        return False
+    label = _norm_cell(row[label_idx]) if label_idx < len(row) else ""
+    return label in _TOTALS_LABELS
+
+
+def column_index_map(header_cells, canonical_cols) -> list[int]:
+    """Map each canonical column NAME to its index in the ACTUAL header row by
+    normalized match (exact first, then whole-word containment, so 'Amount' matches
+    'Amount ($)' and 'Date' matches 'Date Sent'). Falls back to the positional index
+    for any column whose name isn't found — so reading is NEVER worse than the old
+    fixed-position layout, and reordered/renamed columns get read from the right slot
+    instead of silently grabbing whatever happens to sit in that position.
+
+    Returns a list of source indices, one per canonical column. Never raises."""
+    try:
+        norm_header = [_norm_cell(c) for c in header_cells]
+        used: set[int] = set()
+        out: list[int] = []
+        for i, name in enumerate(canonical_cols):
+            nm = _norm_cell(name)
+            idx = next((j for j, h in enumerate(norm_header) if h == nm and j not in used), None)
+            if idx is None and nm:  # whole-word containment (each token of the name appears)
+                want = nm.split()
+                idx = next((j for j, h in enumerate(norm_header)
+                            if j not in used and all(w in h.split() for w in want)), None)
+            if idx is None:         # positional fallback (never worse than fixed layout)
+                idx = i if (i < len(norm_header) and i not in used) else \
+                    next((j for j in range(len(norm_header)) if j not in used), i)
+            out.append(idx)
+            if isinstance(idx, int):
+                used.add(idx)
+        return out
+    except Exception:
+        return list(range(len(list(canonical_cols))))
+
+
 def cell(row: list[str], i: int, default: str = "") -> str:
     """Safe indexed access into a (possibly short) row."""
     return row[i].strip() if row and i < len(row) and row[i] is not None else default

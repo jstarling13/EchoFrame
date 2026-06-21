@@ -13,6 +13,7 @@ Meta: _Missed Calls, _Auto Texts, _Avg Send, _Leads Recovered, _Recovery Pct, _R
 import os, re, csv, base64
 import csv_utils
 import data_quality
+import html_safe
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -34,8 +35,7 @@ def _sanitize(v, n=300):
     v = _CTRL.sub('', str(v)); v = _DELIM.sub('', v); return v[:n].strip()
 def _slug(b): s = re.sub(r"[^a-z0-9]+", "_", (b or "").lower()).strip("_"); return s or "report"
 def _to_float(s):
-    try: return float(str(s).replace("$", "").replace(",", "").strip())
-    except (ValueError, AttributeError): return 0.0
+    return csv_utils.to_amount(s)
 def _money(n): return f"${n:,.0f}"
 def _int(s): return int(_to_float(s))
 
@@ -45,7 +45,7 @@ def load_path(path):
     path = Path(path)
     if not path.exists(): print(f"[CallCatch] ERROR - no CSV at {path}"); return None, {}
     rows = csv_utils.read_rows(path.read_bytes())
-    meta, lrows, inlist = {}, [], False
+    meta, lrows, header_row, inlist = {}, [], [], False
     for row in rows:
         if not row: continue
         first = str(row[0]).strip()
@@ -53,18 +53,23 @@ def load_path(path):
             meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
         cells = [str(c).strip() for c in row]
         if not inlist:
-            if csv_utils.header_matches(cells, _HEADER_TOKENS): inlist = True
+            if csv_utils.header_matches(cells, _HEADER_TOKENS): header_row = cells; inlist = True
             continue
         if not first: continue
+        if csv_utils.looks_like_totals_row(cells): continue  # skip a spreadsheet TOTAL row (don't sum it)
         lrows.append(cells)
     if not lrows: print("[CallCatch] ERROR - no log rows"); return None, meta
     cols = ["Time", "Number", "AutoText", "Response", "Outcome", "Amount"]
     # Rows with MORE cells than columns are the unquoted-thousands signature:
     # "2,300" splits into "2" + "300", truncation drops the "300", and the amount
     # reads as $2. Count them so the data-quality gate can flag the junk row.
-    lrows = [csv_utils.repair_overflow_row(r, len(cols)) for r in lrows]
-    overflow_rows = sum(1 for r in lrows if len(r) > len(cols))
-    norm = [(r + [""] * len(cols))[:len(cols)] for r in lrows]
+    # Map canonical columns to the ACTUAL header positions, so a reordered or renamed
+    # column is read from the right slot, not by blind position (finding D-2).
+    idx_map = csv_utils.column_index_map(header_row, cols)
+    ncols = len(header_row) or len(cols)
+    lrows = [csv_utils.repair_overflow_row(r, ncols) for r in lrows]
+    overflow_rows = sum(1 for r in lrows if len(r) > ncols)
+    norm = [[csv_utils.cell(r, idx_map[k]) for k in range(len(cols))] for r in lrows]
     df = pd.DataFrame(norm, columns=cols)
     df["AmountNum"] = df["Amount"].map(_to_float)
     df["OutKey"] = df["Outcome"].map(lambda s: str(s).strip().lower())
@@ -120,11 +125,16 @@ def _metrics(df, meta):
     else:
         rev_saved = won_sum
 
+    # E-1: clamp impossible derived figures (can't recover more than were missed; %≤100)
+    # and flag an order-of-magnitude revenue overstatement so generate() holds for review.
+    recovered = min(recovered, missed) if missed else recovered
+    rec_pct = data_quality.clamp_pct(rec_pct)
+    severe = data_quality.is_severe_overstatement(rev_saved, won_sum)
     print(f"[CallCatch] missed {missed} | auto {auto} | recovered {recovered} ({rec_pct}%) | saved ${rev_saved:,.0f}")
     return {"missed": missed, "auto": auto, "avg_send": avg_send, "recovered": recovered,
             "rec_pct": rec_pct, "rev_saved": rev_saved, "count": len(df),
             "shown": _int(meta.get("Shown", "")) or len(df),
-            "_reported": reported, "_discrepancies": disc}
+            "_reported": reported, "_discrepancies": disc, "_severe": severe}
 
 
 CALL_CATCH_TOOL = {
@@ -214,6 +224,7 @@ def _context(df, meta, m, prose, is_sample):
 
 def _render(ctx):
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html", "j2"]))
+    env.filters["clean"] = html_safe.clean
     return env.get_template("call_catch.html.j2").render(**ctx)
 def _save(meta, html):
     REPORTS_DIR.mkdir(exist_ok=True)
@@ -224,7 +235,7 @@ def _email(email, owner, html_bytes, meta, dq_warnings=None):
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your business").strip()
-    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.net>"),
         "to": [email], "subject": f"Your {month} Call Catch — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Call Catch report for {biz} is "
                 f"attached — every missed call, the text that kept the lead warm, and the revenue recovered.</p><p>— EchoFrame</p>",
@@ -249,7 +260,10 @@ def generate_call_catch_report(customer_email, customer_name="Client", tier="", 
         print(f"[Call Catch] Data-quality hard fail: {dq.reason}")
         return ""
     if not meta.get("Owner Name", "").strip(): meta["Owner Name"] = customer_name.strip() or "Client"
-    m = _metrics(df, meta); prose = _narrative(df, meta, m)
+    m = _metrics(df, meta)
+    if m.get("_severe"):  # E-1: typed figure dwarfs the data by ≥10× — hard hold, owner does it by hand
+        print("[Call Catch] Severe typed-vs-data overstatement — routing to manual review."); return ""
+    prose = _narrative(df, meta, m)
     ctx = _context(df, meta, m, prose, is_sample=False)
     html = _render(ctx); path = _save(meta, html)
     warnings = list(dq.warnings) + list(m.get("_discrepancies", []))  # B-1 gate + B-2 cross-check

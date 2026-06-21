@@ -174,7 +174,7 @@
       <div class="kpi">
         <div class="label">{{ k.label }}</div>
         <div class="value{% if k.is_text %} txt{% endif %}">{{ k.value }}</div>
-        <div class="sub {{ k.sub_class }}">{{ k.sub | safe }}</div>
+        <div class="sub {{ k.sub_class }}">{{ k.sub | clean }}</div>
       </div>
       {% endfor %}
     </div>
@@ -198,7 +198,7 @@
           <td class="r">{{ c.price }}</td>
           <td>{{ c.rating }}</td>
           <td><span class="promo{% if c.promo_none %} none{% endif %}">{{ c.promo }}</span></td>
-          <td class="r"><span class="chg {{ c.chg_class }}">{{ c.change | safe }}</span></td>
+          <td class="r"><span class="chg {{ c.chg_class }}">{{ c.change | clean }}</span></td>
         </tr>
         {% endfor %}
       </tbody>
@@ -208,7 +208,7 @@
     <div class="secbar">What Moved This Week</div>
     <ul class="moved">
       {% for m in what_moved %}
-      <li><span class="dot {{ m.tone }}"></span>{{ m.text | safe }}</li>
+      <li><span class="dot {{ m.tone }}"></span>{{ m.text | clean }}</li>
       {% endfor %}
     </ul>
 
@@ -216,14 +216,14 @@
     <div class="secbar">The One Thing To Do This Week</div>
     <div class="onething">
       <h3>{{ one_thing.title }}</h3>
-      <p class="body">{{ one_thing.body | safe }}</p>
+      <p class="body">{{ one_thing.body | clean }}</p>
       <ol>
         {% for s in one_thing.steps %}
-        <li>{{ s | safe }}</li>
+        <li>{{ s | clean }}</li>
         {% endfor %}
       </ol>
-      <p class="impact">Estimated impact: {{ one_thing.impact | safe }}</p>
-      <p class="risk"><b>Risk:</b> {{ one_thing.risk | safe }}</p>
+      <p class="impact">Estimated impact: {{ one_thing.impact | clean }}</p>
+      <p class="risk"><b>Risk:</b> {{ one_thing.risk | clean }}</p>
     </div>
 
   </div>

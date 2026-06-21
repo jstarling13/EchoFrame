@@ -14,6 +14,7 @@ Days/status are computed; an item is Lapsed (<0), Due soon (0–30), On track (>
 import os, re, csv, base64
 import csv_utils
 import data_quality
+import html_safe
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -55,6 +56,7 @@ def load_path(path):
     if not path.exists(): print(f"[PermitWatch] ERROR - no CSV at {path}"); return None, {}
     rows = csv_utils.read_rows(path.read_bytes())
     meta, irows, inlist = {}, [], False
+    header_row = []
     for row in rows:
         if not row: continue
         first = str(row[0]).strip()
@@ -62,18 +64,23 @@ def load_path(path):
             meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
         cells = [str(c).strip() for c in row]
         if not inlist:
-            if csv_utils.header_matches(cells, _HEADER_TOKENS): inlist = True
+            if csv_utils.header_matches(cells, _HEADER_TOKENS): header_row = cells; inlist = True
             continue
         if not first: continue
+        if csv_utils.looks_like_totals_row(cells): continue
         irows.append(cells)
     if not irows: print("[PermitWatch] ERROR - no item rows"); return None, meta
     cols = ["Item", "ItemDetail", "Entity", "EntityDetail", "Expiry"]
-    # Rows with MORE cells than columns are the unquoted-thousands signature
+    # Map canonical columns to the ACTUAL header positions, so a reordered or renamed
+    # column is read from the right slot, not by blind position (finding D-2).
+    idx_map = csv_utils.column_index_map(header_row, cols)
+    ncols = len(header_row) or len(cols)
+    # Rows with MORE cells than the header are the unquoted-thousands signature
     # ("2,300" → "2" + "300"); count them before padding so the data-quality gate
     # can flag the wrong-amount bug.
-    irows = [csv_utils.repair_overflow_row(r, len(cols)) for r in irows]
-    overflow_rows = sum(1 for r in irows if len(r) > len(cols))
-    norm = [(r + [""] * len(cols))[:len(cols)] for r in irows]
+    irows = [csv_utils.repair_overflow_row(r, ncols) for r in irows]
+    overflow_rows = sum(1 for r in irows if len(r) > ncols)
+    norm = [[csv_utils.cell(r, idx_map[k]) for k in range(len(cols))] for r in irows]
     df = pd.DataFrame(norm, columns=cols).reset_index(drop=True)
     df.attrs["dq_rows_in"] = len(irows)
     df.attrs["dq_overflow_rows"] = overflow_rows
@@ -200,6 +207,7 @@ def _context(df, meta, m, prose, is_sample):
 
 def _render(ctx):
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html", "j2"]))
+    env.filters["clean"] = html_safe.clean
     return env.get_template("permit_watch.html.j2").render(**ctx)
 def _save(meta, html):
     REPORTS_DIR.mkdir(exist_ok=True)
@@ -210,7 +218,7 @@ def _email(email, owner, html_bytes, meta, dq_warnings=None):
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your business").strip()
-    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.net>"),
         "to": [email], "subject": f"Your {month} Permit Watch — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Permit Watch report for {biz} is "
                 f"attached — every registration, license, and permit with what's expiring next.</p><p>— EchoFrame</p>",

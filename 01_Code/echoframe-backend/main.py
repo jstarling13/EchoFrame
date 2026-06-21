@@ -126,8 +126,6 @@ app.add_middleware(
     allow_origins=[
         "https://echoframe.net",
         "https://www.echoframe.net",
-        "https://echoframe.co",
-        "https://www.echoframe.co",
     ],
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Accept"],
@@ -526,11 +524,13 @@ async def upload_csv(
     if len(raw_bytes) > MAX_UPLOAD_BYTES:
         raise HTTPException(status_code=413, detail="File too large. Maximum size is 5 MB.")
 
-    # 6 — must decode as UTF-8 text (rejects binary uploads)
-    try:
-        raw_bytes.decode("utf-8")
-    except UnicodeDecodeError:
-        raise HTTPException(status_code=400, detail="File must be UTF-8 encoded text.")
+    # 6 — accept any common text encoding (utf-8/utf-8-sig/cp1252/latin-1 — real
+    #     Excel/Windows CSV exports often aren't strict UTF-8; csv_utils.decode_bytes
+    #     handles them downstream), but still reject TRUE binary (images, executables).
+    _sample = raw_bytes[:8192]
+    _nontext = sum(1 for b in _sample if b < 0x09 or b in (0x0b, 0x0c) or (0x0e <= b <= 0x1f) or b == 0x7f)
+    if b"\x00" in _sample or (_sample and _nontext / len(_sample) > 0.10):
+        raise HTTPException(status_code=400, detail="File must be a text CSV, not a binary file.")
 
     # Personalize from the typed intake fields. Every engine reads its
     # Business Name / Month / Industry / Location / Role from leading "_Key,value"
@@ -618,10 +618,12 @@ async def _read_validated_csv(file: UploadFile, label: str) -> bytes:
     raw = await file.read(MAX_UPLOAD_BYTES + 1)
     if len(raw) > MAX_UPLOAD_BYTES:
         raise HTTPException(status_code=413, detail=f"{label}: file too large (max 5 MB).")
-    try:
-        raw.decode("utf-8")
-    except UnicodeDecodeError:
-        raise HTTPException(status_code=400, detail=f"{label}: file must be UTF-8 encoded text.")
+    # Accept any common text encoding (csv_utils.decode_bytes handles cp1252/latin-1
+    # downstream); reject only true binary (null bytes / mostly non-text).
+    _sample = raw[:8192]
+    _nontext = sum(1 for b in _sample if b < 0x09 or b in (0x0b, 0x0c) or (0x0e <= b <= 0x1f) or b == 0x7f)
+    if b"\x00" in _sample or (_sample and _nontext / len(_sample) > 0.10):
+        raise HTTPException(status_code=400, detail=f"{label}: file must be a text CSV, not a binary file.")
     return raw
 
 

@@ -17,6 +17,7 @@ Single plan ($199/mo).
 
 import os, re, base64
 import data_quality
+import html_safe
 from pathlib import Path
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -132,6 +133,7 @@ def _context(c, prose, is_sample):
 
 def _render(ctx):
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html", "j2"]))
+    env.filters["clean"] = html_safe.clean
     return env.get_template("revenue_suite.html.j2").render(**ctx)
 def _save(biz, html):
     REPORTS_DIR.mkdir(exist_ok=True)
@@ -141,7 +143,7 @@ def _email(email, owner, html_bytes, biz, month, dq_warnings=None):
     import resend
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
-    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.net>"),
         "to": [email], "subject": f"Your {month} Revenue Suite — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Revenue Suite report for {biz} is "
                 f"attached — Call Catch, Quote Revive, and Clear Ledger on one page, with everything you "

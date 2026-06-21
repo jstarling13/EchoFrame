@@ -15,6 +15,7 @@ Meta: _ROs Closed, _Paid Before, _Paid Pct, _Avg Time, _Avg Time Sub, _Collected
 import os, re, csv, base64
 import csv_utils
 import data_quality
+import html_safe
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -37,8 +38,7 @@ def _sanitize(v, n=300):
     v = _CTRL.sub('', str(v)); v = _DELIM.sub('', v); return v[:n].strip()
 def _slug(b): s = re.sub(r"[^a-z0-9]+", "_", (b or "").lower()).strip("_"); return s or "report"
 def _to_float(s):
-    try: return float(str(s).replace("$", "").replace(",", "").strip())
-    except (ValueError, AttributeError): return 0.0
+    return csv_utils.to_amount(s)
 def _money(n): return f"${n:,.0f}"
 def _money2(n): return f"${n:,.2f}"
 def _int(s): return int(_to_float(s))
@@ -49,7 +49,7 @@ def load_path(path):
     path = Path(path)
     if not path.exists(): print(f"[DrivePay] ERROR - no CSV at {path}"); return None, {}
     rows = csv_utils.read_rows(path.read_bytes())
-    meta, lrows, inlist = {}, [], False
+    meta, lrows, header_row, inlist = {}, [], [], False
     for row in rows:
         if not row: continue
         first = str(row[0]).strip()
@@ -57,18 +57,23 @@ def load_path(path):
             meta[first.lstrip("_").strip()] = str(row[1]).strip() if len(row) > 1 else ""; continue
         cells = [str(c).strip() for c in row]
         if not inlist:
-            if csv_utils.header_matches(cells, _HEADER_TOKENS): inlist = True
+            if csv_utils.header_matches(cells, _HEADER_TOKENS): header_row = cells; inlist = True
             continue
         if not first: continue
+        if csv_utils.looks_like_totals_row(cells): continue  # skip a spreadsheet TOTAL row (don't sum it)
         lrows.append(cells)
     if not lrows: print("[DrivePay] ERROR - no log rows"); return None, meta
     cols = ["Time", "Customer", "Vehicle", "Invoice", "PayLink", "Outcome", "OutType"]
+    # Map canonical columns to the ACTUAL header positions, so a reordered or renamed
+    # column is read from the right slot, not by blind position (finding D-2).
+    idx_map = csv_utils.column_index_map(header_row, cols)
+    ncols = len(header_row) or len(cols)
     # Rows with MORE cells than columns are the signature of an unquoted thousands
     # separator: "2,300" splits into "2" + "300", truncation drops the "300", and
     # the amount reads as $2. Count them so the data-quality gate can flag it.
-    lrows = [csv_utils.repair_overflow_row(r, len(cols)) for r in lrows]
-    overflow_rows = sum(1 for r in lrows if len(r) > len(cols))
-    norm = [(r + [""] * len(cols))[:len(cols)] for r in lrows]
+    lrows = [csv_utils.repair_overflow_row(r, ncols) for r in lrows]
+    overflow_rows = sum(1 for r in lrows if len(r) > ncols)
+    norm = [[csv_utils.cell(r, idx_map[k]) for k in range(len(cols))] for r in lrows]
     df = pd.DataFrame(norm, columns=cols)
     df["InvoiceNum"] = df["Invoice"].map(_to_float)
     df["OutKey"] = df["OutType"].map(lambda s: str(s).strip().lower())
@@ -126,10 +131,15 @@ def _metrics(df, meta):
         collected = data_collected
 
     before_pickup = _to_float(meta.get("Before Pickup", ""))
+    # E-1: clamp impossible derived figures (can't pay before pickup more than ROs; %≤100)
+    # and flag an order-of-magnitude collected overstatement so generate() holds for review.
+    paid_before = min(paid_before, ros) if ros else paid_before
+    paid_pct = data_quality.clamp_pct(paid_pct)
+    severe = data_quality.is_severe_overstatement(collected, data_collected)
     print(f"[DrivePay] ROs {ros} | paid before {paid_before} ({paid_pct}%) | collected ${collected:,.0f}")
     return {"ros": ros, "paid_before": paid_before, "paid_pct": paid_pct, "collected": collected,
             "before_pickup": before_pickup, "shown": _int(meta.get("Shown", "")) or len(df), "count": len(df),
-            "_reported": reported, "_discrepancies": disc}
+            "_reported": reported, "_discrepancies": disc, "_severe": severe}
 
 
 DRIVE_PAY_TOOL = {
@@ -227,6 +237,7 @@ def _context(df, meta, m, prose, is_sample):
 
 def _render(ctx):
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html", "j2"]))
+    env.filters["clean"] = html_safe.clean
     return env.get_template("drive_pay.html.j2").render(**ctx)
 def _save(meta, html):
     REPORTS_DIR.mkdir(exist_ok=True)
@@ -237,7 +248,7 @@ def _email(email, owner, html_bytes, meta, dq_warnings=None):
     from pdf_render import report_attachment
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     month = meta.get("Month", "").strip(); biz = meta.get("Business Name", "your shop").strip()
-    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+    params = {"from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.net>"),
         "to": [email], "subject": f"Your {month} Drive Pay — {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your {month} Drive Pay report for {biz} is "
                 f"attached — text-to-pay sent at every job close, and what you collected at pickup instead of chasing.</p><p>— EchoFrame</p>",
@@ -263,7 +274,10 @@ def generate_drive_pay_report(customer_email, customer_name="Client", tier="", s
         print(f"[Drive Pay] Data-quality hard fail: {dq.reason}")
         return ""
     if not meta.get("Owner Name", "").strip(): meta["Owner Name"] = customer_name.strip() or "Client"
-    m = _metrics(df, meta); prose = _narrative(df, meta, m)
+    m = _metrics(df, meta)
+    if m.get("_severe"):  # E-1: typed figure dwarfs the data by ≥10× — hard hold, owner does it by hand
+        print("[Drive Pay] Severe typed-vs-data overstatement — routing to manual review."); return ""
+    prose = _narrative(df, meta, m)
     ctx = _context(df, meta, m, prose, is_sample=False)
     html = _render(ctx); path = _save(meta, html)
     warnings = list(dq.warnings) + list(m.get("_discrepancies", []))  # B-1 gate + B-2 cross-check

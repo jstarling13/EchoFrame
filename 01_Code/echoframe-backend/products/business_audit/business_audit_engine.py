@@ -23,6 +23,7 @@ INPUT CSV (questionnaire + financials table):
 import os, re, csv, base64
 import csv_utils
 import data_quality
+import html_safe
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -55,10 +56,7 @@ def _slug(b):
     s = re.sub(r"[^a-z0-9]+", "_", (b or "").lower()).strip("_"); return s or "report"
 
 def _to_float(s):
-    try:
-        return float(str(s).replace("$", "").replace(",", "").replace("k", "000").strip())
-    except (ValueError, AttributeError):
-        return 0.0
+    return csv_utils.to_amount(str(s).replace("k", "000").replace("K", "000"))
 
 def _money(n): return f"${n:,.0f}"
 
@@ -72,6 +70,7 @@ def load_path(path):
         print(f"[BusinessAudit] ERROR - no CSV at {path}"); return None, {}
     rows = csv_utils.read_rows(path.read_bytes())
     meta, lrows, inlist = {}, [], False
+    header_row = []
     for row in rows:
         if not row:
             continue
@@ -82,18 +81,25 @@ def load_path(path):
         cells = [str(c).strip() for c in row]
         if not inlist:
             if csv_utils.header_matches(cells, _HEADER_TOKENS):
+                header_row = cells
                 inlist = True
             continue
         if not first:
+            continue
+        if csv_utils.looks_like_totals_row(cells):  # skip a spreadsheet TOTAL row (don't sum it)
             continue
         lrows.append(cells)
     cols = ["Month", "Revenue", "Expenses"]
     # Rows with MORE cells than columns are the signature of an unquoted thousands
     # separator: "2,300" splits into "2" + "300", truncation drops the "300", and
     # the amount reads as $2. Count them so the data-quality gate can flag it.
-    lrows = [csv_utils.repair_overflow_row(r, len(cols)) for r in lrows]
-    overflow_rows = sum(1 for r in lrows if len(r) > len(cols))
-    norm = [(r + [""] * len(cols))[:len(cols)] for r in lrows]
+    # Map canonical columns to the ACTUAL header positions, so a reordered or renamed
+    # column is read from the right slot, not by blind position (finding D-2).
+    idx_map = csv_utils.column_index_map(header_row, cols)
+    ncols = len(header_row) or len(cols)
+    lrows = [csv_utils.repair_overflow_row(r, ncols) for r in lrows]
+    overflow_rows = sum(1 for r in lrows if len(r) > ncols)
+    norm = [[csv_utils.cell(r, idx_map[k]) for k in range(len(cols))] for r in lrows]
     df = pd.DataFrame(norm, columns=cols).reset_index(drop=True)
     if not df.empty:
         df["Rev"] = df["Revenue"].map(_to_float)
@@ -275,6 +281,7 @@ def _context(df, meta, m, prose, is_sample):
 def _render(ctx):
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)),
                       autoescape=select_autoescape(["html", "j2"]))
+    env.filters["clean"] = html_safe.clean
     return env.get_template("business_audit.html.j2").render(**ctx)
 
 def _save(meta, html):
@@ -289,7 +296,7 @@ def _email(email, owner, html_bytes, meta, dq_warnings=None):
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
     biz = meta.get("Business Name", "your business").strip()
     params = {
-        "from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.co>"),
+        "from": os.environ.get("EMAIL_FROM", "EchoFrame <reports@echoframe.net>"),
         "to": [email],
         "subject": f"Your Business Audit Report - {biz}".strip(),
         "html": f"<p>Hi {(owner or 'there').strip()},</p><p>Your Business Audit Report for {biz} is "

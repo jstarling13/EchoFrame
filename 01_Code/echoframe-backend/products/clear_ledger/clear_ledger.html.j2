@@ -106,7 +106,7 @@
       <div class="kpi">
         <div class="label">{{ k.label }}</div>
         <div class="value">{{ k.value }}{% if k.unit %}<small> {{ k.unit }}</small>{% endif %}</div>
-        <div class="delta {{ k.delta_class }}">{{ k.delta_text | safe }}</div>
+        <div class="delta {{ k.delta_class }}">{{ k.delta_text | clean }}</div>
       </div>
       {% endfor %}
     </div>
@@ -141,14 +141,14 @@
       <div class="stage s{{ loop.index }}">
         <div class="shead"><span class="sname">{{ loop.index }} · {{ s.name }}</span><span class="sday">{{ s.day }}</span></div>
         <div class="tone">{{ s.tone }}</div>
-        <div class="quote">{{ s.quote | safe }}</div>
+        <div class="quote">{{ s.quote | clean }}</div>
       </div>
       {% endfor %}
     </div>
 
     <div class="card">
       <div class="ttl">How Clear Ledger Works</div>
-      <p>{{ method_note | safe }}</p>
+      <p>{{ method_note | clean }}</p>
       <p class="src">{{ source_line }}</p>
     </div>
 
@@ -156,7 +156,7 @@
       <span class="badge">The One Thing</span>
       <div>
         <h3>{{ one_thing.title }}</h3>
-        <p>{{ one_thing.body | safe }}</p>
+        <p>{{ one_thing.body | clean }}</p>
       </div>
     </div>
   </div>

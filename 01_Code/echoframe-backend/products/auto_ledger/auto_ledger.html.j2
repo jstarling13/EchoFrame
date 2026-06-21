@@ -294,7 +294,7 @@
       <div class="kpi">
         <div class="label">{{ k.label }}</div>
         <div class="value">{{ k.value }}</div>
-        <div class="delta {{ k.delta_class }}">{{ k.delta_text | safe }}</div>
+        <div class="delta {{ k.delta_class }}">{{ k.delta_text | clean }}</div>
       </div>
       {% endfor %}
     </div>
@@ -361,7 +361,7 @@
       </div>
       {% endfor %}
     </div>
-    {% if breakdown_note %}<p class="contnote">{{ breakdown_note | safe }}</p>{% endif %}
+    {% if breakdown_note %}<p class="contnote">{{ breakdown_note | clean }}</p>{% endif %}
     {% endif %}
   </div>
 
@@ -392,7 +392,7 @@
       <div class="card">
         <p class="card-title">What changed this month</p>
         {% for p in what_changed %}
-        <p>{{ p | safe }}</p>
+        <p>{{ p | clean }}</p>
         {% endfor %}
       </div>
       <div class="card">
@@ -400,7 +400,7 @@
         {% for m in miscatches %}
         <div class="flag">
           <span class="ico">!</span>
-          <span>{{ m | safe }}</span>
+          <span>{{ m | clean }}</span>
         </div>
         {% endfor %}
       </div>
@@ -417,7 +417,7 @@
       <div class="taxbox"><div class="l">Self-Employment</div><div class="v">{{ tax_estimate.se }}</div></div>
       <div class="taxbox total"><div class="l">Set Aside</div><div class="v">{{ tax_estimate.total }}</div></div>
     </div>
-    <p class="taxnote">{{ tax_estimate.note | safe }}</p>
+    <p class="taxnote">{{ tax_estimate.note | clean }}</p>
     {% endif %}
 
     {% if accounts %}
@@ -446,7 +446,7 @@
     <div class="card">
       <ul class="rules">
         {% for r in custom_rules %}
-        <li>{{ r | safe }}</li>
+        <li>{{ r | clean }}</li>
         {% endfor %}
       </ul>
     </div>
@@ -499,14 +499,14 @@
       </div>
       {% endif %}
     </div>
-    {% if pl_note %}<p class="contnote">{{ pl_note | safe }}</p>{% endif %}
+    {% if pl_note %}<p class="contnote">{{ pl_note | clean }}</p>{% endif %}
     {% endif %}
 
     <div class="onething">
       <span class="badge">The One Thing</span>
       <div>
         <h3>{{ one_thing.title }}</h3>
-        <p>{{ one_thing.body | safe }}</p>
+        <p>{{ one_thing.body | clean }}</p>
       </div>
     </div>
 
@@ -516,7 +516,7 @@
     </div>
     <ul class="watch">
       {% for w in watch_next %}
-      <li>{{ w | safe }}</li>
+      <li>{{ w | clean }}</li>
       {% endfor %}
     </ul>
     {% endif %}
