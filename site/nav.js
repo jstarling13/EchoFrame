@@ -78,7 +78,7 @@
   }
 
   var css = [
-    '.ef-nav{padding:18px 0;border-bottom:1px solid #E5E7EB;background:#fff;position:relative;z-index:200;box-shadow:0 1px 4px rgba(10,39,79,0.08)}',
+    '.ef-nav{padding:18px 0;border-bottom:1px solid #E5E7EB;background:#FAF9F5;position:relative;z-index:200;box-shadow:0 1px 4px rgba(10,39,79,0.08)}',
     '.ef-nav-inner{max-width:1080px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:center}',
     '.ef-brand{display:flex;align-items:center;gap:12px;font-weight:700;color:#0A274F;font-size:22px;letter-spacing:-0.015em;text-decoration:none;font-family:Inter,-apple-system,sans-serif}',
     '.ef-brand:hover{text-decoration:none;color:#0A274F}',
@@ -97,7 +97,7 @@
     '.ef-navlink.is-active{color:#94681C}',
     '.ef-caret{font-size:10px;line-height:1;transition:transform .15s;display:inline-block;margin-top:1px}',
     /* panel — hidden by default, shown on hover */
-    '.ef-dd-panel{display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:240px;background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:8px;box-shadow:0 12px 36px rgba(10,39,79,.12);z-index:400}',
+    '.ef-dd-panel{display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:240px;background:#FAF9F5;border:1px solid #E5E7EB;border-radius:14px;padding:8px;box-shadow:0 12px 36px rgba(10,39,79,.12);z-index:400}',
     '.ef-dd-wrap:hover .ef-dd-panel{display:block}',
     '.ef-dd-wrap:hover .ef-caret{transform:rotate(180deg)}',
     '.ef-dd-head{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94681C;padding:6px 12px 8px;font-family:Inter,-apple-system,sans-serif}',
@@ -106,7 +106,7 @@
     '.ef-dd-all{display:block;padding:10px 12px;font-size:13px;font-weight:600;color:#94681C;border-top:1px solid #E5E7EB;margin-top:4px;text-decoration:none;font-family:Inter,-apple-system,sans-serif;border-radius:0 0 8px 8px}',
     '.ef-dd-all:hover{background:#FDF3E3;text-decoration:none}',
     /* log in link — outlined secondary, sits left of the Talk to us CTA */
-    '.ef-login{font-size:14px;font-weight:600;color:#0A274F;background:#fff;text-decoration:none;margin-left:12px;padding:8px 15px;border-radius:8px;border:1px solid #D1D5DB;font-family:Inter,-apple-system,sans-serif;white-space:nowrap;transition:background .12s,color .12s,border-color .12s}',
+    '.ef-login{font-size:14px;font-weight:600;color:#0A274F;background:#FAF9F5;text-decoration:none;margin-left:12px;padding:8px 15px;border-radius:8px;border:1px solid #D1D5DB;font-family:Inter,-apple-system,sans-serif;white-space:nowrap;transition:background .12s,color .12s,border-color .12s}',
     '.ef-login:hover{background:#F9FAFB;color:#94681C;border-color:#94681C;text-decoration:none}',
     /* talk link */
     '.ef-talk{font-size:14px;font-weight:600;color:#fff;background:#94681C;text-decoration:none;margin-left:10px;padding:9px 16px;border-radius:8px;font-family:Inter,-apple-system,sans-serif;white-space:nowrap}',
