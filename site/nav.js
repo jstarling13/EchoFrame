@@ -96,7 +96,7 @@
     '.ef-navlink:hover{background:#F9FAFB;color:#94681C;text-decoration:none}',
     '.ef-navlink.is-active{color:#94681C}',
     '.ef-caret{font-size:10px;line-height:1;transition:transform .15s;display:inline-block;margin-top:1px}',
-    /* panel — hidden by default, shown on hover */
+    /* panel, hidden by default, shown on hover */
     '.ef-dd-panel{display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:240px;background:#FAF9F5;border:1px solid #E5E7EB;border-radius:14px;padding:8px;box-shadow:0 12px 36px rgba(10,39,79,.12);z-index:400}',
     '.ef-dd-wrap:hover .ef-dd-panel{display:block}',
     '.ef-dd-wrap:hover .ef-caret{transform:rotate(180deg)}',
@@ -105,7 +105,7 @@
     '.ef-dd-item:hover{background:#F9FAFB;color:#0A274F;text-decoration:none}',
     '.ef-dd-all{display:block;padding:10px 12px;font-size:13px;font-weight:600;color:#94681C;border-top:1px solid #E5E7EB;margin-top:4px;text-decoration:none;font-family:Inter,-apple-system,sans-serif;border-radius:0 0 8px 8px}',
     '.ef-dd-all:hover{background:#FDF3E3;text-decoration:none}',
-    /* log in link — outlined secondary, sits left of the Talk to us CTA */
+    /* log in link, outlined secondary, sits left of the Talk to us CTA */
     '.ef-login{font-size:14px;font-weight:600;color:#0A274F;background:#FAF9F5;text-decoration:none;margin-left:12px;padding:8px 15px;border-radius:8px;border:1px solid #D1D5DB;font-family:Inter,-apple-system,sans-serif;white-space:nowrap;transition:background .12s,color .12s,border-color .12s}',
     '.ef-login:hover{background:#F9FAFB;color:#94681C;border-color:#94681C;text-decoration:none}',
     /* talk link */
@@ -119,7 +119,7 @@
     '.ef-login{margin-left:8px;padding:7px 11px;font-size:13px}',
     '.ef-talk{margin-left:8px;padding:8px 12px;font-size:13px}',
     '}',
-    /* Site-wide navy gradient on the hero bands — adds depth (matches brand collateral). */
+    /* Site-wide navy gradient on the hero bands, adds depth (matches brand collateral). */
     '.breadcrumb{background:#12386a !important}',
     '.product-hero,.div-hero{background:radial-gradient(140% 120% at 50% -25%,#173f73 0%,#0b2a53 48%,#06182f 100%) !important}',
     /* Depth pass: soft card elevation + hover-lift on cards. */
