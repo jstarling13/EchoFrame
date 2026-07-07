@@ -137,6 +137,7 @@
     + buildMenu('revenue')
     + buildMenu('ops')
     + '<a href="' + rel('/our-story.html') + '" class="ef-navlink' + (rawPath.indexOf('our-story') !== -1 ? ' is-active' : '') + '">Our Story</a>'
+    + '<a href="' + rel('/partners.html') + '" class="ef-navlink' + (rawPath.indexOf('partners') !== -1 ? ' is-active' : '') + '">Partners</a>'
     + '<a href="' + rel('/login.html') + '" class="ef-login">Log in</a>'
     + '<a href="mailto:jacobstarling4313@gmail.com" class="ef-talk">Talk to us</a>'
     + '</div></div></nav>';
