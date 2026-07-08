@@ -461,8 +461,16 @@ DEFAULT_BENCHMARKS = {
 }
 
 def _get_benchmarks(industry: str) -> dict:
-    """Return the benchmark dict for the given industry string (case-insensitive)."""
-    return INDUSTRY_BENCHMARKS.get(industry.strip().lower(), DEFAULT_BENCHMARKS)
+    """Return the benchmark dict for the given industry string (case-insensitive).
+    Prefers real government-sourced ratios (benchmarks/loader.py) when the fetch
+    scripts have cached data for this industry's NAICS sector; otherwise falls
+    back to the hardcoded estimate below, unchanged."""
+    estimate = INDUSTRY_BENCHMARKS.get(industry.strip().lower(), DEFAULT_BENCHMARKS)
+    try:
+        from benchmarks.loader import get_benchmarks as _real_benchmarks
+        return _real_benchmarks(industry, fallback=estimate)
+    except ImportError:
+        return estimate
 
 # ── Tool schema: Claude fills prose strings only ──────────────────────────────
 
