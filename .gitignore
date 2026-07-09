@@ -9,6 +9,10 @@
 **/uploads/
 **/reports/
 **/data/
+# Exception: benchmarks/data holds real fetched government data (BLS/Census
+# JSON caches), not customer data — safe and meant to ship with the code.
+!01_Code/echoframe-backend/benchmarks/data/
+!01_Code/echoframe-backend/benchmarks/data/*.json
 *.sqlite3
 *.db
 *.bin
