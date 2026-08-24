@@ -1,169 +1,136 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Partners, EchoFrame for CPAs and Bookkeepers | EchoFrame</title>
-  <meta name="description" content="EchoFrame is the base layer new and small businesses start on before a CPA. A two way referral loop: we send you clients who already understand their numbers, you send us the prospects who are not ready for you yet.">
-  <link rel="canonical" href="https://echoframe.net/partners.html">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="echoframe_logo.png">
-  <link rel="apple-touch-icon" href="echoframe_logo.png">
-  <style>
-    :root {
-      --navy: #0A274F; --amber: #94681C; --amber-bright: #E0A93F; --amber-soft: #FDF3E3;
-      --ink: #111827; --ink-soft: #4B5563; --ink-faint: #6B7280;
-      --line: #E5E7EB; --bg: #FAF9F5; --bg-soft: #F4F2EA; --bg-deep: #EDEAE0;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { background: var(--bg); color: var(--ink); }
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
-    a { color: var(--amber); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
-
-    .product-hero { padding: 80px 0 64px; text-align: center; background: var(--navy); }
-    .eyebrow { display: block; color: var(--amber-bright); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; }
-    .product-hero h1 { font-size: 44px; line-height: 1.1; letter-spacing: -0.025em; color: #FFFFFF; font-weight: 700; margin: 0 auto 18px; max-width: 720px; }
-    .product-hero .subhead { font-size: 19px; color: #C7D2E0; line-height: 1.55; margin: 0 auto 30px; max-width: 640px; }
-    .cta { display: inline-block; background: var(--amber-bright); color: var(--navy); font-weight: 600; font-size: 16px; padding: 15px 30px; border-radius: 8px; transition: background 0.15s; }
-    .cta:hover { background: #D49A2C; text-decoration: none; color: var(--navy); }
-
-    .section { padding: 68px 0; border-top: 1px solid var(--line); }
-    .section-header { margin-bottom: 40px; text-align: center; }
-    .section-eyebrow { color: var(--amber); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: block; }
-    .section-title { font-size: 30px; color: var(--navy); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; text-wrap: balance; }
-    .section-sub { font-size: 18px; color: var(--ink-soft); max-width: 620px; line-height: 1.55; margin: 0 auto; }
-
-    .ladder { max-width: 780px; margin: 40px auto 0; display: flex; flex-direction: column; gap: 12px; }
-    .rung { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; padding: 16px 22px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
-    .rung .tag { font-weight: 700; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-faint); min-width: 116px; }
-    .rung .who { flex: 1; min-width: 230px; }
-    .rung .who b { color: var(--navy); font-size: 17px; }
-    .rung .who span { color: var(--ink-soft); font-size: 15px; }
-    .rung.faint { opacity: .62; }
-    .rung.you { border: 1.5px solid var(--navy); box-shadow: 0 6px 18px rgba(10,39,79,.08); }
-    .rung.you .tag { color: var(--navy); }
-    .rung.start { border: 2px solid var(--amber-bright); background: #FFFDF7; box-shadow: 0 12px 30px rgba(10,39,79,.10); }
-    .rung.start .tag { color: var(--amber); }
-    .rung.start .who b { font-size: 19px; }
-    .rung .price { font-weight: 700; color: var(--navy); white-space: nowrap; }
-
-    .loop { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 900px; margin: 0 auto; }
-    .loop .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 26px; }
-    .loop .dir { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
-    .loop .card h3 { font-size: 17px; color: var(--navy); margin-bottom: 8px; }
-    .loop .card p { font-size: 15px; color: var(--ink-soft); line-height: 1.6; }
-
-    .note { max-width: 760px; margin: 44px auto 0; background: var(--amber-soft); border: 1px solid #EBD9AE; border-radius: 12px; padding: 18px 22px; font-size: 14.5px; line-height: 1.6; color: #5c4a1f; }
-    .note strong { color: #3f3413; }
-
-    .closing { text-align: center; }
-    .closing .section-title { margin-bottom: 22px; }
-
-    footer { padding: 40px 0; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-faint); }
-    .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; align-items: center; }
-    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
-    .footer-links a { color: var(--ink-faint); }
-    .footer-links a:hover { color: var(--amber); }
-    .footer-disclaimer { margin-top: 14px; font-size: 11.5px; color: var(--ink-faint); line-height: 1.6; }
-
-    @media (max-width: 720px) {
-      .product-hero h1 { font-size: 32px; } .product-hero { padding: 56px 0 44px; }
-      .section-title { font-size: 24px; } .loop { grid-template-columns: 1fr; }
-      .footer-inner { flex-direction: column; gap: 8px; text-align: center; } .footer-links { justify-content: center; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Partners | EchoFrame for CPAs and Bookkeepers</title>
+<meta name="description" content="EchoFrame gives new and small business owners a clear monthly read on their own numbers. It sits under your practice, not next to it.">
+<link rel="canonical" href="https://echoframe.net/partners.html">
+<link rel="icon" type="image/png" href="/echoframe-icon.png">
+<link rel="apple-touch-icon" href="/echoframe-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <div id="ef-nav"></div>
-  <script src="nav.js"></script>
+<header class="site-header">
+  <a class="brand brand-logo" href="/index.html" aria-label="EchoFrame home"><img src="/echoframe-logo.png" alt="EchoFrame"></a>
+  <nav aria-label="Primary navigation">
+    <a href="/intelligence/index.html">Intelligence</a>
+    <a href="/revenue/index.html">Revenue</a>
+    <a href="/ops/index.html">Operations</a>
+    <a href="/about.html">Company</a>
+  </nav>
+  <a class="nav-cta" href="/sample.html">Get a free first look <span aria-hidden="true">&#8599;</span></a>
+  <details class="mobile-menu">
+    <summary aria-label="Open navigation">Menu</summary>
+    <div>
+      <a href="/intelligence/index.html">Intelligence</a>
+      <a href="/revenue/index.html">Revenue</a>
+      <a href="/ops/index.html">Operations</a>
+      <a href="/about.html">Company</a>
+      <a href="/partners.html">Partners</a>
+      <a href="/sample.html">Get a free first look</a>
+    </div>
+  </details>
+</header>
 
-  <section class="product-hero">
-    <div class="container">
-      <span class="eyebrow">For CPAs and bookkeepers</span>
-      <h1>Where your future clients start.</h1>
-      <p class="subhead">EchoFrame gives new and small business owners a clear monthly read on their own numbers, in plain English. It sits under your work, not next to it, and the owners who use it grow into clients who already understand their business.</p>
-      <a class="cta" href="get-a-sample.html?product=Monthly+Clarity+Report">Send a client a free sample</a>
+<main>
+  <section class="division-hero neutral">
+    <p class="eyebrow"><span></span>For CPAs and bookkeepers</p>
+    <h1>Where your future clients start.</h1>
+    <p>EchoFrame gives new and small business owners a clear monthly read on their own numbers, in plain English. It sits under your work, not next to it, and the owners who use it grow into clients who already understand their business.</p>
+    <div class="actions">
+      <a class="button primary" href="/sample.html?area=partners">Send a client a free sample <span aria-hidden="true">&#8599;</span></a>
     </div>
   </section>
 
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-eyebrow">Where we fit</span>
-        <h2 class="section-title">Every business climbs a financial ladder. We are the first rung.</h2>
-        <p class="section-sub">Real financial clarity used to mean hiring a CFO or a firm most owners are nowhere near needing. So they go without. EchoFrame is the base layer built for that gap, and the on ramp to your practice.</p>
-      </div>
-      <div class="ladder">
-        <div class="rung faint">
-          <span class="tag">Later, maybe</span>
-          <div class="who"><b>A CFO or advisory firm.</b> <span>Full strategic finance, for bigger companies.</span></div>
-        </div>
-        <div class="rung you">
-          <span class="tag">You are here</span>
-          <div class="who"><b>A CPA.</b> <span>Taxes, audit, and compliance. Where owners grow into your practice.</span><br><span style="font-size:13px;color:var(--ink-faint);">(We'll help you get there. Warm, pre educated referrals build your practice.)</span></div>
-        </div>
-        <div class="rung start">
-          <span class="tag">They start here</span>
-          <div class="who"><b>EchoFrame.</b> <span>The clarity of a CFO, in plain English.</span></div>
-          <span class="price">from $49 / mo</span>
-        </div>
-        <div class="rung faint">
-          <span class="tag">Rung zero</span>
-          <div class="who"><b>Flying blind.</b> <span>Where most new owners are. Free, and nobody is in their corner.</span></div>
-        </div>
-      </div>
+  <section class="section" style="padding-bottom:0">
+    <div class="section-heading" style="margin-bottom:0">
+      <div><p class="kicker">Where we fit</p><h2>Every business climbs a financial ladder. We are the first rung.</h2></div>
+      <p>Real financial clarity used to mean hiring a CFO or a firm most owners are nowhere near needing. So they go without. EchoFrame is the base layer built for that gap, and the on ramp to your practice.</p>
     </div>
   </section>
 
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-eyebrow">Why it works for you</span>
-        <h2 class="section-title">A two way referral loop, not a competitor.</h2>
-      </div>
-      <div class="loop">
-        <div class="card">
-          <span class="dir">&#8593; We send clients up to you</span>
-          <h3>Pre educated, ready to sign</h3>
-          <p>An owner who has run EchoFrame for a few months arrives organized, tax ready, and already fluent in their own numbers. Warm leads for your practice instead of a shoebox of receipts.</p>
-        </div>
-        <div class="card">
-          <span class="dir">&#8595; You send prospects down to us</span>
-          <h3>Keep every prospect in the fold</h3>
-          <p>The prospect who is not ready for you yet does not have to be a "no." Hand them to EchoFrame, stay their trusted referral, and get them back when they have grown into your practice.</p>
-        </div>
-      </div>
-      <div class="note">
-        <strong>To be clear:</strong> EchoFrame is business intelligence and plain English analysis, not a CPA firm. It does not provide accounting, tax, audit, or investment advice. It makes your clients easier to serve and more likely to grow into you, never less likely to need you.
-      </div>
+  <div class="ladder">
+    <div class="rung faint">
+      <span class="tag">Later, maybe</span>
+      <div class="who"><b>A CFO or advisory firm.</b><span>Full strategic finance, for bigger companies.</span></div>
+    </div>
+    <div class="rung you">
+      <span class="tag">You are here</span>
+      <div class="who"><b>A CPA.</b><span>Taxes, audit, and compliance. Where owners grow into your practice. We&rsquo;ll help you get there, warm, pre educated referrals build your practice.</span></div>
+    </div>
+    <div class="rung start">
+      <span class="tag">They start here</span>
+      <div class="who"><b>EchoFrame.</b><span>The clarity of a CFO, in plain English.</span></div>
+      <span class="price">from $49/mo</span>
+    </div>
+    <div class="rung faint">
+      <span class="tag">Rung zero</span>
+      <div class="who"><b>Flying blind.</b><span>Where most new owners are. Free, and nobody is in their corner.</span></div>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:0">
+    <div class="section-heading">
+      <div><p class="kicker">Why it works for you</p><h2>A two way referral loop, not a competitor.</h2></div>
     </div>
   </section>
-
-  <section class="section closing">
-    <div class="container">
-      <h2 class="section-title">Want to see the loop?</h2>
-      <a class="cta" href="get-a-sample.html?product=Monthly+Clarity+Report">Send one client a free sample</a>
+  <div class="loop-grid">
+    <div class="loop-card">
+      <span class="loop-dir">&#8593; We send clients up to you</span>
+      <h3>Pre educated, ready to sign</h3>
+      <p>An owner who has run EchoFrame for a few months arrives organized, tax ready, and already fluent in their own numbers. Warm leads for your practice instead of a shoebox of receipts.</p>
     </div>
+    <div class="loop-card">
+      <span class="loop-dir">&#8595; You send prospects down to us</span>
+      <h3>Keep every prospect in the fold</h3>
+      <p>The prospect who is not ready for you yet does not have to be a &ldquo;no.&rdquo; Hand them to EchoFrame, stay their trusted referral, and get them back when they have grown into your practice.</p>
+    </div>
+  </div>
+  <div class="compliance-note"><strong>To be clear:</strong> EchoFrame is business intelligence and plain English analysis, not a CPA firm. It does not provide accounting, tax, audit, or investment advice. It makes your clients easier to serve and more likely to grow into you, never less likely to need you.</div>
+
+  <section class="cta-band">
+    <div>
+      <p class="kicker light">Want to see the loop?</p>
+      <h2>Send one client a free sample.</h2>
+    </div>
+    <a class="button gold" href="/sample.html?area=partners">Send a free sample <span aria-hidden="true">&#8599;</span></a>
   </section>
+</main>
 
-  <footer>
-    <div class="container">
-      <div class="footer-inner">
-        <span>&copy; 2026 EchoFrame, Clear Financial Reports for Small Business Owners</span>
-        <div class="footer-links">
-          <a href="index.html">Home</a>
-          <a href="our-story.html">Our Story</a>
-          <a href="privacy.html">Privacy Policy</a>
-          <a href="terms.html">Terms of Service</a>
-          <a href="mailto:jacob.starling@echoframe.net">jacob.starling@echoframe.net</a>
-        </div>
-      </div>
-      <p class="footer-disclaimer">EchoFrame provides business intelligence and informational analysis only. EchoFrame is not a CPA firm, accounting firm, registered investment adviser, or law firm, and does not provide accounting, audit, tax, legal, or investment advice. Reports are informational and you are solely responsible for the decisions you make. Consult a licensed professional before acting.</p>
+<footer>
+  <div class="footer-main">
+    <div>
+      <a class="brand brand-logo brand-logo-dark" href="/index.html" aria-label="EchoFrame home"><img src="/echoframe-logo.png" alt="EchoFrame"></a>
+      <p>Clearer signals. Better decisions.<br>Built for owner-led businesses.</p>
     </div>
-  </footer>
+    <div>
+      <b>Platform</b>
+      <a href="/intelligence/index.html">Intelligence</a>
+      <a href="/revenue/index.html">Revenue</a>
+      <a href="/ops/index.html">Operations</a>
+    </div>
+    <div>
+      <b>Company</b>
+      <a href="/about.html">Our story</a>
+      <a href="/partners.html">Partners</a>
+      <a href="mailto:jacob.starling@echoframe.net">Contact</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+    </div>
+    <div>
+      <b>Start here</b>
+      <a href="/sample.html">Free first look</a>
+      <a href="mailto:jacob.starling@echoframe.net">jacob.starling@echoframe.net</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 EchoFrame &mdash; Clear Financial Reports for Small Business Owners</span>
+  </div>
+  <p style="max-width:900px;margin:16px auto 0;font-family:'Open Sans',Arial,sans-serif;font-size:10px;line-height:1.6;color:#5b6b81;text-align:center">EchoFrame provides business intelligence and informational analysis only. EchoFrame is not a CPA firm, accounting firm, registered investment adviser, or law firm, and does not provide accounting, audit, tax, legal, or investment advice. Reports are informational and you are solely responsible for the decisions you make. Consult a licensed professional before acting.</p>
+</footer>
 </body>
 </html>

@@ -1,0 +1,23 @@
+{
+  "redirects": [
+    { "source": "/our-story.html", "destination": "/about.html", "permanent": true },
+    { "source": "/get-a-sample.html", "destination": "/sample.html", "permanent": true },
+    { "source": "/index_standalone_landing.html", "destination": "/", "permanent": true },
+    { "source": "/intelligence/auto-ledger.html", "destination": "/intelligence/index.html", "permanent": true },
+    { "source": "/intelligence/rate-watch.html", "destination": "/intelligence/index.html", "permanent": true },
+    { "source": "/intelligence/rival-scan.html", "destination": "/intelligence/index.html", "permanent": true },
+    { "source": "/intelligence/shift-lens.html", "destination": "/intelligence/index.html", "permanent": true },
+    { "source": "/intelligence/clarity.html", "destination": "/intelligence/index.html", "permanent": true },
+    { "source": "/intelligence/business-audit.html", "destination": "/intelligence/index.html", "permanent": true },
+    { "source": "/intelligence/competitor-landscape.html", "destination": "/intelligence/index.html", "permanent": true },
+    { "source": "/revenue/call-catch.html", "destination": "/revenue/index.html", "permanent": true },
+    { "source": "/revenue/quote-revive.html", "destination": "/revenue/index.html", "permanent": true },
+    { "source": "/revenue/clear-ledger.html", "destination": "/revenue/index.html", "permanent": true },
+    { "source": "/revenue/revenue-suite.html", "destination": "/revenue/index.html", "permanent": true },
+    { "source": "/ops/bay-coach.html", "destination": "/ops/index.html", "permanent": true },
+    { "source": "/ops/call-router.html", "destination": "/ops/index.html", "permanent": true },
+    { "source": "/ops/crew-hire.html", "destination": "/ops/index.html", "permanent": true },
+    { "source": "/ops/drive-pay.html", "destination": "/ops/index.html", "permanent": true },
+    { "source": "/ops/permit-watch.html", "destination": "/ops/index.html", "permanent": true }
+  ]
+}
