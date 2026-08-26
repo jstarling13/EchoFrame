@@ -138,3 +138,74 @@ def send_owner_alert(
         f"<p>— EchoFrame system</p>"
     )
     _send({"from": EMAIL_FROM, "to": [ALERT_EMAIL], "subject": subject, "html": html})
+
+
+def send_intake_confirmation(
+    to_email: str,
+    name: str,
+    reference: str,
+    area_label: str,
+    product_name: str,
+    file_count: int,
+) -> None:
+    """Confirm a Free First Look submission. No file contents or financial
+    figures are echoed back — just what was received and what happens next."""
+    greeting = (name or "").strip() or "there"
+    files_line = (
+        f"We also received {file_count} file{'s' if file_count != 1 else ''}."
+        if file_count else "You didn't attach a file, and that's fine for a first look."
+    )
+    subject = f"We've got your EchoFrame first look ({reference})"
+    html = (
+        f"<p>Hi {greeting},</p>"
+        f"<p>Thanks for telling us where things feel unclear. Here's what we received:</p>"
+        f"<ul>"
+        f"<li><strong>Reference:</strong> {reference}</li>"
+        f"<li><strong>Area:</strong> {area_label}</li>"
+        f"<li><strong>Starting point:</strong> {product_name}</li>"
+        f"</ul>"
+        f"<p>{files_line}</p>"
+        f"<p><strong>What happens next:</strong> a person checks what you shared, confirms "
+        f"the recommended starting point, and replies with the next step. You'll hear back "
+        f"within 48 hours.</p>"
+        f"<p style=\"color:#6B7280;font-size:13px;\">Need to correct or add something? Just reply "
+        f"to this email and mention reference {reference}.</p>"
+        f"<p>— EchoFrame</p>"
+        f"{_DISCLAIMER}"
+    )
+    _send({"from": EMAIL_FROM, "to": [to_email], "subject": subject, "html": html})
+
+
+def send_intake_owner_alert(
+    reference: str,
+    area_label: str,
+    product_name: str,
+    business_name: str,
+    contact_name: str,
+    contact_email: str,
+    contact_phone: str,
+    summary: str,
+    attachments: list[dict] | None = None,
+) -> None:
+    """Alert the owner to a new Free First Look lead. Unlike customer-facing mail,
+    this one carries full detail — it's an internal working alert, not a public
+    message — and any uploaded files come along as attachments so it's a two-
+    minute follow-up instead of a second round trip to find the file."""
+    subject = f"New first look ({area_label}): {business_name or contact_email}"
+    html = (
+        f"<p>New Free First Look submission:</p>"
+        f"<ul>"
+        f"<li><strong>Reference:</strong> {reference}</li>"
+        f"<li><strong>Area:</strong> {area_label}</li>"
+        f"<li><strong>Recommended product:</strong> {product_name}</li>"
+        f"<li><strong>Business:</strong> {business_name or '(not given)'}</li>"
+        f"<li><strong>Contact:</strong> {contact_name or '(no name)'} &lt;{contact_email}&gt;"
+        f"{' · ' + contact_phone if contact_phone else ''}</li>"
+        f"</ul>"
+        f"<p><strong>What they said:</strong><br>{summary or '(no summary provided)'}</p>"
+        f"<p>Reply to {contact_email} within 48 hours.</p>"
+    )
+    msg = {"from": EMAIL_FROM, "to": [ALERT_EMAIL], "subject": subject, "html": html}
+    if attachments:
+        msg["attachments"] = attachments
+    _send(msg)

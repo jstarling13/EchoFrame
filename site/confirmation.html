@@ -3,9 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Get Your Free First Look | EchoFrame</title>
-<meta name="description" content="Show EchoFrame where the business feels unclear and get a guided starting recommendation, free, within 48 hours.">
-<link rel="canonical" href="https://echoframe.net/sample.html">
+<title>First Look Received | EchoFrame</title>
+<meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="/echoframe-icon.png">
 <link rel="apple-touch-icon" href="/echoframe-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +14,6 @@
 <link rel="stylesheet" href="/intake/intake.css">
 </head>
 <body>
-<a class="skip-link" href="#main" style="position:fixed;left:1rem;top:-5rem;background:#fff;padding:.8rem;z-index:1000;transition:top .15s;">Skip to intake</a>
 <header class="site-header">
   <a class="brand brand-logo" href="/index.html" aria-label="EchoFrame home"><img src="/echoframe-logo.png" alt="EchoFrame"></a>
   <nav aria-label="Primary navigation">
@@ -40,25 +38,35 @@
 <main id="main">
 <div id="intake-app">
   <div class="shell">
-    <div class="intake-hero">
-      <section class="intro" aria-labelledby="page-title">
-        <p class="eyebrow"><span></span>Free first look</p>
-        <h1 id="page-title">Show us where the business feels unclear.</h1>
-        <p id="page-intro" class="lede">Answer a few focused questions. We will recommend the right starting point and tell you exactly what would help us show you something useful, free, within 48 hours.</p>
-        <div class="trust-note"><strong>Your information stays yours.</strong><p class="small">No accounting login is required. Share only what you are comfortable sharing. This tool routes you to an EchoFrame product; it does not provide financial advice.</p></div>
-      </section>
-      <section class="card wizard" aria-label="Free First Look intake">
-        <div class="progress" aria-label="Intake progress">
-          <div class="progress-head"><span id="progress-label">Step 1 of 7</span><span id="progress-name">Starting point</span></div>
-          <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+    <section class="received">
+      <p class="eyebrow"><span></span>Request received</p>
+      <h1>Your first look has been received.</h1>
+      <p class="lede">We will review what you shared and respond within 48 hours.</p>
+      <div class="card">
+        <dl id="receipt"></dl>
+        <section>
+          <h2>What happens next</h2>
+          <ol>
+            <li>We check the information for a usable signal.</li>
+            <li>A person reviews the recommended starting point.</li>
+            <li>You receive a plain English response with the next move.</li>
+          </ol>
+        </section>
+        <div class="actions">
+          <a class="i-button" href="/login.html" id="account-link">Create an account or sign in &#8594;</a>
+          <a class="i-button secondary" href="/index.html">Back to EchoFrame</a>
         </div>
-        <div id="error-summary" class="error-summary" role="alert" hidden></div>
-        <div id="step-panel"></div>
-        <div id="submission-status" class="status hidden" role="status"></div>
+      </div>
+      <section class="card schedule">
+        <p class="eyebrow"><span></span>Optional</p>
+        <h2>Schedule a 15-minute call.</h2>
+        <p>Scheduling is optional and never blocks your request.</p>
+        <a id="schedule-link" class="i-button hidden" rel="noopener noreferrer" target="_blank">Schedule a 15-minute call &#8599;</a>
+        <p id="schedule-placeholder" class="status">Scheduling will appear here once EchoFrame adds a verified booking link.</p>
       </section>
-    </div>
+      <p class="small">Need to correct something? <a href="mailto:jacob.starling@echoframe.net?subject=Correction%20to%20my%20EchoFrame%20First%20Look">Contact EchoFrame</a>.</p>
+    </section>
   </div>
-  <div id="announcer" class="hidden" aria-live="polite" aria-atomic="true"></div>
 </div>
 </main>
 
@@ -94,6 +102,6 @@
   </div>
   <p style="max-width:900px;margin:16px auto 0;font-family:'Open Sans',Arial,sans-serif;font-size:10px;line-height:1.6;color:#5b6b81;text-align:center">EchoFrame provides business intelligence and informational analysis only. EchoFrame is not a CPA firm, accounting firm, registered investment adviser, or law firm, and does not provide accounting, audit, tax, legal, or investment advice. Reports are informational and you are solely responsible for the decisions you make. Consult a licensed professional before acting.</p>
 </footer>
-<script type="module" src="/intake/sample.js"></script>
+<script type="module" src="/intake/confirmation.js"></script>
 </body>
 </html>

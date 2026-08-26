@@ -1,0 +1,107 @@
+/* Free First Look intake + confirmation — scoped under #intake-app so it can
+   share a page with the site's real header/footer (styles.css) without any
+   class-name or :root custom-property collisions. Font stack and hex values
+   match styles.css exactly (Newsreader serif, Open Sans labels, navy/gold). */
+#intake-app{--i-error:#9d2a2a;--i-ok:#21643d;--i-paper:#fff;--i-shadow:0 20px 50px rgba(16,35,63,.11);font-family:"Newsreader",Georgia,serif}
+#intake-app *{box-sizing:border-box}
+#intake-app h1,#intake-app h2,#intake-app h3,#intake-app p{margin-top:0}
+#intake-app .shell{max-width:1180px;margin:auto;padding:clamp(48px,7vw,92px) clamp(20px,5vw,60px)}
+#intake-app .lede{font-size:19px;color:var(--muted);max-width:660px;line-height:1.65}
+#intake-app .card{background:var(--i-paper);border:1px solid var(--line);box-shadow:var(--i-shadow);padding:clamp(24px,4vw,48px)}
+#intake-app .small{font-size:13px;color:var(--muted);font-family:"Open Sans",Arial,sans-serif}
+#intake-app .hidden{display:none!important}
+#intake-app .status{border-left:3px solid var(--gold);padding:.8rem 1rem;background:var(--paper,#fdf3e3);font-family:"Open Sans",Arial,sans-serif;font-size:14px}
+#intake-app .status.error{border-color:var(--i-error);color:#711c1c;background:#fff5f4}
+#intake-app .status.success{border-color:var(--i-ok);color:#174b2d}
+#intake-app .trust-note{margin-top:26px;border-left:3px solid var(--gold);padding-left:16px}
+#intake-app .privacy-note{border-left:3px solid var(--gold);padding:12px 18px}
+#intake-app .privacy-note span,#intake-app .trust-note span{color:var(--muted);font-size:13px}
+
+/* Wizard shell */
+#intake-app .intake-hero{display:grid;grid-template-columns:minmax(0,.9fr) minmax(480px,1.1fr);gap:clamp(32px,6vw,80px);align-items:start}
+#intake-app .intro{position:sticky;top:30px}
+#intake-app .wizard{min-height:600px}
+#intake-app .progress{margin-bottom:30px}
+#intake-app .progress-head{display:flex;justify-content:space-between;font:700 11px/1.2 "Open Sans",Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+#intake-app .progress-track{height:3px;background:var(--line);margin-top:12px}
+#intake-app .progress-bar{height:100%;background:var(--gold);transition:width .25s}
+#intake-app .step-title{font-family:"Newsreader",Georgia,serif;font-weight:500;font-size:32px;margin-bottom:10px}
+#intake-app .step-title:focus{outline:none}
+
+/* Choices (step 1) */
+#intake-app .choices{display:grid;gap:8px;margin-top:22px}
+#intake-app .choice{position:relative}
+#intake-app .choice input{position:absolute;opacity:0}
+#intake-app .choice label{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:12px;border-top:1px solid var(--line);padding:16px 4px;cursor:pointer}
+#intake-app .choice input:focus-visible+label{outline:3px solid var(--gold);outline-offset:2px}
+#intake-app .choice input:checked+label{background:#f5f1e6}
+#intake-app .choice-num{color:#91681d;font:700 11px "Open Sans",Arial,sans-serif}
+
+/* Fields */
+#intake-app .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+#intake-app .field{margin:0 0 16px}
+#intake-app .field.full{grid-column:1/-1}
+#intake-app label,#intake-app .label{display:block;font:700 13px/1.35 "Open Sans",Arial,sans-serif;margin-bottom:6px;color:var(--ink)}
+#intake-app input,#intake-app select,#intake-app textarea{width:100%;min-height:46px;border:1px solid #b7bcc4;border-radius:2px;background:#fff;color:var(--ink);font:400 16px/1.4 "Open Sans",Arial,sans-serif;padding:10px 12px}
+#intake-app textarea{min-height:110px;resize:vertical}
+#intake-app .field-error{color:var(--i-error);font:600 12px "Open Sans",Arial,sans-serif;margin-top:5px}
+#intake-app .has-error input,#intake-app .has-error select,#intake-app .has-error textarea{border:2px solid var(--i-error)}
+#intake-app .consent{display:flex;gap:10px;align-items:flex-start}
+#intake-app .consent input{width:20px;min-height:20px;margin-top:2px}
+
+/* Actions / buttons — namespaced .i-button so it can't collide with styles.css's .button */
+#intake-app .actions{display:flex;justify-content:space-between;gap:12px;margin-top:28px;padding-top:20px;border-top:1px solid var(--line)}
+#intake-app .i-button{display:inline-flex;min-height:46px;align-items:center;justify-content:center;gap:10px;border:1px solid var(--ink);background:var(--ink);color:#fff;padding:.7rem 1.15rem;text-decoration:none;font:600 14px/1 "Open Sans",Arial,sans-serif;cursor:pointer;border-radius:4px}
+#intake-app .i-button:hover{background:#1a3152;text-decoration:none;color:#fff}
+#intake-app .i-button.secondary{background:transparent;color:var(--ink)}
+#intake-app .i-button.text{border:0;background:transparent;color:var(--ink);padding:.5rem;text-decoration:underline}
+#intake-app .i-button:disabled{opacity:.55;cursor:not-allowed}
+#intake-app .skip-intake{margin-top:16px;width:100%;text-align:center}
+
+/* Recommendation (step 4) */
+#intake-app .recommendation{border-left:4px solid var(--gold);padding:20px 22px;background:#f7f3e8}
+#intake-app .recommendation .price{font:700 17px "Open Sans",Arial,sans-serif;color:var(--ink)}
+#intake-app .selector{margin-top:26px;border-top:1px solid var(--line);padding-top:18px}
+#intake-app .selector select{margin-top:8px}
+
+/* Upload (step 5) */
+#intake-app .upload{border:2px dashed #9aa4b1;padding:28px;text-align:center;background:#fcfcfa}
+#intake-app .upload.drag{border-color:var(--gold);background:#faf5e8}
+#intake-app .file-row{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-top:14px;border:1px solid var(--line);padding:13px}
+
+/* Review (step 7) */
+#intake-app .review-section{border-top:1px solid var(--line);padding:16px 0}
+#intake-app .review-head{display:flex;justify-content:space-between;gap:20px}
+#intake-app .review-head button{border:0;background:transparent;text-decoration:underline;color:var(--ink);cursor:pointer;font-family:"Open Sans",Arial,sans-serif}
+
+/* Error summary */
+#intake-app .error-summary{border:2px solid var(--i-error);background:#fff5f4;padding:16px;margin-bottom:18px}
+#intake-app .error-summary h3{font-size:18px;margin-bottom:6px;font-family:"Newsreader",Georgia,serif}
+#intake-app .error-summary a{color:#711c1c}
+
+/* Confirmation page */
+#intake-app .received{max-width:850px;margin:auto}
+#intake-app .received .card{margin:30px 0}
+#intake-app .received dl{display:grid;grid-template-columns:180px 1fr;border-bottom:1px solid var(--line);margin:0 0 26px}
+#intake-app .received dt,#intake-app .received dd{padding:11px 0;border-top:1px solid var(--line)}
+#intake-app .received dt{font:700 13px "Open Sans",Arial,sans-serif;color:var(--muted)}
+#intake-app .received dd{margin:0}
+#intake-app .schedule{box-shadow:none;border-left:4px solid var(--gold)}
+
+@media(max-width:950px){
+  #intake-app .intake-hero{grid-template-columns:1fr}
+  #intake-app .intro{position:static}
+  #intake-app .wizard{min-height:0}
+}
+@media(max-width:620px){
+  #intake-app .grid{grid-template-columns:1fr}
+  #intake-app .card{padding:22px 18px}
+  #intake-app .actions{flex-direction:column-reverse}
+  #intake-app .actions .i-button{width:100%}
+  #intake-app .file-row{align-items:flex-start;flex-direction:column}
+  #intake-app .received dl{grid-template-columns:1fr}
+  #intake-app .received dd{margin:0;border-top:0;padding-top:0}
+}
+@media(prefers-reduced-motion:reduce){
+  #intake-app *{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+}

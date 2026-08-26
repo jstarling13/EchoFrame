@@ -6,7 +6,6 @@ falls back to its in-memory backend. PUBLIC_BASE_URL is http:// so the session
 cookie is not marked Secure and the TestClient will actually send it back.
 """
 import os
-import sys
 import types
 import time
 
@@ -18,6 +17,10 @@ import pytest
 # PUBLIC_BASE_URL once at import; portal reads os.environ live, so the portal
 # routes are base-URL-agnostic in these tests.) The session cookie's Secure flag
 # is forced off via monkeypatch below so the http TestClient retains the cookie.
+# Belt-and-suspenders: conftest.py also sets both of these before ANY test
+# module imports, since whichever file first triggers `import main` locks in
+# its own os.environ reads for the whole session regardless of setdefault()
+# calls made afterward by other files.
 os.environ.setdefault("SIGNING_SECRET", "portal-test-signing-secret")
 # Match the value test_renewals pins. main caches PUBLIC_BASE_URL at first import,
 # and this module may be imported first — using the same value keeps both modules'
@@ -25,6 +28,12 @@ os.environ.setdefault("SIGNING_SECRET", "portal-test-signing-secret")
 os.environ.setdefault("PUBLIC_BASE_URL", "https://app.echoframe.net")
 
 # Stub the resend SDK so sending a sign-in link never touches the network.
+# Installed via monkeypatch on `emails.resend` (see _seed_and_clear below)
+# rather than a module-level `sys.modules["resend"]` swap: `emails.py` does
+# `import resend` once at its own top level, so whichever test file happens
+# to trigger that FIRST import (not necessarily this one) is the only one a
+# sys.modules swap would actually reach. Patching the name as bound inside
+# emails.py works regardless of import order.
 _sent = []
 _fake_resend = types.ModuleType("resend")
 class _Emails:
@@ -34,12 +43,12 @@ class _Emails:
         return {"id": f"test-{len(_sent)}"}
 _fake_resend.Emails = _Emails
 _fake_resend.api_key = ""
-sys.modules["resend"] = _fake_resend
 
 from fastapi.testclient import TestClient  # noqa: E402
 
 import sign       # noqa: E402
 import store      # noqa: E402
+import emails     # noqa: E402
 import portal     # noqa: E402
 from main import app  # noqa: E402
 
@@ -61,6 +70,7 @@ def _seed_and_clear(monkeypatch):
     # Force the session cookie non-Secure regardless of PUBLIC_BASE_URL, so the
     # http:// TestClient stores and replays it (a Secure cookie is dropped over http).
     monkeypatch.setattr(portal, "_cookie_secure", lambda: False)
+    monkeypatch.setattr(emails, "resend", _fake_resend)
     _reset_store()
     _sent.clear()
     # A known customer with a Stripe id and one pending period.

@@ -182,6 +182,8 @@ _EVENT_PREFIX    = "ef:evt:"             # ef:evt:<event_id> -> "1" (idempotency
 _LOGIN_NONCE     = "ef:login_nonce:"     # ef:login_nonce:<token_fp> -> email (single-use magic links, TTL'd)
 _QR_QUOTES       = "ef:qr:quotes:"       # ef:qr:quotes:<safe_email> -> {csv, name, uploaded_at} (Quote Revive weekly digest)
 _QR_SUBSCRIBERS  = "ef:qr:subscribers"   # set of safe_emails with a stored open-quote list
+_LEAD_PREFIX     = "ef:lead:"            # ef:lead:<reference> -> Free First Look intake lead (JSON)
+_LEAD_DEDUP      = "ef:lead_dedup:"      # ef:lead_dedup:<safe_email>:<area>:<product> -> reference (short TTL)
 
 # How long processed-event markers live. Comfortably longer than Stripe's
 # ~3-day automatic retry window so replays after a restart are still caught.
@@ -195,6 +197,41 @@ def claim_event(event_id: str) -> bool:
     event (caller should process it); False = duplicate (caller should skip).
     Only meaningful when a durable backend is configured."""
     return kv_setnx(f"{_EVENT_PREFIX}{event_id}", "1", ex=EVENT_TTL_SECONDS)
+
+
+# ── Free First Look leads (public intake, pre-purchase) ────────────────────────
+# A lead is a sales inquiry, not a billing record, so it gets its own namespace,
+# TTL, and dedup window rather than reusing the customer/period records above
+# (those are keyed to a paying Stripe customer; a lead may never become one).
+
+LEAD_TTL_SECONDS       = 180 * 24 * 3600  # 180 days: long enough to work the lead, not an indefinite store
+LEAD_DEDUP_TTL_SECONDS = 3600             # 1 hour: catches a double-click/retry, not a legitimate later inquiry
+
+
+def save_lead(reference: str, record: dict) -> None:
+    set_json(f"{_LEAD_PREFIX}{reference}", record, ex=LEAD_TTL_SECONDS)
+
+
+def load_lead(reference: str) -> Optional[dict]:
+    return get_json(f"{_LEAD_PREFIX}{reference}")
+
+
+def delete_lead(reference: str) -> None:
+    """Support a correction/deletion request against a stored lead."""
+    kv_delete(f"{_LEAD_PREFIX}{reference}")
+
+
+def claim_lead_dedup(safe_email: str, area: str, product: str, reference: str) -> tuple[bool, str]:
+    """Atomic dedup claim for a lead submission.
+
+    Returns (True, reference) the first time this (email, area, product) combination
+    is submitted within LEAD_DEDUP_TTL_SECONDS. Returns (False, existing_reference)
+    for a duplicate within that window, so the caller can hand back the SAME
+    reference instead of creating a second lead for one double-click or retry."""
+    key = f"{_LEAD_DEDUP}{safe_email}:{area}:{product}"
+    if kv_setnx(key, reference, ex=LEAD_DEDUP_TTL_SECONDS):
+        return True, reference
+    return False, (kv_get(key) or reference)
 
 
 def save_customer_record(safe_email: str, record: dict) -> None:
