@@ -2,10 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/index.py": {
-      "runtime": "@vercel/python@4.3.1",
       "maxDuration": 60,
       "memory": 1024,
-      "includeFiles": "{main.py,registry.py,sign.py,store.py,emails.py,portal.py,weekly_quote_revive.py,csv_utils.py,fulfillment_guard.py,email_failsafe.py,reminders.py,intake_specs.py,engine.py,products/**,templates/**}"
+      "includeFiles": "{main.py,registry.py,sign.py,store.py,emails.py,portal.py,intake.py,weekly_quote_revive.py,csv_utils.py,fulfillment_guard.py,email_failsafe.py,reminders.py,intake_specs.py,review_gate.py,data_quality.py,customer_errors.py,html_safe.py,pdf_render.py,engine.py,products/**,templates/**}"
     }
   },
   "rewrites": [
