@@ -8,6 +8,19 @@ import pytest
 # Ensure test-safe placeholder values are present before app import.
 # All four are required at startup (see main.py _REQUIRED_ENV_VARS).
 # Use explicit assignment so empty-string system env vars are replaced with safe placeholders.
+#
+# PUBLIC_BASE_URL and SIGNING_SECRET are read into module-level constants by
+# main.py at import time (not read live), and main/emails/portal/intake are
+# each imported exactly once per test session — whichever test file happens
+# to trigger that first import "locks in" these two for every other file.
+# test_portal.py and test_renewals.py used to each set their own via
+# os.environ.setdefault() as a defensive guard against exactly this, but that
+# only works if one of THEM is the file that runs first; any other test file
+# that imports main first (e.g. one added later, alphabetically earlier)
+# silently caches empty/wrong values for the rest of the session. Setting
+# them here removes the ordering dependency entirely — both existing
+# setdefault() calls already use these same values, so this is a no-op for
+# them and simply extends the guarantee to every test file.
 _CONFTEST_DEFAULTS = {
     "STRIPE_SECRET_KEY":               "sk_test_placeholder",
     "STRIPE_WEBHOOK_SECRET":           "whsec_test_placeholder",
@@ -17,6 +30,8 @@ _CONFTEST_DEFAULTS = {
     "PRICE_ID_MONTHLY_CLARITY_REPORT": "price_test_monthly",
     "PRICE_ID_BUSINESS_AUDIT":         "price_test_audit",
     "PRICE_ID_COMPETITOR_REPORT":      "price_test_competitor",
+    "PUBLIC_BASE_URL":                 "https://app.echoframe.net",
+    "SIGNING_SECRET":                  "conftest-shared-test-signing-secret",
 }
 for _k, _v in _CONFTEST_DEFAULTS.items():
     if not os.environ.get(_k):  # covers both absent AND empty-string values

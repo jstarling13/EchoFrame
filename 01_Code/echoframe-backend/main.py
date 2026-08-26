@@ -29,6 +29,7 @@ import review_gate
 import data_quality
 from customer_errors import CustomerInputError
 import portal
+import intake
 import weekly_quote_revive
 from reminders import run_reminders
 
@@ -117,6 +118,10 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # Client portal (passwordless magic-link login + self-serve account area).
 # Mounted here so it reuses this app's rate limiter without a circular import.
 portal.register_portal(app, limiter)
+
+# Free First Look intake (public lead capture — see intake.py). Same pattern:
+# mounted here to reuse the app's rate limiter without a circular import.
+intake.register_intake(app, limiter)
 
 # CORS — the login/signup page is a static file on echoframe.net (a different
 # origin) and submits in the background so the visitor never leaves the marketing
