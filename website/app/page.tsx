@@ -11,21 +11,23 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main>
-      <section className="hero container">
-        <p className="eyebrow">AI operations for established businesses</p>
-        <h1>Build the workflow. Train the people. Keep the capability.</h1>
-        <p>
-          We map the way work actually moves through your business, implement
-          the right mix of AI and automation, test it, train your team, and
-          transfer ownership.
-        </p>
-        <div className="hero-actions">
-          <Link href="/contact" className="btn btn-primary">
-            Book a fit call
-          </Link>
-          <Link href="/method" className="btn btn-secondary">
-            See how the method works
-          </Link>
+      <section className="hero on-dark">
+        <div className="container">
+          <p className="eyebrow">AI operations for established businesses</p>
+          <h1>Build the workflow. Train the people. Keep the capability.</h1>
+          <p>
+            We map the way work actually moves through your business,
+            implement the right mix of AI and automation, test it, train
+            your team, and transfer ownership.
+          </p>
+          <div className="hero-actions">
+            <Link href="/contact" className="btn btn-primary">
+              Book a fit call
+            </Link>
+            <Link href="/method" className="btn btn-secondary">
+              See how the method works
+            </Link>
+          </div>
         </div>
       </section>
 
