@@ -29,3 +29,6 @@ npm-debug.log*
 coverage/
 
 # source zip stays outside git tracking by choice? (kept, see note below)
+
+# typescript build info
+website/tsconfig.tsbuildinfo
