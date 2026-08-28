@@ -1,0 +1,6 @@
+offer_code,name,billing_type,unit_amount_usd,currency,interval,payment_schedule,tax_behavior,active
+O1,Workflow Opportunity Diagnostic,one_time,2500,usd,,100% prepaid,configure_after_CPA_review,True
+O2,Workflow Build Sprint,one_time,7500,usd,,50% deposit; 50% pre-launch,configure_after_CPA_review,True
+O3,AI Operations Transformation,one_time,18000,usd,,40% deposit; 30% blueprint; 30% pre-launch,configure_after_CPA_review,True
+O4,Enterprise AI Operations Program,one_time,45000,usd,,30% deposit; 25% blueprint; 25% acceptance; 20% handoff,configure_after_CPA_review,True
+O5,Workflow Assurance & Enablement,recurring,2500,usd,month,Monthly in advance; 3-month initial term,configure_after_CPA_review,True

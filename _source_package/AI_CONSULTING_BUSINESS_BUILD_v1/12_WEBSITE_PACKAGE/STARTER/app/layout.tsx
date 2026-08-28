@@ -1,0 +1,1 @@
+import './styles.css'; export const metadata={title:'Practical AI Operations',description:'AI workflow consulting, implementation, training, and ownership transfer.'}; export default function Layout({children}:{children:React.ReactNode}){return <html lang="en"><body><a className="skip" href="#content">Skip to content</a>{children}</body></html>}

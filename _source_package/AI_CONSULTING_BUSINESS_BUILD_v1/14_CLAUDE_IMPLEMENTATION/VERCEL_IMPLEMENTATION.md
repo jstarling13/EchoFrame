@@ -1,0 +1,1 @@
+Inspect repository/framework first. Connect the correct Git project, configure environment-scoped variables, deploy Preview, run the full acceptance plan, record commit/deployment, and obtain owner approval before Production. Use rollback to the last healthy deployment if post-launch checks fail.

@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+website/node_modules/
+
+# next.js
+website/.next/
+website/out/
+website/build/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+website/.env
+website/.env.*
+!website/.env.example
+
+# logs
+*.log
+npm-debug.log*
+
+# os
+.DS_Store
+
+# vercel
+.vercel
+
+# test / coverage
+coverage/
+
+# source zip stays outside git tracking by choice? (kept, see note below)

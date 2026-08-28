@@ -1,0 +1,1 @@
+Create test-mode objects from 12_STRIPE_PACKAGE/product_catalog.json. Use invoices for milestones, hosted checkout/payment links for standard payments, and a monthly subscription for O5. Verify raw webhook bodies, make handlers idempotent, map project metadata, reconcile events, test failures/refunds/disputes, then request owner approval before live objects.
