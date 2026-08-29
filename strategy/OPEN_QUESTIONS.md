@@ -15,7 +15,17 @@
 
 ## Professional review
 
-New York counsel must select governing law/venue, entity details, sales-tax treatment, privacy disclosures, regulated-industry restrictions, insurance requirements, limitation of liability, indemnity, data processing terms, and AI-generated content/IP language. A CPA should validate tax and bookkeeping treatment.
+**Amended in the pre-merge audit (2026-08-29):** counsel selection must
+not be assumed to be New York solely because initial clients are in New
+York. The engaged counsel — wherever licensed and appropriate — must
+select governing law/venue, entity details, sales-tax treatment, privacy
+disclosures, regulated-industry restrictions, insurance requirements,
+limitation of liability, indemnity, data processing terms, and
+AI-generated content/IP language, weighing: the state where the business
+entity is formed, the owner's principal place of business, where services
+are actually performed, where clients are located, and any regulated
+industries or data types involved. A CPA should validate tax and
+bookkeeping treatment.
 
 ## Implementation discoveries
 

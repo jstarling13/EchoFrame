@@ -14,7 +14,13 @@ Resolve business name, legal entity, domain, contact routes, service-area langua
 
 ## Phase 2: commercial foundation
 
-Review legal drafts with New York counsel; approve offers, prices, payment terms, travel terms, and security boundaries. Configure CRM and client folder structure.
+Review legal drafts with counsel — selected per the factors in
+`OPEN_QUESTIONS.md` "Professional review" (entity formation state,
+principal place of business, where services are performed, where clients
+are located, regulated industries/data — not assumed to be New York just
+because initial clients are there); approve offers, prices, payment
+terms, travel terms, and security boundaries. Configure CRM and client
+folder structure.
 
 ## Phase 3: website
 
