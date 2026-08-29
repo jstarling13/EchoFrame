@@ -16,7 +16,7 @@ export default function OfferTable() {
             <th scope="col">Code</th>
             <th scope="col">Offer</th>
             <th scope="col">Total contract price</th>
-            <th scope="col">Due at checkout</th>
+            <th scope="col">Initial payment</th>
             <th scope="col">Duration</th>
           </tr>
         </thead>

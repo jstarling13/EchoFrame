@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import EngagementJourney from "@/components/EngagementJourney";
 import {
   getOffer,
   formatUsd,
@@ -49,7 +50,11 @@ export default function OfferDetail({ code }: { code: OfferCode }) {
               {formatUsd(getDisplayPriceUsd(offer))}
               {offer.billing === "recurring" ? "/mo" : ""}
             </p>
-            <p className="hint">Due at checkout: {formatUsd(getDueAtCheckoutUsd(offer))}</p>
+            <p className="hint">
+              Initial payment: {formatUsd(getDueAtCheckoutUsd(offer))}{" "}
+              (invoiced privately after a signed SOW — not a public
+              checkout)
+            </p>
             <p className="hint">Payment schedule: {offer.paymentSchedule}</p>
             {offer.billing === "recurring" && offer.initialTermMonths && (
               <p className="hint">
@@ -115,12 +120,15 @@ export default function OfferDetail({ code }: { code: OfferCode }) {
           <p>
             USD pricing before sales tax. Third-party software and approved
             travel are separate unless the SOW says otherwise. A signed
-            Statement of Work precedes scheduled work; the amount due at
-            checkout reserves your slot but is not the full contract price
-            for multi-milestone offers. Regulated or consequential
-            workflows require additional review and may be declined.
+            Statement of Work precedes scheduled work; the initial payment,
+            invoiced privately after that SOW is signed, reserves your
+            slot but is not the full contract price for multi-milestone
+            offers. Regulated or consequential workflows require
+            additional review and may be declined.
           </p>
         </div>
+
+        <EngagementJourney />
 
         <Link href="/contact" className="btn btn-primary">
           Book a fit call

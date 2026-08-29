@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import OfferTable from "@/components/OfferTable";
+import EngagementJourney from "@/components/EngagementJourney";
 import Faq from "@/components/Faq";
 
 export const metadata: Metadata = {
@@ -24,6 +25,10 @@ export default function ServicesPage() {
             $2,000. Security/compliance specialist: pass-through or
             separately quoted.
           </p>
+        </div>
+
+        <div style={{ marginTop: "3rem" }}>
+          <EngagementJourney />
         </div>
 
         <h2 style={{ marginTop: "3rem" }}>Frequently asked questions</h2>
