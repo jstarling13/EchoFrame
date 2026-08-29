@@ -1,72 +1,114 @@
 /**
- * Minimal rate limiter for the contact form. If RATE_LIMIT_STORE_URL and
- * RATE_LIMIT_STORE_TOKEN are set (an Upstash Redis REST-compatible store),
- * limits are enforced durably across serverless instances. Otherwise this
- * falls back to an in-memory limiter that only protects a single running
- * instance — acceptable for local/dev, NOT sufficient for a multi-instance
- * production deployment. Configure a real store before launch.
+ * Rate limiter for the public contact form.
+ *
+ * PRODUCTION SAFETY: unlike Stripe webhook idempotency (lib/idempotency.ts,
+ * which fails CLOSED), rate limiting fails OPEN when a durable store isn't
+ * configured or is unreachable — a public lead-capture form staying
+ * available matters more than perfect abuse protection for one instance.
+ * But a missing durable store in production is loudly flagged in logs
+ * every time, per the pre-merge audit's "public contact-form deployment
+ * must also flag missing durable rate limiting" requirement. Configure
+ * RATE_LIMIT_STORE_URL/RATE_LIMIT_STORE_TOKEN before real traffic —
+ * without it, limits only apply per serverless instance, which is easy to
+ * defeat at scale.
  */
+import { isDurableStoreConfigured, isProductionRuntime } from "./durable-store";
 
 const WINDOW_SECONDS = 60;
 const MAX_REQUESTS = 5;
 
-const memoryStore = new Map<string, { count: number; resetAt: number }>();
-
-async function limitWithUpstash(
-  key: string,
-  url: string,
-  token: string
-): Promise<{ success: boolean; remaining: number }> {
-  const pipeline = [
-    ["INCR", key],
-    ["EXPIRE", key, String(WINDOW_SECONDS), "NX"],
-  ];
-  const res = await fetch(`${url}/pipeline`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(pipeline),
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    // Fail closed on the side of allowing the request but log for observability.
-    console.error("rate_limit_store_error", res.status);
-    return { success: true, remaining: MAX_REQUESTS };
-  }
-  const data = (await res.json()) as Array<{ result: number }>;
-  const count = data[0]?.result ?? 1;
-  return { success: count <= MAX_REQUESTS, remaining: Math.max(0, MAX_REQUESTS - count) };
+export interface RateLimitResult {
+  success: boolean;
+  remaining: number;
+  /** False whenever this result came from the in-memory fallback, not the durable store. */
+  durable: boolean;
 }
 
-function limitInMemory(key: string): { success: boolean; remaining: number } {
-  const now = Date.now();
-  const entry = memoryStore.get(key);
-  if (!entry || entry.resetAt < now) {
-    memoryStore.set(key, { count: 1, resetAt: now + WINDOW_SECONDS * 1000 });
-    return { success: true, remaining: MAX_REQUESTS - 1 };
+export interface RateLimitStore {
+  /** Increments the counter for `key` (creating it with the given TTL if absent) and returns the new count. */
+  increment(key: string, windowSeconds: number): Promise<number>;
+}
+
+export class UpstashRestRateLimitStore implements RateLimitStore {
+  constructor(
+    private readonly url: string,
+    private readonly token: string
+  ) {}
+
+  async increment(key: string, windowSeconds: number): Promise<number> {
+    const pipeline = [
+      ["INCR", key],
+      ["EXPIRE", key, String(windowSeconds), "NX"],
+    ];
+    const res = await fetch(`${this.url}/pipeline`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(pipeline),
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      throw new Error(`Upstash-compatible store returned status ${res.status}`);
+    }
+    const data = (await res.json()) as Array<{ result: number }>;
+    return data[0]?.result ?? 1;
   }
-  entry.count += 1;
+}
+
+/** Local development and tests ONLY — see module doc. */
+export class InMemoryRateLimitStore implements RateLimitStore {
+  private readonly counts = new Map<string, { count: number; resetAt: number }>();
+
+  async increment(key: string, windowSeconds: number): Promise<number> {
+    const now = Date.now();
+    const entry = this.counts.get(key);
+    if (!entry || entry.resetAt <= now) {
+      this.counts.set(key, { count: 1, resetAt: now + windowSeconds * 1000 });
+      return 1;
+    }
+    entry.count += 1;
+    return entry.count;
+  }
+}
+
+const memoryStore = new InMemoryRateLimitStore();
+
+function getDurableStore(): RateLimitStore {
+  const url = process.env.RATE_LIMIT_STORE_URL!;
+  const token = process.env.RATE_LIMIT_STORE_TOKEN!;
+  return new UpstashRestRateLimitStore(url, token);
+}
+
+function toResult(count: number, durable: boolean): RateLimitResult {
   return {
-    success: entry.count <= MAX_REQUESTS,
-    remaining: Math.max(0, MAX_REQUESTS - entry.count),
+    success: count <= MAX_REQUESTS,
+    remaining: Math.max(0, MAX_REQUESTS - count),
+    durable,
   };
 }
 
-export async function checkRateLimit(
-  identifier: string
-): Promise<{ success: boolean; remaining: number }> {
+export async function checkRateLimit(identifier: string): Promise<RateLimitResult> {
   const key = `contact-form:${identifier}`;
-  const url = process.env.RATE_LIMIT_STORE_URL;
-  const token = process.env.RATE_LIMIT_STORE_TOKEN;
-  if (url && token) {
+
+  if (isDurableStoreConfigured()) {
     try {
-      return await limitWithUpstash(key, url, token);
+      const count = await getDurableStore().increment(key, WINDOW_SECONDS);
+      return toResult(count, true);
     } catch (err) {
       console.error("rate_limit_store_unreachable", err);
-      return limitInMemory(key);
+      const count = await memoryStore.increment(key, WINDOW_SECONDS);
+      return toResult(count, false);
     }
   }
-  return limitInMemory(key);
+
+  if (isProductionRuntime()) {
+    console.error("rate_limit_durable_store_missing_production", {
+      feature: "contact-form",
+    });
+  }
+
+  const count = await memoryStore.increment(key, WINDOW_SECONDS);
+  return toResult(count, false);
 }
