@@ -12,7 +12,7 @@ export default function Header() {
     <header className="site-header">
       <div className="bar">
         <Link href="/" className="brand-mark">
-          Practical AI Operations
+          White Oak Operations
         </Link>
         <nav className="primary-nav" aria-label="Primary">
           <ul>

@@ -10,7 +10,7 @@ until the permission issue is resolved").
 With the owner's approval in an earlier session, a direct-file Preview
 deployment was attempted via a Vercel MCP connector to team `EchoFrame's
 projects` (`team_aRAPqQAKxNgEEADhOrrt1byO`), project name
-`practical-ai-operations`. Both attempts (explicit team ID, and none)
+`white-oak-operations`. Both attempts (explicit team ID, and none)
 failed identically:
 
 ```

@@ -63,7 +63,7 @@ async function main() {
       existing.data[0] ??
       (await stripe.products.create({
         name: offer.name,
-        metadata: { offer_code: offer.code, source: "practical-ai-operations-site" },
+        metadata: { offer_code: offer.code, source: "white-oak-operations-site" },
       }));
 
     const existingPrices = await stripe.prices.list({ product: product.id, active: true });

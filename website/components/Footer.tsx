@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div>
-            <h2>Practical AI Operations</h2>
+            <h2>White Oak Operations</h2>
             <p style={{ maxWidth: "32ch", opacity: 0.85 }}>
               Vendor-neutral AI workflow consulting, implementation, and
               training for established businesses.
@@ -46,10 +46,10 @@ export default function Footer() {
         </div>
         <div className="footer-legal">
           <p>
-            &copy; {new Date().getFullYear()} Practical AI Operations. Working
-            brand name, pending trademark and domain screening — see{" "}
-            <Link href="/about">About</Link>. Not a certification of legal,
-            medical, accounting, cybersecurity, or regulatory compliance.
+            &copy; {new Date().getFullYear()} White Oak Operations. See{" "}
+            <Link href="/about">About</Link> for company details still
+            pending finalization. Not a certification of legal, medical,
+            accounting, cybersecurity, or regulatory compliance.
           </p>
         </div>
       </div>

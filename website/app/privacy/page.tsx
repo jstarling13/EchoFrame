@@ -3,7 +3,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Privacy policy for Practical AI Operations.",
+  description: "Privacy policy for White Oak Operations.",
   // Attorney-review draft, not final — never indexed regardless of
   // environment, even once Production is otherwise indexable.
   robots: { index: false, follow: true },

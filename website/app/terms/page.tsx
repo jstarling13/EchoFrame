@@ -3,7 +3,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
-  description: "Website terms of use for Practical AI Operations.",
+  description: "Website terms of use for White Oak Operations.",
   // Attorney-review draft, not final — never indexed regardless of
   // environment, even once Production is otherwise indexable.
   robots: { index: false, follow: true },
@@ -42,7 +42,7 @@ export default function TermsPage() {
 
         <h2>Ownership</h2>
         <p>
-          The site and its content are owned by Practical AI Operations or
+          The site and its content are owned by White Oak Operations or
           its licensors, subject to third-party materials identified
           separately.
         </p>

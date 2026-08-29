@@ -10,8 +10,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "AI Workflow Consulting, Implementation & Training | Practical AI Operations",
-    template: "%s | Practical AI Operations",
+    default: "AI Workflow Consulting, Implementation & Training | White Oak Operations",
+    template: "%s | White Oak Operations",
   },
   description:
     "Vendor-neutral AI workflow consulting for established businesses: process mapping, implementation, testing, staff training, governance, and ownership transfer.",
