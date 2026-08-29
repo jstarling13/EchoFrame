@@ -4,6 +4,9 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 export const metadata: Metadata = {
   title: "Terms of Use",
   description: "Website terms of use for Practical AI Operations.",
+  // Attorney-review draft, not final — never indexed regardless of
+  // environment, even once Production is otherwise indexable.
+  robots: { index: false, follow: true },
 };
 
 export default function TermsPage() {
@@ -16,9 +19,11 @@ export default function TermsPage() {
           <p>
             <strong>Draft for attorney review.</strong> This page is a
             business-operating draft, not legal advice, and is not yet
-            approved by New York counsel (see{" "}
+            approved by counsel (see{" "}
             <code>legal/ATTORNEY_REVIEW_REQUIRED.md</code>). It must not be
-            treated as final before that review.
+            treated as final before that review. Governing law and venue
+            are not assumed from initial New York client geography alone —
+            see the factors below.
           </p>
         </div>
 
@@ -56,7 +61,12 @@ export default function TermsPage() {
           Owner/counsel action needed: legal entity name, mailing address,
           governing law/venue, and a contact route must be supplied before
           this page is published to production. Placeholder facts are
-          intentionally not included.
+          intentionally not included. Selecting governing law and venue
+          should weigh: the state where the business entity is formed, the
+          owner&rsquo;s principal place of business, where services are
+          actually performed, where clients are located, and any regulated
+          industries or data types involved — not simply the state of the
+          first clients.
         </p>
       </div>
     </main>

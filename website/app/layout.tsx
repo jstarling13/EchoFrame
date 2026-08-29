@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import DraftBanner from "@/components/DraftBanner";
+import { isProductionDeployment } from "@/lib/environment";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -14,7 +15,11 @@ export const metadata: Metadata = {
   },
   description:
     "Vendor-neutral AI workflow consulting for established businesses: process mapping, implementation, testing, staff training, governance, and ownership transfer.",
-  robots: { index: true, follow: true },
+  // Preview/local builds must never be indexed. Individual routes (e.g.
+  // /thank-you, /privacy, /terms) may narrow this further themselves.
+  robots: isProductionDeployment()
+    ? { index: true, follow: true }
+    : { index: false, follow: false },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -4,6 +4,9 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "Privacy policy for Practical AI Operations.",
+  // Attorney-review draft, not final — never indexed regardless of
+  // environment, even once Production is otherwise indexable.
+  robots: { index: false, follow: true },
 };
 
 export default function PrivacyPage() {
@@ -16,9 +19,10 @@ export default function PrivacyPage() {
           <p>
             <strong>Draft for attorney review.</strong> This page describes
             only what this site actually implements today. It is not yet
-            approved by New York counsel and must be finalized before
-            production launch (see{" "}
-            <code>legal/ATTORNEY_REVIEW_REQUIRED.md</code>).
+            approved by counsel and must be finalized before production
+            launch. Counsel selection and governing law are not assumed
+            from initial New York client geography alone — see{" "}
+            <code>legal/ATTORNEY_REVIEW_REQUIRED.md</code>.
           </p>
         </div>
 
