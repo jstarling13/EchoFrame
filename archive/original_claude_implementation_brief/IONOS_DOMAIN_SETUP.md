@@ -1,0 +1,1 @@
+Inventory and export current IONOS DNS, especially MX/SPF/DKIM/DMARC. Add the domain in Vercel, then enter the exact apex A and www CNAME/verification records Vercel displays. Do not copy stale example IPs. Preserve mail/service records. Verify apex, www redirect, SSL, email delivery, and propagation before closing. Nameserver migration requires separate explicit approval.

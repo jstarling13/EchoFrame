@@ -1,0 +1,57 @@
+[
+  {
+    "offer_code": "O1",
+    "name": "Workflow Opportunity Diagnostic",
+    "billing_type": "one_time",
+    "unit_amount_usd": 2500,
+    "currency": "usd",
+    "interval": "",
+    "payment_schedule": "100% prepaid",
+    "tax_behavior": "configure_after_CPA_review",
+    "active": true
+  },
+  {
+    "offer_code": "O2",
+    "name": "Workflow Build Sprint",
+    "billing_type": "one_time",
+    "unit_amount_usd": 7500,
+    "currency": "usd",
+    "interval": "",
+    "payment_schedule": "50% deposit; 50% pre-launch",
+    "tax_behavior": "configure_after_CPA_review",
+    "active": true
+  },
+  {
+    "offer_code": "O3",
+    "name": "AI Operations Transformation",
+    "billing_type": "one_time",
+    "unit_amount_usd": 18000,
+    "currency": "usd",
+    "interval": "",
+    "payment_schedule": "40% deposit; 30% blueprint; 30% pre-launch",
+    "tax_behavior": "configure_after_CPA_review",
+    "active": true
+  },
+  {
+    "offer_code": "O4",
+    "name": "Enterprise AI Operations Program",
+    "billing_type": "one_time",
+    "unit_amount_usd": 45000,
+    "currency": "usd",
+    "interval": "",
+    "payment_schedule": "30% deposit; 25% blueprint; 25% acceptance; 20% handoff",
+    "tax_behavior": "configure_after_CPA_review",
+    "active": true
+  },
+  {
+    "offer_code": "O5",
+    "name": "Workflow Assurance & Enablement",
+    "billing_type": "recurring",
+    "unit_amount_usd": 2500,
+    "currency": "usd",
+    "interval": "month",
+    "payment_schedule": "Monthly in advance; 3-month initial term",
+    "tax_behavior": "configure_after_CPA_review",
+    "active": true
+  }
+]

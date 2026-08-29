@@ -1,0 +1,1 @@
+See 12_WEBSITE_PACKAGE/WEBSITE_SPECIFICATION.md and WEBSITE_COPY.md. Merge into the inspected framework; do not blindly replace the repo with STARTER. Implement server-side forms, complete routes, accessibility, analytics consent, security, SEO, tests, and preview evidence.
