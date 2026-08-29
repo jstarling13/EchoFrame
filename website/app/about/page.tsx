@@ -20,12 +20,11 @@ export default function AboutPage() {
           evidence, cost, and exit path.
         </p>
         <p className="owner-todo">
-          Company name confirmed by the owner: White Oak Operations
-          (strategy/DECISION_LOG.md). Trademark/domain clearance status has
-          not been separately confirmed. Legal entity name, mailing
-          address, phone, and support/privacy email have not been
-          finalized and are intentionally omitted here rather than
-          fabricated.
+          White Oak Operations is the selected working company name,
+          pending trademark, entity-name, domain, and common-law clearance
+          (strategy/DECISION_LOG.md). Legal entity name, mailing address,
+          phone, and support/privacy email have not been finalized and are
+          intentionally omitted here rather than fabricated.
         </p>
       </div>
     </main>

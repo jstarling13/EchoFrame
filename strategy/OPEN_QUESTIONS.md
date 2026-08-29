@@ -6,7 +6,7 @@
 
 ## Owner decisions
 
-1. ~~Permanent company name~~ — **Resolved 2026-08-29: White Oak Operations** (see `strategy/DECISION_LOG.md`). Trademark/domain clearance status not separately confirmed.
+1. Permanent company name — **corrected 2026-08-29: White Oak Operations is the selected working company name, pending trademark, entity-name, domain, and common-law clearance** (see `strategy/DECISION_LOG.md`). This item stays open until each of those four clearances is separately confirmed; the working name is in active use on the site and in Preview in the meantime.
 2. Legal entity name, mailing address, phone, support email, and privacy email.
 3. Exact New York travel base and included-mile radius.
 4. Whether prices are public or “starting at.”

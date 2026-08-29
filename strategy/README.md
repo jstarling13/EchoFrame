@@ -10,12 +10,13 @@ A complete v1 operating system for a vendor-neutral AI workflow consulting, impl
 
 ## Working identity
 
-**Company name confirmed by the owner (2026-08-29): White Oak Operations.**
-See `strategy/DECISION_LOG.md`. "Practical AI Operations" was the
-placeholder working label used while the package was implemented under
-this working name; it has been replaced throughout the website and
-operational docs. Trademark/domain clearance status has not been
-separately confirmed — verify before public launch if not already done.
+**White Oak Operations is the selected working company name, pending
+trademark, entity-name, domain, and common-law clearance** (see
+`strategy/DECISION_LOG.md`). "Practical AI Operations" was the prior
+placeholder working label used while the package was implemented; it has
+been replaced with White Oak Operations throughout the website and
+operational docs. Do not treat this as a final, cleared brand — complete
+all four clearances before public launch.
 
 ## Start here
 

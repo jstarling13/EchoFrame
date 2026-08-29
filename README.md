@@ -1,6 +1,8 @@
 # AI Consulting Business — Working Repository
 
-Company name: **White Oak Operations** (see `strategy/DECISION_LOG.md`).
+Company name: **White Oak Operations** is the selected working company
+name, pending trademark, entity-name, domain, and common-law clearance
+(see `strategy/DECISION_LOG.md`).
 
 This repo is the local implementation of the ChatGPT-authored v1 business
 package (`_source_package/AI_CONSULTING_BUSINESS_BUILD_v1`, extracted from

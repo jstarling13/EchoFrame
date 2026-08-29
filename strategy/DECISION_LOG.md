@@ -4,18 +4,21 @@
 
 **Version:** 1.0 | **Date:** 2026-08-28
 
-## Company name (decided 2026-08-29)
+## Company name (2026-08-29, corrected 2026-08-29)
 
-**White Oak Operations** is the confirmed company name, replacing the
-"Practical AI Operations" working label used throughout the original v1
-package. Applied across the website (`website/`), naming/positioning docs
-(`brand/NAMING_FRAMEWORK.md`, `strategy/MARKET_POSITIONING.md`,
-`strategy/README.md`), and the client-project ID convention
-(`operations/CRM_AND_FOLDER_SPEC.md`: `WOO-YYYY-NNN`, was `PAO-YYYY-NNN`).
-Resolves `strategy/OPEN_QUESTIONS.md` item 1. **Not yet confirmed:**
-trademark/domain clearance status, and the legal entity name (which may
-differ from the trade/brand name) — still open per `OPEN_QUESTIONS.md`
-item 2.
+**White Oak Operations is the selected working company name, pending
+trademark, entity-name, domain, and common-law clearance.** It replaces
+the "Practical AI Operations" working label used throughout the original
+v1 package and is applied across the website (`website/`),
+naming/positioning docs (`brand/NAMING_FRAMEWORK.md`,
+`strategy/MARKET_POSITIONING.md`, `strategy/README.md`), and the
+client-project ID convention (`operations/CRM_AND_FOLDER_SPEC.md`:
+`WOO-YYYY-NNN`, was `PAO-YYYY-NNN`) — none of that usage should be
+undone. It does **not** resolve `strategy/OPEN_QUESTIONS.md` item 1;
+that item remains open until trademark, entity-name, domain, and
+common-law clearance are each separately confirmed. The legal entity
+name (which may differ from this working/trade name) is a distinct open
+item — see `OPEN_QUESTIONS.md` item 2.
 
 ## Approved v1 architecture
 
