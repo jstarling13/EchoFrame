@@ -1,6 +1,6 @@
 # AI Consulting Business — Working Repository
 
-Working brand: **Practical AI Operations** (provisional; see `strategy/DECISION_LOG.md`).
+Company name: **White Oak Operations** (see `strategy/DECISION_LOG.md`).
 
 This repo is the local implementation of the ChatGPT-authored v1 business
 package (`_source_package/AI_CONSULTING_BUSINESS_BUILD_v1`, extracted from
@@ -19,7 +19,7 @@ package (`_source_package/AI_CONSULTING_BUSINESS_BUILD_v1`, extracted from
 - `finance/` — pricing/ROI/financial model workbooks
 - `stripe/` — Stripe specification and product catalog
 - `case-studies/` — empty until a real, verified engagement exists
-- `client-projects/` — per-client folders, `PAO-YYYY-NNN` naming
+- `client-projects/` — per-client folders, `WOO-YYYY-NNN` naming
 - `website/` — Next.js marketing/intake site (deploys to Vercel)
 - `archive/` — polished DOCX/PDF artifacts, checksums, version history
 - `_source_package/` — untouched extraction of the original ZIP (source of truth)

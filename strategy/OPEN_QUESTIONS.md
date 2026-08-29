@@ -6,7 +6,7 @@
 
 ## Owner decisions
 
-1. Permanent company name after trademark/domain screening.
+1. ~~Permanent company name~~ — **Resolved 2026-08-29: White Oak Operations** (see `strategy/DECISION_LOG.md`). Trademark/domain clearance status not separately confirmed.
 2. Legal entity name, mailing address, phone, support email, and privacy email.
 3. Exact New York travel base and included-mile radius.
 4. Whether prices are public or “starting at.”

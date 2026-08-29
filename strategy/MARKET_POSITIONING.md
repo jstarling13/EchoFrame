@@ -6,7 +6,7 @@
 
 ## Positioning statement
 
-For established organizations whose operations rely on email, documents, spreadsheets, and experienced employees, Practical AI Operations designs and implements governed AI workflows and trains the team to own them. Unlike generic coaching or tool resellers, the engagement ends with working systems, evidence, documentation, and internal capability.
+For established organizations whose operations rely on email, documents, spreadsheets, and experienced employees, White Oak Operations designs and implements governed AI workflows and trains the team to own them. Unlike generic coaching or tool resellers, the engagement ends with working systems, evidence, documentation, and internal capability.
 
 ## Value pillars
 

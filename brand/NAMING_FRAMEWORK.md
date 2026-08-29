@@ -26,3 +26,13 @@ Score 1-5: credibility 25%, distinctiveness 20%, clarity 20%, extensibility 15%,
 ## Recommendation
 
 Use “Practical AI Operations” only as a working descriptive brand. Shortlist Commonwork Systems, Method & Machine, and Workcraft Systems for clearance.
+
+## Decision (2026-08-29)
+
+**Owner selected White Oak Operations as the company name** — not from
+the candidate list above (that list and its scoring are preserved here as
+the historical working record, not retroactively edited). Trademark/
+domain clearance status for White Oak Operations has not been separately
+confirmed with this decision; verify before public launch if not already
+done. See `strategy/DECISION_LOG.md` for the formal record and
+`strategy/OPEN_QUESTIONS.md` item 1 (now resolved).

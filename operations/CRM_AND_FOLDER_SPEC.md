@@ -18,4 +18,4 @@ YYYYMMDD_CLIENTID_WORKFLOW_ARTIFACT_vMAJOR.MINOR_STATUS.ext. Status: DRAFT, REVI
 
 ## Project ID
 
-PAO-YYYY-NNN. Workflow ID: client ID + WF-NNN. Prompt/instruction ID: workflow + INS-NNN. Stripe metadata uses these stable IDs.
+WOO-YYYY-NNN (updated from PAO- upon company name confirmation, see `strategy/DECISION_LOG.md`). Workflow ID: client ID + WF-NNN. Prompt/instruction ID: workflow + INS-NNN. Stripe metadata uses these stable IDs.

@@ -4,6 +4,19 @@
 
 **Version:** 1.0 | **Date:** 2026-08-28
 
+## Company name (decided 2026-08-29)
+
+**White Oak Operations** is the confirmed company name, replacing the
+"Practical AI Operations" working label used throughout the original v1
+package. Applied across the website (`website/`), naming/positioning docs
+(`brand/NAMING_FRAMEWORK.md`, `strategy/MARKET_POSITIONING.md`,
+`strategy/README.md`), and the client-project ID convention
+(`operations/CRM_AND_FOLDER_SPEC.md`: `WOO-YYYY-NNN`, was `PAO-YYYY-NNN`).
+Resolves `strategy/OPEN_QUESTIONS.md` item 1. **Not yet confirmed:**
+trademark/domain clearance status, and the legal entity name (which may
+differ from the trade/brand name) — still open per `OPEN_QUESTIONS.md`
+item 2.
+
 ## Approved v1 architecture
 
 - **O1**: Workflow Opportunity Diagnostic at $2,500; deposit $2,500; 10 business days.
