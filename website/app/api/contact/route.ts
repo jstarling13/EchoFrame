@@ -9,6 +9,11 @@ import {
 import { checkRateLimit } from "@/lib/rate-limit";
 import { routeLeadToCrm } from "@/lib/crm";
 import { sendNotificationEmail } from "@/lib/email";
+import {
+  resolveSubmissionOutcome,
+  shouldReturnServiceUnavailable,
+} from "@/lib/lead-routing";
+import { isProductionRuntime } from "@/lib/durable-store";
 
 export const runtime = "nodejs";
 
@@ -38,9 +43,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (isHoneypotFilled(raw)) {
-    // Silently succeed to avoid tipping off bots; nothing is routed.
-    return NextResponse.json({ ok: true, leadId: randomUUID() }, { status: 200 });
+  const leadId = randomUUID();
+  const honeypotFilled = isHoneypotFilled(raw);
+
+  if (honeypotFilled) {
+    // Silently succeed to avoid tipping off bots; nothing is routed or attempted.
+    console.info("contact_form_submission_outcome", { leadId, outcome: "spam" });
+    return NextResponse.json({ ok: true, leadId }, { status: 200 });
   }
 
   const parsed = contactFormSchema.safeParse(normalizeContactPayload(raw));
@@ -51,7 +60,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const leadId = randomUUID();
+  const crmConfigured = Boolean(process.env.CRM_WEBHOOK_URL);
+  const emailConfigured = Boolean(
+    process.env.EMAIL_PROVIDER_API_KEY &&
+      process.env.EMAIL_FROM &&
+      process.env.LEAD_NOTIFICATION_EMAIL
+  );
+
   const submittedAt = new Date().toISOString();
 
   const [crmResult, emailResult] = await Promise.all([
@@ -72,10 +87,9 @@ export async function POST(req: NextRequest) {
       leadId,
     }),
     (async () => {
-      const notifyTo = process.env.LEAD_NOTIFICATION_EMAIL;
-      if (!notifyTo) return { sent: false, reason: "not_configured" as const };
+      if (!emailConfigured) return { sent: false, reason: "not_configured" as const };
       return sendNotificationEmail({
-        to: notifyTo,
+        to: process.env.LEAD_NOTIFICATION_EMAIL!,
         subject: `New fit call request: ${parsed.data.company}`,
         text: [
           `Lead ID: ${leadId}`,
@@ -93,14 +107,41 @@ export async function POST(req: NextRequest) {
     })(),
   ]);
 
-  // Never log free-text form content (workflowProblem); log only routing
-  // outcomes for observability, per WEBSITE_SPECIFICATION.md "logging
-  // without sensitive form bodies".
-  console.info("contact_form_submitted", {
-    leadId,
+  const outcome = resolveSubmissionOutcome({
+    isHoneypotFilled: false,
+    crmConfigured,
+    emailConfigured,
     crmDelivered: crmResult.delivered,
     emailSent: emailResult.sent,
   });
+
+  // Never log free-text form content (workflowProblem); log only routing
+  // outcomes for observability, per WEBSITE_SPECIFICATION.md "logging
+  // without sensitive form bodies".
+  console.info("contact_form_submission_outcome", {
+    leadId,
+    outcome,
+    crmConfigured,
+    emailConfigured,
+    crmDelivered: crmResult.delivered,
+    emailSent: emailResult.sent,
+  });
+
+  if (shouldReturnServiceUnavailable(outcome, isProductionRuntime())) {
+    // Both configured destinations failed (or none is configured at all)
+    // in a production environment: do not present a normal success state
+    // — the lead would otherwise silently vanish.
+    console.error("contact_form_no_lead_destination_available", { leadId, outcome });
+    return NextResponse.json(
+      {
+        ok: false,
+        errors: {
+          form: "We couldn't process your request right now. Please try again shortly or reach out directly.",
+        },
+      },
+      { status: 503 }
+    );
+  }
 
   return NextResponse.json({ ok: true, leadId }, { status: 200 });
 }
