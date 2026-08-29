@@ -1,0 +1,12 @@
+offer_code,milestone_id,label,amount_usd,trigger,method
+O1,full,Full payment,2500,Before kickoff,checkout
+O2,deposit,Deposit,3750,Before kickoff,checkout
+O2,final,Final payment,3750,Before production launch,invoice
+O3,deposit,Deposit,7200,Before kickoff,checkout
+O3,blueprint,Blueprint milestone,5400,After blueprint approval,invoice
+O3,launch,Launch milestone,5400,Before launch,invoice
+O4,deposit,Deposit,13500,Kickoff,checkout
+O4,blueprint,Blueprint milestone,11250,After blueprint approval,invoice
+O4,acceptance,Implementation acceptance milestone,11250,After implementation acceptance,invoice
+O4,handoff,Final handoff milestone,9000,Before final handoff,invoice
+O5,monthly,Monthly payment,2500,Monthly in advance,checkout

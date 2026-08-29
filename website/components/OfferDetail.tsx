@@ -1,9 +1,17 @@
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { getOffer, formatUsd, type OfferCode } from "@/lib/offers";
+import {
+  getOffer,
+  formatUsd,
+  getDisplayPriceUsd,
+  getDueAtCheckoutUsd,
+  getInvoiceMilestones,
+  type OfferCode,
+} from "@/lib/offers";
 
 export default function OfferDetail({ code }: { code: OfferCode }) {
   const offer = getOffer(code);
+  const invoiceMilestones = getInvoiceMilestones(offer);
 
   const serviceJsonLd = {
     "@context": "https://schema.org",
@@ -13,7 +21,7 @@ export default function OfferDetail({ code }: { code: OfferCode }) {
     description: offer.summary,
     offers: {
       "@type": "Offer",
-      price: offer.priceUsd,
+      price: getDisplayPriceUsd(offer),
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
     },
@@ -36,19 +44,58 @@ export default function OfferDetail({ code }: { code: OfferCode }) {
 
         <div className="grid grid-2" style={{ margin: "2rem 0" }}>
           <div className="card">
-            <h3>Price</h3>
+            <h3>Total contract price</h3>
             <p style={{ fontSize: "1.5rem", fontFamily: "var(--font-serif)" }}>
-              {formatUsd(offer.priceUsd)}
+              {formatUsd(getDisplayPriceUsd(offer))}
               {offer.billing === "recurring" ? "/mo" : ""}
             </p>
-            <p className="hint">Deposit: {formatUsd(offer.depositUsd)}</p>
+            <p className="hint">Due at checkout: {formatUsd(getDueAtCheckoutUsd(offer))}</p>
             <p className="hint">Payment schedule: {offer.paymentSchedule}</p>
+            {offer.billing === "recurring" && offer.initialTermMonths && (
+              <p className="hint">
+                {offer.initialTermMonths}-month initial contractual term
+                {offer.initialTermTotalUsd
+                  ? ` (${formatUsd(offer.initialTermTotalUsd)} minimum commitment)`
+                  : ""}
+                . See <Link href="/support#term">initial-term terms</Link>.
+              </p>
+            )}
           </div>
           <div className="card">
             <h3>Duration</h3>
             <p>{offer.duration}</p>
           </div>
         </div>
+
+        {invoiceMilestones.length > 0 && (
+          <>
+            <h2>Payment milestones after the deposit</h2>
+            <p className="hint" style={{ marginBottom: "1rem" }}>
+              Billed separately by invoice against the signed Statement of
+              Work as each milestone is reached — not charged today.
+            </p>
+            <div className="offers-table-wrap" style={{ marginBottom: "2rem" }}>
+              <table className="offers">
+                <thead>
+                  <tr>
+                    <th scope="col">Milestone</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Due</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {invoiceMilestones.map((m) => (
+                    <tr key={m.id}>
+                      <td>{m.label}</td>
+                      <td>{formatUsd(m.amountUsd)}</td>
+                      <td>{m.trigger}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
 
         <h2>Deliverables</h2>
         <ul>
@@ -68,9 +115,10 @@ export default function OfferDetail({ code }: { code: OfferCode }) {
           <p>
             USD pricing before sales tax. Third-party software and approved
             travel are separate unless the SOW says otherwise. A signed
-            Statement of Work precedes scheduled work; the deposit reserves
-            your slot. Regulated or consequential workflows require
-            additional review and may be declined.
+            Statement of Work precedes scheduled work; the amount due at
+            checkout reserves your slot but is not the full contract price
+            for multi-milestone offers. Regulated or consequential
+            workflows require additional review and may be declined.
           </p>
         </div>
 

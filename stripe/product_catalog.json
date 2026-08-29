@@ -1,57 +1,149 @@
-[
-  {
-    "offer_code": "O1",
-    "name": "Workflow Opportunity Diagnostic",
-    "billing_type": "one_time",
-    "unit_amount_usd": 2500,
-    "currency": "usd",
-    "interval": "",
-    "payment_schedule": "100% prepaid",
-    "tax_behavior": "configure_after_CPA_review",
-    "active": true
-  },
-  {
-    "offer_code": "O2",
-    "name": "Workflow Build Sprint",
-    "billing_type": "one_time",
-    "unit_amount_usd": 7500,
-    "currency": "usd",
-    "interval": "",
-    "payment_schedule": "50% deposit; 50% pre-launch",
-    "tax_behavior": "configure_after_CPA_review",
-    "active": true
-  },
-  {
-    "offer_code": "O3",
-    "name": "AI Operations Transformation",
-    "billing_type": "one_time",
-    "unit_amount_usd": 18000,
-    "currency": "usd",
-    "interval": "",
-    "payment_schedule": "40% deposit; 30% blueprint; 30% pre-launch",
-    "tax_behavior": "configure_after_CPA_review",
-    "active": true
-  },
-  {
-    "offer_code": "O4",
-    "name": "Enterprise AI Operations Program",
-    "billing_type": "one_time",
-    "unit_amount_usd": 45000,
-    "currency": "usd",
-    "interval": "",
-    "payment_schedule": "30% deposit; 25% blueprint; 25% acceptance; 20% handoff",
-    "tax_behavior": "configure_after_CPA_review",
-    "active": true
-  },
-  {
-    "offer_code": "O5",
-    "name": "Workflow Assurance & Enablement",
-    "billing_type": "recurring",
-    "unit_amount_usd": 2500,
-    "currency": "usd",
-    "interval": "month",
-    "payment_schedule": "Monthly in advance; 3-month initial term",
-    "tax_behavior": "configure_after_CPA_review",
-    "active": true
-  }
-]
+{
+  "_note": "Corrected in a pre-merge Stripe payment-architecture audit (2026-08-29). The original v1 catalog's unit_amount_usd conflated total contract value with the amount to charge at checkout, which would have made Stripe Checkout charge the FULL contract price for O2-O4 instead of the deposit. This version separates total_usd (informational) from milestones[].amount_usd (what is actually billed, and how). The unmodified original ZIP remains at /Users/jacob/Downloads/AI_CONSULTING_BUSINESS_BUILD_v1.zip; website/lib/offers.ts is the authoritative, tested copy the application actually reads.",
+  "offers": [
+    {
+      "offer_code": "O1",
+      "name": "Workflow Opportunity Diagnostic",
+      "billing_type": "one_time",
+      "total_usd": 2500,
+      "currency": "usd",
+      "interval": "",
+      "payment_schedule": "100% prepaid before kickoff",
+      "tax_behavior": "configure_after_CPA_review",
+      "active": true,
+      "milestones": [
+        {
+          "id": "full",
+          "label": "Full payment",
+          "amount_usd": 2500,
+          "trigger": "Before kickoff",
+          "method": "checkout"
+        }
+      ]
+    },
+    {
+      "offer_code": "O2",
+      "name": "Workflow Build Sprint",
+      "billing_type": "one_time",
+      "total_usd": 7500,
+      "currency": "usd",
+      "interval": "",
+      "payment_schedule": "50% deposit before kickoff; 50% invoiced before production launch",
+      "tax_behavior": "configure_after_CPA_review",
+      "active": true,
+      "milestones": [
+        {
+          "id": "deposit",
+          "label": "Deposit",
+          "amount_usd": 3750,
+          "trigger": "Before kickoff",
+          "method": "checkout"
+        },
+        {
+          "id": "final",
+          "label": "Final payment",
+          "amount_usd": 3750,
+          "trigger": "Before production launch",
+          "method": "invoice"
+        }
+      ]
+    },
+    {
+      "offer_code": "O3",
+      "name": "AI Operations Transformation",
+      "billing_type": "one_time",
+      "total_usd": 18000,
+      "currency": "usd",
+      "interval": "",
+      "payment_schedule": "40% deposit before kickoff; 30% invoiced after blueprint approval; 30% invoiced before launch",
+      "tax_behavior": "configure_after_CPA_review",
+      "active": true,
+      "milestones": [
+        {
+          "id": "deposit",
+          "label": "Deposit",
+          "amount_usd": 7200,
+          "trigger": "Before kickoff",
+          "method": "checkout"
+        },
+        {
+          "id": "blueprint",
+          "label": "Blueprint milestone",
+          "amount_usd": 5400,
+          "trigger": "After blueprint approval",
+          "method": "invoice"
+        },
+        {
+          "id": "launch",
+          "label": "Launch milestone",
+          "amount_usd": 5400,
+          "trigger": "Before launch",
+          "method": "invoice"
+        }
+      ]
+    },
+    {
+      "offer_code": "O4",
+      "name": "Enterprise AI Operations Program",
+      "billing_type": "one_time",
+      "total_usd": 45000,
+      "currency": "usd",
+      "interval": "",
+      "payment_schedule": "30% deposit at kickoff; 25% invoiced after blueprint approval; 25% invoiced after implementation acceptance; 20% invoiced before final handoff",
+      "tax_behavior": "configure_after_CPA_review",
+      "active": true,
+      "milestones": [
+        {
+          "id": "deposit",
+          "label": "Deposit",
+          "amount_usd": 13500,
+          "trigger": "Kickoff",
+          "method": "checkout"
+        },
+        {
+          "id": "blueprint",
+          "label": "Blueprint milestone",
+          "amount_usd": 11250,
+          "trigger": "After blueprint approval",
+          "method": "invoice"
+        },
+        {
+          "id": "acceptance",
+          "label": "Implementation acceptance milestone",
+          "amount_usd": 11250,
+          "trigger": "After implementation acceptance",
+          "method": "invoice"
+        },
+        {
+          "id": "handoff",
+          "label": "Final handoff milestone",
+          "amount_usd": 9000,
+          "trigger": "Before final handoff",
+          "method": "invoice"
+        }
+      ]
+    },
+    {
+      "offer_code": "O5",
+      "name": "Workflow Assurance & Enablement",
+      "billing_type": "recurring",
+      "total_usd": null,
+      "currency": "usd",
+      "interval": "month",
+      "initial_term_months": 3,
+      "initial_term_total_usd": 7500,
+      "payment_schedule": "Monthly in advance; 3-month initial contractual term",
+      "tax_behavior": "configure_after_CPA_review",
+      "active": true,
+      "milestones": [
+        {
+          "id": "monthly",
+          "label": "Monthly payment",
+          "amount_usd": 2500,
+          "trigger": "Monthly in advance",
+          "method": "checkout"
+        }
+      ]
+    }
+  ]
+}

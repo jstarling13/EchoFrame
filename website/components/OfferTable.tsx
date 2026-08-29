@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { OFFERS, formatUsd } from "@/lib/offers";
+import {
+  OFFERS,
+  formatUsd,
+  getDisplayPriceUsd,
+  getDueAtCheckoutUsd,
+} from "@/lib/offers";
 
 export default function OfferTable() {
   return (
@@ -10,8 +15,8 @@ export default function OfferTable() {
           <tr>
             <th scope="col">Code</th>
             <th scope="col">Offer</th>
-            <th scope="col">Price</th>
-            <th scope="col">Deposit</th>
+            <th scope="col">Total contract price</th>
+            <th scope="col">Due at checkout</th>
             <th scope="col">Duration</th>
           </tr>
         </thead>
@@ -23,10 +28,10 @@ export default function OfferTable() {
                 <Link href={`/${offer.slug}`}>{offer.name}</Link>
               </td>
               <td>
-                {formatUsd(offer.priceUsd)}
+                {formatUsd(getDisplayPriceUsd(offer))}
                 {offer.billing === "recurring" ? "/mo" : ""}
               </td>
-              <td>{formatUsd(offer.depositUsd)}</td>
+              <td>{formatUsd(getDueAtCheckoutUsd(offer))}</td>
               <td>{offer.duration}</td>
             </tr>
           ))}

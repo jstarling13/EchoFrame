@@ -35,3 +35,16 @@ O5 cancel at period end after initial term unless contract says otherwise. No pr
 ## Test cases
 
 Successful/failed/3DS/async payment; duplicate/out-of-order webhook; invalid signature; invoice overdue; subscription cancel/renew/fail; partial/full refund; dispute; wrong metadata; test/live key separation; reconciliation to project ID.
+
+## Addendum — pre-merge payment-architecture audit (2026-08-29)
+
+The original v1 `product_catalog.json`/`.csv` used a single `unit_amount_usd`
+field that a naive implementation could read as "the amount to charge at
+checkout," which is only correct for O1 and O5. For O2-O4 it is the total
+contract value, not the deposit. This was found and fixed before merge —
+see `website/lib/offers.ts` and `tests/offers.test.ts` in the website repo,
+and the corrected `total_usd` / `milestones[]` schema in
+`product_catalog.json`. Exactly one Stripe Price is created per offer (the
+`checkout` milestone); every other milestone is invoice-only, per "Object
+strategy" above, and is never exposed as a public reusable Price or a
+public checkout button.
