@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-08-29",
+  "project": "White Oak Operations",
+  "repository_path": "/Users/jacob/AI-Consulting-Business",
+  "working_branch": "website-implementation",
+  "states": {
+    "local_code": "PASS_REPORTED",
+    "git_remote": "BLOCKED_NOT_CREATED",
+    "vercel_project": "BLOCKED_NOT_CREATED",
+    "preview_env": "BLOCKED_NO_PROJECT",
+    "preview_deploy": "BLOCKED_NO_PROJECT",
+    "stripe_test": "NOT_STARTED",
+    "durable_store": "NOT_STARTED",
+    "resend": "NOT_STARTED",
+    "name_clearance": "NOT_STARTED",
+    "legal_entity": "NOT_STARTED",
+    "production": "PROHIBITED"
+  },
+  "next_owner_action": "Publish existing repository privately through GitHub Desktop, main first then website-implementation.",
+  "prohibitions": [
+    "no_merge",
+    "no_production_deploy",
+    "no_live_stripe",
+    "no_ionos_change",
+    "no_secret_in_chat",
+    "no_public_checkout"
+  ]
+}

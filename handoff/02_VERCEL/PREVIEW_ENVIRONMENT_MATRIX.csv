@@ -1,0 +1,20 @@
+variable,provider,secret,preview_required,phase,notes
+NEXT_PUBLIC_SITE_URL,Vercel,false,yes,basic_preview,Set to actual Preview URL after first deployment; redeploy if changed
+VERCEL_ENV,Vercel system,false,automatic,basic_preview,Do not manually override unless implementation specifically requires it
+LEAD_NOTIFICATION_EMAIL,Owner,false,yes,contact_testing,Actively monitored owner inbox
+EMAIL_PROVIDER_API_KEY,Resend,true,yes,contact_testing,Enter directly in Vercel Preview settings
+EMAIL_FROM,Resend,false,yes,contact_testing,Use permitted test sender or verified domain
+CRM_WEBHOOK_URL,Selected CRM,false,no,optional,CRM may remain disabled when email delivery succeeds
+CRM_WEBHOOK_SECRET,Selected CRM,true,no,optional,Only if CRM enabled
+STRIPE_SECRET_KEY,Stripe,true,yes,stripe_testing,Test key only; sk_test_ prefix
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,Stripe,false,yes,stripe_testing,Test publishable key only
+STRIPE_WEBHOOK_SECRET,Stripe,true,yes,stripe_webhook,Created after Preview webhook endpoint exists
+STRIPE_PRICE_O1,Stripe,false,yes,stripe_testing,Test price/payment mapping
+STRIPE_PRICE_O2_DEPOSIT,Stripe,false,yes,stripe_testing,$3,750 initial deposit
+STRIPE_PRICE_O3_DEPOSIT,Stripe,false,yes,stripe_testing,$7,200 initial deposit
+STRIPE_PRICE_O4_DEPOSIT,Stripe,false,yes,stripe_testing,$13,500 initial deposit
+STRIPE_PRICE_O5_MONTHLY,Stripe,false,yes,stripe_testing,$2,500 monthly
+RATE_LIMIT_STORE_URL,Upstash/compatible,false,yes,durable_store,Preview store endpoint
+RATE_LIMIT_STORE_TOKEN,Upstash/compatible,true,yes,durable_store,Preview store credential
+ANALYTICS_ID,Selected analytics,false,no,optional,Do not enable before consent/privacy decision
+ERROR_MONITOR_DSN,Selected monitoring,false,no,optional,Ensure no sensitive payload capture

@@ -1,0 +1,44 @@
+{
+  "git": [
+    "private",
+    "correct_owner",
+    "main_remote",
+    "website_implementation_remote",
+    "history_preserved",
+    "clean_tree",
+    "no_secrets"
+  ],
+  "preview": [
+    "vercel_project_exists",
+    "root_directory_website",
+    "production_branch_main",
+    "preview_branch_website_implementation",
+    "noindex",
+    "test_keys_only",
+    "routes_healthy"
+  ],
+  "services": [
+    "resend_delivery",
+    "durable_rate_limit",
+    "durable_webhook_idempotency",
+    "stripe_test_amounts",
+    "webhook_signature",
+    "duplicate_safe"
+  ],
+  "business": [
+    "name_status_truthful",
+    "no_public_checkout",
+    "offer_constants_match",
+    "fictional_examples_labeled",
+    "capacity_not_cash"
+  ],
+  "production": [
+    "owner_approval",
+    "name_domain_clearance_review",
+    "entity_facts",
+    "attorney_approved_legal",
+    "live_services",
+    "ionos_email_preserved",
+    "rollback_tested"
+  ]
+}

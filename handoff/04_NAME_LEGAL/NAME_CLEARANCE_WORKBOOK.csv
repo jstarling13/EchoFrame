@@ -1,0 +1,9 @@
+candidate,search_area,query,status,conflicting_name,industry,geography,active,source_url,risk,reviewer,date,notes
+White Oak Operations,USPTO exact,"White Oak Operations",NOT_RUN,,,,,,,Owner,,
+White Oak Operations,USPTO similar,"White Oak AND operations/consulting/technology/training",NOT_RUN,,,,,,,Attorney,,
+White Oak Operations,Georgia entities,"White Oak Operations and White Oak",NOT_RUN,,,,,,,Owner,,
+White Oak Operations,Georgia state marks,"White Oak",NOT_RUN,,,,,,,Owner,,
+White Oak Operations,New York entities,"White Oak Operations and White Oak",NOT_RUN,,,,,,,Owner,,
+White Oak Operations,Common law,"White Oak operations consulting AI automation systems training",NOT_RUN,,,,,,,Owner,,
+White Oak Operations,Domains,"whiteoakoperations and close variants",NOT_RUN,,,,,,,Owner,,
+White Oak Operations,Social/industry,"White Oak Operations",NOT_RUN,,,,,,,Owner,,
