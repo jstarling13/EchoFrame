@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripeClient } from "@/lib/stripe";
 import { markEventProcessedIfNew } from "@/lib/idempotency";
+import { getOffer, type OfferCode } from "@/lib/offers";
+import { checkEarlyCancellation } from "@/lib/subscription-term";
 import type Stripe from "stripe";
 
 export const runtime = "nodejs";
@@ -49,7 +51,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Invalid signature" }, { status: 400 });
   }
 
-  const isNew = await markEventProcessedIfNew(event.id);
+  let isNew: boolean;
+  try {
+    isNew = await markEventProcessedIfNew(event.id);
+  } catch (err) {
+    // Fail closed: without durable idempotency we cannot safely guarantee
+    // this event won't be double-processed across serverless instances.
+    // Return 500 so Stripe retries once the durable store is configured
+    // or reachable again — never process the event without it.
+    console.error("stripe_webhook_idempotency_unavailable", event.id, err);
+    return NextResponse.json(
+      { ok: false, error: "Idempotency store unavailable; configuration required." },
+      { status: 500 }
+    );
+  }
+
   if (!isNew) {
     // Duplicate delivery: acknowledge without reprocessing.
     return NextResponse.json({ ok: true, duplicate: true }, { status: 200 });
@@ -86,9 +102,89 @@ async function recordPaymentStateChange(event: Stripe.Event): Promise<void> {
     clientId: metadata.client_id,
   });
 
+  if (event.type === "customer.subscription.updated") {
+    checkForEarlyCancellationRequest(event);
+  }
+  if (event.type === "customer.subscription.deleted") {
+    checkForEarlyCancellationCompletion(event);
+  }
+
   // TODO(owner): once a CRM/ops backend is selected, POST this state change
   // there (e.g. via lib/crm.ts) so a human creates/updates the operations
   // task. Do not auto-start delivery work from a webhook alone.
+}
+
+/**
+ * O5's 3-month initial term is a CONTRACTUAL commitment (see
+ * strategy/DECISION_LOG.md and lib/subscription-term.ts) — Stripe does not
+ * enforce it technically, and this handler never blocks or auto-charges
+ * anything. It only flags, in logs, when a cancellation was requested (or
+ * completed) before the initial term elapsed, so a human follows up per
+ * the signed SOW/MSA. Final cancellation/early-termination wording is
+ * pending attorney review (see website/docs/O5_INITIAL_TERM.md).
+ */
+function checkForEarlyCancellationRequest(event: Stripe.Event): void {
+  const subscription = event.data.object as Stripe.Subscription;
+  const previous = (
+    event.data as { previous_attributes?: Partial<Stripe.Subscription> }
+  ).previous_attributes;
+
+  const justRequestedCancellation =
+    subscription.cancel_at_period_end === true &&
+    previous?.cancel_at_period_end !== true;
+
+  if (!justRequestedCancellation) return;
+
+  flagIfWithinInitialTerm(subscription, subscription.canceled_at ?? nowEpochSeconds());
+}
+
+function checkForEarlyCancellationCompletion(event: Stripe.Event): void {
+  const subscription = event.data.object as Stripe.Subscription;
+  flagIfWithinInitialTerm(
+    subscription,
+    subscription.ended_at ?? subscription.canceled_at ?? nowEpochSeconds()
+  );
+}
+
+function flagIfWithinInitialTerm(
+  subscription: Stripe.Subscription,
+  cancellationEpochSeconds: number
+): void {
+  const offerCode = subscription.metadata?.offer_code as OfferCode | undefined;
+  if (!offerCode) {
+    console.warn(
+      "stripe_subscription_missing_offer_metadata",
+      subscription.id,
+      "cannot check initial-term status"
+    );
+    return;
+  }
+
+  const offer = getOffer(offerCode);
+  if (!offer.initialTermMonths) return; // offer has no minimum term
+
+  const startEpochSeconds = subscription.start_date ?? subscription.created;
+  const result = checkEarlyCancellation(
+    startEpochSeconds,
+    cancellationEpochSeconds,
+    offer.initialTermMonths
+  );
+
+  if (result.isWithinInitialTerm) {
+    // Flag only — never auto-charge or block. A human resolves this per
+    // the signed contract's early-termination terms.
+    console.warn("stripe_subscription_cancelled_within_initial_term", {
+      subscriptionId: subscription.id,
+      offerCode,
+      projectId: subscription.metadata?.project_id,
+      monthsElapsed: Number(result.monthsElapsed.toFixed(2)),
+      initialTermMonths: result.initialTermMonths,
+    });
+  }
+}
+
+function nowEpochSeconds(): number {
+  return Math.floor(Date.now() / 1000);
 }
 
 function extractMetadata(event: Stripe.Event): Record<string, string> {
