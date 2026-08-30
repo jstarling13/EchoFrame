@@ -53,6 +53,24 @@ export default function Home() {
       </section>
 
       <section className="section section-border">
+        <div className="container">
+          <div className="callout">
+            <p className="eyebrow">A recent example</p>
+            <p>
+              A bookkeeper at a 15-location retail business was tracking
+              everything by hand in QuickBooks and Excel. We built an AI
+              workflow using QuickBooks&rsquo; own API to update records
+              automatically as the underlying data changed, cutting roughly
+              five hours of manual work out of her day. She was also trained
+              to build and extend her own automations going forward, using
+              AI tools directly &mdash; not just to run what we built, but
+              to keep improving it herself.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section section-border">
         <div className="container grid grid-3">
           <div>
             <Image
