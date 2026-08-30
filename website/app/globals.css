@@ -155,6 +155,12 @@ select:focus-visible,
   flex-shrink: 0;
 }
 
+.brand-logo-full {
+  height: 3.25rem;
+  width: auto;
+  object-fit: contain;
+}
+
 .footer-brand {
   display: flex;
   align-items: center;

@@ -14,14 +14,13 @@ export default function Header() {
       <div className="bar">
         <Link href="/" className="brand-mark">
           <Image
-            src="/images/logo-mark-black.png"
-            alt=""
-            width={32}
-            height={32}
-            className="brand-mark-icon"
+            src="/images/logo-full-white.png"
+            alt="White Oak Operations"
+            width={175}
+            height={140}
+            className="brand-logo-full"
             priority
           />
-          White Oak Operations
         </Link>
         <nav className="primary-nav" aria-label="Primary">
           <ul>
