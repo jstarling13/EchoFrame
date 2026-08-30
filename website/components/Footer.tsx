@@ -22,6 +22,17 @@ export default function Footer() {
               Vendor-neutral AI workflow consulting, implementation, and
               training for established businesses.
             </p>
+            <p style={{ maxWidth: "32ch", opacity: 0.85, marginTop: "1rem" }}>
+              17 Ridgeway Drive
+              <br />
+              Cataula, GA 31804
+              <br />
+              <a href="tel:+17063661096">(706) 366-1096</a>
+              <br />
+              <a href="mailto:jacobstarling4313@gmail.com">
+                jacobstarling4313@gmail.com
+              </a>
+            </p>
           </div>
           <div>
             <h3>Company</h3>
@@ -56,10 +67,11 @@ export default function Footer() {
         </div>
         <div className="footer-legal">
           <p>
-            &copy; {new Date().getFullYear()} White Oak Operations. See{" "}
-            <Link href="/about">About</Link> for company details still
-            pending finalization. Not a certification of legal, medical,
-            accounting, cybersecurity, or regulatory compliance.
+            &copy; {new Date().getFullYear()} White Oak Operations. Legal
+            entity type, formation state, and registered agent are still
+            pending — see <Link href="/about">About</Link>. Not a
+            certification of legal, medical, accounting, cybersecurity, or
+            regulatory compliance.
           </p>
         </div>
       </div>

@@ -23,10 +23,31 @@ export default function AboutPage() {
         <p className="owner-todo">
           White Oak Operations is the selected working company name,
           pending trademark, entity-name, domain, and common-law clearance
-          (strategy/DECISION_LOG.md). Legal entity name, mailing address,
-          phone, and support/privacy email have not been finalized and are
+          (strategy/DECISION_LOG.md). Legal entity type, formation state,
+          and registered agent have not been finalized and are
           intentionally omitted here rather than fabricated.
         </p>
+
+        <div className="grid grid-2" style={{ marginTop: "1.5rem" }}>
+          <div className="card">
+            <h3>Address</h3>
+            <p>
+              17 Ridgeway Drive
+              <br />
+              Cataula, GA 31804
+            </p>
+          </div>
+          <div className="card">
+            <h3>Contact</h3>
+            <p>
+              <a href="tel:+17063661096">(706) 366-1096</a>
+              <br />
+              <a href="mailto:jacobstarling4313@gmail.com">
+                jacobstarling4313@gmail.com
+              </a>
+            </p>
+          </div>
+        </div>
 
         <div className="page-photo">
           <Image

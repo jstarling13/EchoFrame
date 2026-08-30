@@ -65,11 +65,20 @@ export default function PrivacyPage() {
         </p>
 
         <h2>Contact</h2>
+        <p>
+          White Oak Operations
+          <br />
+          17 Ridgeway Drive, Cataula, GA 31804
+          <br />
+          <a href="mailto:jacobstarling4313@gmail.com">
+            jacobstarling4313@gmail.com
+          </a>
+        </p>
         <p className="owner-todo">
-          Owner/counsel action needed: legal entity name, mailing address,
-          a verified privacy contact email, retention schedule, and
+          Owner/counsel action still needed: legal entity type, formation
+          state, and registered agent; a retention schedule; and an
           effective date must be supplied before this page is published to
-          production. Placeholder facts are intentionally not included.
+          production.
         </p>
       </div>
     </main>

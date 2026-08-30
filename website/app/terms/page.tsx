@@ -57,12 +57,21 @@ export default function TermsPage() {
         <p>These terms may change; the effective date below reflects the current version.</p>
 
         <h2>Governing law and contact</h2>
+        <p>
+          White Oak Operations
+          <br />
+          17 Ridgeway Drive, Cataula, GA 31804
+          <br />
+          <a href="tel:+17063661096">(706) 366-1096</a> &middot;{" "}
+          <a href="mailto:jacobstarling4313@gmail.com">
+            jacobstarling4313@gmail.com
+          </a>
+        </p>
         <p className="owner-todo">
-          Owner/counsel action needed: legal entity name, mailing address,
-          governing law/venue, and a contact route must be supplied before
-          this page is published to production. Placeholder facts are
-          intentionally not included. Selecting governing law and venue
-          should weigh: the state where the business entity is formed, the
+          Owner/counsel action still needed: legal entity type, formation
+          state, and registered agent; and governing law/venue, which
+          counsel must select. Selecting governing law and venue should
+          weigh: the state where the business entity is formed, the
           owner&rsquo;s principal place of business, where services are
           actually performed, where clients are located, and any regulated
           industries or data types involved — not simply the state of the

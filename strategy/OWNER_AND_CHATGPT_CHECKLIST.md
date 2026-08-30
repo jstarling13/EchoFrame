@@ -15,14 +15,20 @@ ChatGPT cannot invent these — they're real facts about your business.
 Once you have them, hand them to ChatGPT (or me) to drop into documents
 and site copy.
 
-1. **Legal entity** — formation state, exact legal name, DBA/assumed name
-   (if different from "White Oak Operations"), entity type (LLC/Corp/sole
-   proprietor), registered agent.
-2. **Principal business address** — the mailing address that will appear
-   publicly (Terms, Privacy, footer).
-3. **Business phone number** — public-facing.
-4. **Support and privacy email addresses** — e.g. `support@` and
-   `privacy@` at your eventual domain.
+1. **Legal entity** — name confirmed as White Oak Operations. Still
+   open: formation state, entity type (LLC/Corp/sole proprietor), DBA/
+   assumed name if any, registered agent.
+2. **Principal business address — provided 2026-08-30:** 17 Ridgeway
+   Drive, Cataula, GA 31804. Live on About, Terms, Privacy, and the
+   footer. Note: this reads as a residential address; flagged to owner,
+   owner's choice to use it or switch to a virtual mailbox/registered-
+   agent address later.
+3. **Business phone number — provided 2026-08-30:** (706) 366-1096.
+   Live on About, Terms, and the footer.
+4. **Support and privacy email — provided 2026-08-30:**
+   jacobstarling4313@gmail.com, used for both. Live on About, Privacy,
+   and the footer. A domain-branded address (`support@`/`privacy@`) can
+   replace it once a domain is live.
 5. **Tax ID / EIN** status.
 6. **Business bank account** — set up and ready to receive Stripe
    payouts.
