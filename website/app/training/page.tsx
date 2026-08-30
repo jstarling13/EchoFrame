@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
@@ -25,6 +26,16 @@ export default function TrainingPage() {
           practice, data rules, verification, exceptions, and competency
           checks.
         </p>
+
+        <div className="page-photo">
+          <Image
+            src="/images/training-workshop.png"
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, 76rem"
+          />
+        </div>
+
         <div className="grid grid-2" style={{ marginTop: "1.5rem" }}>
           {TRACKS.map((track) => (
             <div className="card" key={track.title}>

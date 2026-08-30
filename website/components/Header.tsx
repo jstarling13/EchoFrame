@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PRIMARY_NAV } from "@/lib/nav";
@@ -12,6 +13,14 @@ export default function Header() {
     <header className="site-header">
       <div className="bar">
         <Link href="/" className="brand-mark">
+          <Image
+            src="/images/logo-mark-black.png"
+            alt=""
+            width={32}
+            height={32}
+            className="brand-mark-icon"
+            priority
+          />
           White Oak Operations
         </Link>
         <nav className="primary-nav" aria-label="Primary">

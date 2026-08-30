@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
@@ -22,6 +23,13 @@ export default function SecurityPage() {
     <main id="content">
       <div className="container section">
         <Breadcrumbs trail={[{ href: "/security", label: "Security" }]} />
+        <Image
+          className="line-icon on-light"
+          src="/images/icon-security-shield.png"
+          alt=""
+          width={56}
+          height={56}
+        />
         <h1>Useful AI begins with a clear data path.</h1>
         <ul>
           {CONTROLS.map((c) => (

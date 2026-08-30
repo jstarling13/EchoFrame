@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { FOOTER_COMPANY, FOOTER_SERVICES, FOOTER_LEGAL } from "@/lib/nav";
 
@@ -7,7 +8,16 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div>
-            <h2>White Oak Operations</h2>
+            <h2 className="footer-brand">
+              <Image
+                src="/images/logo-mark-white.png"
+                alt=""
+                width={36}
+                height={36}
+                className="brand-mark-icon"
+              />
+              White Oak Operations
+            </h2>
             <p style={{ maxWidth: "32ch", opacity: 0.85 }}>
               Vendor-neutral AI workflow consulting, implementation, and
               training for established businesses.

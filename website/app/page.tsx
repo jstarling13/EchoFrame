@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import OfferTable from "@/components/OfferTable";
@@ -11,7 +12,17 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main>
-      <section className="hero on-dark">
+      <section className="hero on-dark hero-photo">
+        <div className="hero-media">
+          <Image
+            src="/images/hero-staircase.png"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+          />
+        </div>
+        <div className="hero-overlay" />
         <div className="container">
           <p className="eyebrow">AI operations for established businesses</p>
           <h1>Build the workflow. Train the people. Keep the capability.</h1>
@@ -38,6 +49,44 @@ export default function Home() {
             They need a repeated bottleneck fixed without losing control of
             quality, data, or judgment.
           </p>
+        </div>
+      </section>
+
+      <section className="section section-border">
+        <div className="container grid grid-3">
+          <div>
+            <Image
+              className="line-icon on-light"
+              src="/images/icon-discovery.png"
+              alt=""
+              width={48}
+              height={48}
+            />
+            <h3>Consulting</h3>
+            <p>Map how the work actually moves before touching any tool.</p>
+          </div>
+          <div>
+            <Image
+              className="line-icon on-light"
+              src="/images/icon-implementation.png"
+              alt=""
+              width={48}
+              height={48}
+            />
+            <h3>Implementation</h3>
+            <p>Build, test, and integrate the workflow into daily operations.</p>
+          </div>
+          <div>
+            <Image
+              className="line-icon on-light"
+              src="/images/icon-training.png"
+              alt=""
+              width={48}
+              height={48}
+            />
+            <h3>Training</h3>
+            <p>Hand the team the skills and documentation to run it alone.</p>
+          </div>
         </div>
       </section>
 

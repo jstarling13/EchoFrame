@@ -28,6 +28,15 @@ export default function AboutPage() {
           intentionally omitted here rather than fabricated.
         </p>
 
+        <div className="page-photo">
+          <Image
+            src="/images/about-office.png"
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, 76rem"
+          />
+        </div>
+
         <div className="founder-section">
           <Image
             className="founder-photo"

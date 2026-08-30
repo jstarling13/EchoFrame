@@ -136,6 +136,9 @@ select:focus-visible,
 }
 
 .brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   font-family: var(--font-serif);
   font-weight: 700;
   font-size: 1.2rem;
@@ -143,6 +146,19 @@ select:focus-visible,
   text-decoration: none;
   color: var(--ink-pure);
   letter-spacing: -0.01em;
+}
+
+.brand-mark-icon {
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
 }
 
 .primary-nav {
@@ -301,6 +317,82 @@ select:focus-visible,
 .hero.on-dark {
   background: var(--ink-pure);
   color: var(--white);
+}
+
+.hero-photo {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-photo .hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-photo .hero-media img {
+  object-fit: cover;
+}
+
+.hero-photo .hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    100deg,
+    rgba(0, 0, 0, 0.86) 0%,
+    rgba(0, 0, 0, 0.72) 45%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+}
+
+.hero-photo > .container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Supporting page photo */
+.page-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-block: 2rem;
+}
+
+.page-photo img {
+  object-fit: cover;
+}
+
+/* Card photo (industries) */
+.card-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.card-photo img {
+  object-fit: cover;
+}
+
+/* Line-art icon */
+.line-icon {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.on-dark .line-icon {
+  filter: none;
+}
+
+.line-icon.on-light {
+  filter: invert(1);
 }
 
 .hero.on-dark h1 {

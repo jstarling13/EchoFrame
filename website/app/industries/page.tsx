@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
@@ -8,15 +9,15 @@ export const metadata: Metadata = {
 };
 
 const INDUSTRIES = [
-  "Professional services",
-  "Property operations",
-  "Construction",
-  "Recruiting",
-  "Architecture/engineering administration",
-  "Hospitality",
-  "Logistics",
-  "Distribution",
-  "Family businesses",
+  { name: "Professional services", photo: "/images/industry-professional-services.png" },
+  { name: "Property operations", photo: null },
+  { name: "Construction", photo: null },
+  { name: "Recruiting", photo: null },
+  { name: "Architecture/engineering administration", photo: null },
+  { name: "Hospitality", photo: null },
+  { name: "Logistics", photo: "/images/industry-logistics.png" },
+  { name: "Distribution", photo: null },
+  { name: "Family businesses", photo: null },
 ];
 
 export default function IndustriesPage() {
@@ -34,8 +35,13 @@ export default function IndustriesPage() {
         </p>
         <div className="grid grid-3" style={{ marginTop: "1.5rem" }}>
           {INDUSTRIES.map((industry) => (
-            <div className="card" key={industry}>
-              <h3>{industry}</h3>
+            <div className="card" key={industry.name}>
+              {industry.photo && (
+                <div className="card-photo">
+                  <Image src={industry.photo} alt="" fill sizes="(max-width: 768px) 100vw, 24rem" />
+                </div>
+              )}
+              <h3>{industry.name}</h3>
             </div>
           ))}
         </div>
