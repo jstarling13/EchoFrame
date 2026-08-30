@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
@@ -26,6 +27,32 @@ export default function AboutPage() {
           phone, and support/privacy email have not been finalized and are
           intentionally omitted here rather than fabricated.
         </p>
+
+        <div className="founder-section">
+          <Image
+            className="founder-photo"
+            src="/assets/jacob-starling.jpg"
+            alt="Jacob Starling, Founder of White Oak Operations"
+            width={160}
+            height={160}
+          />
+          <div>
+            <p className="eyebrow">Jacob Starling, Founder</p>
+            <h2>Capability, not dependency.</h2>
+            <p>
+              White Oak Operations exists to combine process consulting,
+              implementation, training, and ownership transfer into one
+              engagement, so a client team ends up able to run and extend
+              its own workflow rather than depending on an outside vendor
+              for it indefinitely.
+            </p>
+            <p className="owner-todo">
+              Additional founder background and credentials are pending
+              owner confirmation and are intentionally omitted here rather
+              than fabricated.
+            </p>
+          </div>
+        </div>
       </div>
     </main>
   );
