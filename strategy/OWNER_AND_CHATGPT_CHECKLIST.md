@@ -55,32 +55,31 @@ and site copy.
 
 ## B. Documents ChatGPT can draft now — attorney review still required before going live
 
-Once you have the facts from Section A, give them to ChatGPT and ask it
-to draft:
-
-1. Terms of Service
-2. Privacy Policy
-3. Master Service Agreement (MSA) template
-4. Statement of Work (SOW) template, one per offer (O1–O5)
-5. Mutual NDA template
-6. Data Processing Agreement (DPA) — needed if any client data is
-   handled
-7. Cancellation/refund policy language
-8. Travel/expense policy language
-
-These stay labeled as attorney-review drafts on the site (the yellow
-banner) until a real attorney signs off — that's not optional, it's
-what keeps the site honest about its own status.
+**Delivered 2026-08-30.** ChatGPT drafted all 12 documents; reviewed for
+fabrication (none found — every genuinely unknown fact stayed a
+placeholder), address/phone/email backfilled from Section A, and one
+naming error caught and fixed (`STRIPE_PRICE_O5` corrected to
+`STRIPE_PRICE_O5_MONTHLY` to match actual code). Now living in
+`legal/`: `terms-of-service.md`, `privacy-policy.md`, `msa-template.md`,
+`sow-template-O1.md` through `sow-template-O5.md`,
+`mutual-nda-template.md`, `data-processing-agreement.md`,
+`cancellation-refund-policy.md`, `travel-expense-policy.md`. These stay
+labeled as attorney-review drafts on the site (the yellow banner) until
+a real attorney signs off — that's not optional, it's what keeps the
+site honest about its own status.
 
 ## C. Technical credentials needed to finish the live Preview
 
-Not documents — actual account setup, still pending:
+**Runbook delivered 2026-08-30** — not the credentials themselves (no
+AI tool can generate real ones): `website/docs/credential-setup-runbook.md`
+walks through obtaining each one yourself, and
+`website/docs/env-template.txt` lists every variable name Vercel will
+need, blank. Still pending, actual account setup:
 
 1. Stripe test-mode API keys
 2. Resend account + API key + verified sender domain/email
 3. Upstash (or compatible) Redis REST URL + token
-4. Preview environment variables pasted into Vercel (exact names in
-   `handoff/02_VERCEL/PREVIEW_ENVIRONMENT_MATRIX.csv`)
+4. Pasting all of the above into Vercel's Preview environment variables
 5. IONOS DNS access, only once a real domain is ready to connect
 
 ## D. Professional review — not a document, an actual person

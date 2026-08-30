@@ -1,0 +1,35 @@
+# Proposed names: Claude must reconcile with actual code before configuration; all values intentionally blank.
+# Actual HTTPS Preview origin used for canonical links and payment return URLs; not a secret.
+NEXT_PUBLIC_SITE_URL=
+# Server-only Stripe test restricted/secret runtime key; never a live key in Preview.
+STRIPE_SECRET_KEY=
+# Server-only signing secret for the exact deployed Stripe test webhook endpoint.
+STRIPE_WEBHOOK_SECRET=
+# Test one-time Price ID for O1 initial payment of USD 2500.
+STRIPE_PRICE_O1=
+# Test one-time Price ID for O2 initial payment of USD 3750; reconcile any existing _DEPOSIT suffix.
+STRIPE_PRICE_O2=
+# Test one-time Price ID for O3 initial payment of USD 7200; reconcile any existing _DEPOSIT suffix.
+STRIPE_PRICE_O3=
+# Test one-time Price ID for O4 initial payment of USD 13500; reconcile any existing _DEPOSIT suffix.
+STRIPE_PRICE_O4=
+# Test recurring monthly Price ID for O5 at USD 2500; reconcile any existing _MONTHLY suffix.
+STRIPE_PRICE_O5_MONTHLY=
+# Server-only Resend sending API key for the Preview sender.
+EMAIL_PROVIDER_API_KEY=
+# Exact Resend-approved sender address or supported display-name/address format.
+EMAIL_FROM=
+# Founder-controlled inbox for lead notifications; use the permitted recipient during restricted Resend testing.
+LEAD_NOTIFICATION_EMAIL=
+# Upstash Redis HTTPS REST endpoint mapped from the provider's UPSTASH_REDIS_REST_URL.
+RATE_LIMIT_STORE_URL=
+# Server-only Upstash REST token with required read/write permissions, not the read-only token.
+RATE_LIMIT_STORE_TOKEN=
+# Optional CRM HTTPS destination; leave absent in Vercel when no CRM is configured.
+CRM_WEBHOOK_URL=
+# Optional server-only CRM signing secret agreed with the actual receiver; leave absent if CRM is unused.
+CRM_WEBHOOK_SECRET=
+# Optional publishable test key only if inspected frontend code needs Stripe.js; server-redirect Checkout does not.
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+# VERCEL_ENV is supplied by Vercel automatically; do not create or override it manually.
+# IONOS credentials, legal identity facts and AI-model API keys are not required runtime variables for this setup.
