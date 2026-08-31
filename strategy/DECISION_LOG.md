@@ -4,10 +4,26 @@
 
 **Version:** 1.0 | **Date:** 2026-08-28
 
-## Company name (2026-08-29, corrected 2026-08-29)
+## Company name (2026-08-29, corrected 2026-08-29, elevated 2026-08-31)
 
 **White Oak Operations is the selected working company name, pending
-trademark, entity-name, domain, and common-law clearance.** It replaces
+trademark, entity-name, domain, and common-law clearance — and, as of a
+2026-08-31 preliminary search, a potential name conflict has actually
+been identified, not just an unrun check.** An existing business
+operating under the exact name "White Oak Operations" was found
+offering virtual assistance, administrative support, business systems,
+and workflow support — services close enough to overlap with this
+business. Separately, and regardless of how the trademark question
+resolves, `whiteoakoperations.com` is already registered by an
+unrelated third party (GoDaddy, privacy-protected, registered
+2024-10-08) and is not available. Full preliminary findings:
+`handoff/04_NAME_LEGAL/NAME_CLEARANCE_WORKBOOK.csv`. This search was
+non-authoritative (ChatGPT, with several registry checks incomplete due
+to access restrictions) and does not substitute for a trademark
+attorney's opinion — but it raises the real possibility that the name
+needs to change before further investment, and should go in front of
+counsel promptly rather than being treated as a routine formality. It
+replaces
 the "Practical AI Operations" working label used throughout the original
 v1 package and is applied across the website (`website/`),
 naming/positioning docs (`brand/NAMING_FRAMEWORK.md`,

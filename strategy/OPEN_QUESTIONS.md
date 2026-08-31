@@ -6,7 +6,7 @@
 
 ## Owner decisions
 
-1. Permanent company name — **corrected 2026-08-29: White Oak Operations is the selected working company name, pending trademark, entity-name, domain, and common-law clearance** (see `strategy/DECISION_LOG.md`). This item stays open until each of those four clearances is separately confirmed; the working name is in active use on the site and in Preview in the meantime.
+1. Permanent company name — **elevated 2026-08-31: a preliminary (non-authoritative) name-clearance search found a potential real conflict**, not just an unrun check. An existing business operating under the exact name "White Oak Operations" offers overlapping services (virtual assistance, business systems, workflow support), and `whiteoakoperations.com` is already registered by an unrelated party. See `handoff/04_NAME_LEGAL/NAME_CLEARANCE_WORKBOOK.csv` and `strategy/DECISION_LOG.md`. This should go to a trademark attorney promptly — the owner should not treat continued use of this name as a formality pending routine sign-off; a rename is a real possibility.
 2. **Resolved 2026-08-30:** mailing address (17 Ridgeway Drive, Cataula, GA 31804), phone ((706) 366-1096), and support/privacy email (jacobstarling4313@gmail.com) are provided and live on the site. Still open: legal entity type, formation state, and registered agent.
 3. Exact New York travel base and included-mile radius.
 4. Whether prices are public or “starting at.”
