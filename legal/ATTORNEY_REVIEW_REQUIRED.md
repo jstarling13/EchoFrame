@@ -26,8 +26,8 @@ directory. They carry real, owner-confirmed address/phone/email and
 correctly placeholder every fact still pending (entity type, formation
 state, registered agent, governing law/venue, dates, IDs).
 
-`COMMERCIAL_POLICIES_DRAFT.md`, `MASTER_SERVICES_AGREEMENT_DRAFT.md`,
-`NDA_DRAFT.md`, `STATEMENT_OF_WORK_DRAFT.md`, and
-`WEBSITE_TERMS_PRIVACY_DRAFT.md` are an earlier, thinner draft generation
-now superseded by the set above. Recommend removing them once the owner
-confirms — not deleted automatically.
+The earlier, thinner draft generation (`COMMERCIAL_POLICIES_DRAFT.md`,
+`MASTER_SERVICES_AGREEMENT_DRAFT.md`, `NDA_DRAFT.md`,
+`STATEMENT_OF_WORK_DRAFT.md`, `WEBSITE_TERMS_PRIVACY_DRAFT.md`) has been
+removed (2026-08-31) as superseded — recoverable via git history if ever
+needed.
