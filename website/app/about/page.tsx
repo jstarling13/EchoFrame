@@ -76,10 +76,15 @@ export default function AboutPage() {
               its own workflow rather than depending on an outside vendor
               for it indefinitely.
             </p>
-            <p className="owner-todo">
-              Additional founder background and credentials are pending
-              owner confirmation and are intentionally omitted here rather
-              than fabricated.
+            <p>
+              Jacob Starling holds an M.S. in Finance from Emory University
+              and is entering the U.S. Navy as a Supply Corps officer &mdash;
+              the community responsible for logistics, contracting, and
+              financial management aboard ship and ashore. That same
+              operational and financial discipline is what White Oak
+              Operations brings to client engagements: get into the actual
+              workflow, build something real, and leave the client able to
+              run and extend it without him.
             </p>
           </div>
         </div>
