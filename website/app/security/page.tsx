@@ -45,6 +45,18 @@ const CONTROL_AREAS = [
     title: "Professional Review",
     body: "Where accounting, legal, clinical, security, or other professional judgment is required, that judgment stays with the appropriate licensed professional — not the model.",
   },
+  {
+    title: "Data Handling & Storage",
+    body: "Data in transit is encrypted by default, and access is scoped to what a given workflow actually requires — not warehoused 'just in case.' At the end of an engagement, you decide what happens to EchoFrame's access: fully transferred to your team, revoked entirely, or something in between, documented in writing either way.",
+  },
+  {
+    title: "Incident Response",
+    body: "If a workflow misfires, a vendor has an outage, or something looks wrong with the data, you hear about it directly from me as soon as I've confirmed it — not through a support ticket, and not after the fact. Every production workflow has an agreed manual fallback so the business can keep operating while an issue gets fixed.",
+  },
+  {
+    title: "Direct Accountability, No Middle Layer",
+    body: "There is no subcontractor, offshore team, or support queue between you and the person who built your workflow. One person scopes it, builds it, tests it, and stays reachable for it — you are never re-explaining your business to someone new.",
+  },
 ];
 
 export default function SecurityPage() {
@@ -61,8 +73,12 @@ export default function SecurityPage() {
         />
         <h1>Useful AI begins with a clear data path.</h1>
         <p>
-          Every engagement operates under the same nine-part control
-          framework, regardless of industry or workflow.
+          Every engagement operates under the same control framework,
+          regardless of industry or workflow. No engagement is ever
+          &ldquo;completely safe&rdquo; &mdash; no honest consultant would
+          claim that. What EchoFrame can control is being direct about
+          exactly what protects your data, what still depends on your own
+          judgment, and what to do if something goes wrong.
         </p>
 
         <div className="accordion" style={{ marginTop: "1.5rem" }}>

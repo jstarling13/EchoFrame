@@ -174,16 +174,17 @@ select:focus-visible,
   height: 3rem;
 }
 
-/* The real logo file is navy/gold on transparent. The footer and the
-   header (brand-blue background) are both dark-enough surfaces, so
-   the logo is rendered as a white silhouette via filter rather than a
-   second exported asset. Logos are exempt from WCAG text-contrast
-   ratios (1.4.3), unlike the header's nav text/buttons, which stay
-   dark for real contrast against this background. (The old
-   "logo-full-white.png" and "logo-mark-white/black.png" files in
-   public/images are leftover White Oak Operations brand assets — a
-   different company's tree logo — and must never be used for
-   EchoFrame.) */
+/* The real logo file is navy/gold on transparent. The header's brand-
+   blue background is dark enough that Jacob wants the logo rendered
+   as a white silhouette there (filter, not a second exported asset —
+   logos are exempt from WCAG text-contrast ratios, 1.4.3, unlike the
+   header's nav text/buttons, which stay dark for real contrast). The
+   footer uses the logo's real navy/blue ink color unfiltered — Jacob
+   confirmed it reads clearly against the footer's black background.
+   (The old "logo-full-white.png" and "logo-mark-white/black.png"
+   files in public/images are leftover White Oak Operations brand
+   assets — a different company's tree logo — and must never be used
+   for EchoFrame.) */
 .logo-inverted {
   filter: brightness(0) invert(1);
 }
