@@ -1,5 +1,11 @@
 # ICP, Personas, Pain Points, and Buying Triggers
 
+> **Superseded 2026-09-12.** Jacob approved the two-lane ICP in
+> `ICP_PERSONAS_AND_TRIGGERS_REVISED.md`: a 2-50 employee owner-led launch
+> lane and a 51-250 employee expansion lane (opportunistic, not
+> launch-messaging-driving). That file is now the active ICP. This file is
+> kept for historical reference, not deleted.
+
 **Purpose:** Focus acquisition without permanently narrowing the company
 
 **Version:** 1.0 | **Date:** 2026-08-28

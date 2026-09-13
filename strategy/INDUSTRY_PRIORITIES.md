@@ -1,5 +1,9 @@
 # Industry Priorities
 
+> **Candidate revision pending 2026-09-12.** `INDUSTRY_PRIORITIES_REVISED.md`
+> proposes an updated version. Not yet approved by Jacob — this file
+> remains active until he decides.
+
 **Purpose:** Sequence initial New York vertical learning
 
 **Version:** 1.0 | **Date:** 2026-08-28

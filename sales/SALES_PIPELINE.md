@@ -1,5 +1,10 @@
 # Sales Pipeline and Qualification
 
+> **Candidate revision pending 2026-09-12.** `SALES_PIPELINE_REVISED_2026-09-12.md`
+> (ChatGPT-drafted, 10-stage pipeline for the hourly/referral model) proposes
+> an updated version. Not yet approved by Jacob — this file remains active
+> until he decides.
+
 **Purpose:** Run a disciplined referral-to-close process
 
 **Version:** 1.0 | **Date:** 2026-08-28

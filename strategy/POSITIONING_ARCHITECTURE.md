@@ -1,5 +1,9 @@
 # Positioning Architecture
 
+> **Candidate revision pending 2026-09-12.** `POSITIONING_ARCHITECTURE_REVISED.md`
+> (ChatGPT-drafted) proposes an updated version. Not yet approved by
+> Jacob — this file remains active until he decides.
+
 **Purpose:** Keep messaging coherent by audience and funnel stage
 
 **Version:** 1.0 | **Date:** 2026-08-28

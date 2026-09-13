@@ -1,5 +1,10 @@
 # Business Blueprint
 
+> **Candidate revision pending 2026-09-12.** `BUSINESS_BLUEPRINT_REVISED.md`
+> (ChatGPT-drafted, from the EchoFrame handoff) proposes an updated version
+> of this document. Not yet approved by Jacob — this file remains the
+> active version until he decides.
+
 **Purpose:** Define how the company creates, delivers, and captures value
 
 **Version:** 1.0 | **Date:** 2026-08-28
