@@ -14,18 +14,8 @@ export default function TermsPage() {
     <main id="content">
       <div className="container section">
         <Breadcrumbs trail={[{ href: "/terms", label: "Terms" }]} />
-        <h1>Terms of use</h1>
-        <div className="callout callout-risk">
-          <p>
-            <strong>Draft for attorney review.</strong> This page is a
-            business-operating draft, not legal advice, and is not yet
-            approved by counsel (see{" "}
-            <code>legal/ATTORNEY_REVIEW_REQUIRED.md</code>). It must not be
-            treated as final before that review. Governing law and venue
-            are not assumed from initial New York client geography alone —
-            see the factors below.
-          </p>
-        </div>
+        <h1>Terms of Use</h1>
+        <p className="hint">Effective date: September 13, 2026</p>
 
         <h2>Informational site</h2>
         <p>
@@ -67,15 +57,10 @@ export default function TermsPage() {
             jacob.starling@echoframe.net
           </a>
         </p>
-        <p className="owner-todo">
-          Owner/counsel action still needed: legal entity type, formation
-          state, and registered agent; and governing law/venue, which
-          counsel must select. Selecting governing law and venue should
-          weigh: the state where the business entity is formed, the
-          owner&rsquo;s principal place of business, where services are
-          actually performed, where clients are located, and any regulated
-          industries or data types involved — not simply the state of the
-          first clients.
+        <p className="hint">
+          EchoFrame is operated by Jacob Starling, doing business as
+          EchoFrame. Governing law and venue will be specified once
+          EchoFrame's legal entity is formally established.
         </p>
       </div>
     </main>

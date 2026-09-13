@@ -1,57 +1,56 @@
 # EchoFrame Privacy Policy — Business Draft for Attorney Review
 
-**NOT FINAL UNTIL REVIEWED AGAINST THE ACTUAL PRODUCTION SITE, ANALYTICS, FORMS, VENDORS, AND APPLICABLE LAW.**
+**THIS IS A BUSINESS DRAFT, NOT LEGAL ADVICE. QUALIFIED COUNSEL SHOULD REVIEW BEFORE RELYING ON IT AS A FINAL LEGAL DOCUMENT.** It is, however, kept in sync with what actually runs on the live site at `website/app/privacy/page.tsx` — no placeholder instructions, no internal file references, no unresolved template language.
 
-## 1. Business Identity
-Insert final legal entity, address/contact information required by counsel, and privacy contact.
+**Effective date:** September 13, 2026
 
-## 2. Data Collected on the Website
-Confirm actual production behavior before publishing. Potential categories: name, email, phone, company, message/form contents, IP/device/browser information, analytics events, referral/source information, cookies or similar technologies.
+## Business identity
+Jacob Starling, doing business as EchoFrame ("EchoFrame," "we," "us"). No LLC or corporation has been formed as of the effective date above. Registered agent, formation state, and governing-law provisions belong in the entity's Terms of Service / formation documents, not this policy.
 
-Do not list data the site does not collect merely because a template says so.
+## Scope: this Site, not client engagements
+Covers only echoframe.net (the "Site"). Client-engagement data (financial records, employee information, credentials, API data, internal business documents) is governed by the signed MSA/SOW/DPA for that engagement, not this policy.
 
-## 3. How Data Is Collected
-- contact form
-- direct email
-- analytics
-- server logs
-- cookies/consent tools if present
+## Information collected
+Contact-form fields: name, work email, company, role, company website (optional), employee range, state/region, workflow description, urgency, referral source (optional), consent. Plus standard technical/server logs (IP, browser, device) for security/abuse prevention. No payment info, financial account numbers, health information, or government IDs are collected through the Site.
 
-## 4. Purposes
-Potential: respond to inquiries, evaluate projects, operate/security-monitor the site, understand site usage, maintain records, comply with legal obligations.
+## How it's used
+Respond to inquiries, evaluate fit, keep a record; log data used to operate/secure/troubleshoot the Site.
 
-## 5. Service Providers
-Create a real production vendor list. Likely categories may include Vercel hosting, email provider, analytics provider, CRM/webhook provider, and form/storage vendor. Only name vendors actually in production.
+## Service providers (verified against the actual codebase)
+- Vercel — hosting/infrastructure.
+- Resend — transactional email, if `EMAIL_PROVIDER_API_KEY`/`EMAIL_FROM`/`LEAD_NOTIFICATION_EMAIL` are configured (`website/app/api/contact/route.ts`).
+- Upstash — rate-limiting store, if `RATE_LIMIT_STORE_URL`/`RATE_LIMIT_STORE_TOKEN` are configured (`website/lib/rate-limit.ts`).
+- No CRM, marketing platform, or ad network is currently wired up (`CRM_WEBHOOK_URL` is unset by default — see `website/lib/crm.ts`). Update this list and the live page together before adding one.
 
-## 6. AI Use
-If inquiry contents are ever processed by an AI system, document provider/configuration and avoid routing sensitive form submissions into AI by default.
+## AI use
+No automated AI system processes or routes contact-form submissions. Jacob may use general-purpose AI assistants (Claude, ChatGPT) as a personal drafting aid when responding to inquiries. AI use during an actual engagement is addressed in that engagement's SOW, not here.
 
-## 7. Cookies / Analytics
-Confirm whether analytics/cookies are enabled. Counsel should advise on consent requirements based on audience, jurisdiction, and tools.
+## Cookies / tracking
+None in use today — no GA, Meta Pixel, LinkedIn Insight Tag, Calendly, reCAPTCHA, or similar. Update this section and the live page together before adding any.
 
-## 8. Retention
-Define realistic retention periods/processes.
+## Sharing, sale, advertising
+No sale of personal information. No sharing for third parties' independent marketing. No targeted/cross-context behavioral advertising. Disclosure only if legally required or to protect EchoFrame/clients/others.
 
-## 9. Security
-Use measured language. Do not claim absolute security or certifications that do not exist.
+## Retention
+Contact submissions: up to 24 months or until deletion is requested, whichever is first. Security/technical logs: shorter, per hosting-provider defaults. Engagement records: per the signed agreement, not this policy.
 
-## 10. Disclosures
-Describe vendors/service providers, legal requirements, business transfers if appropriate, and sale/sharing language only as actually applicable.
+## Privacy rights
+Access, correction, deletion, marketing opt-out — contact EchoFrame using the info below. Identity verification may be requested. Target response time: within 30 days.
 
-## 11. Rights / Requests
-Counsel should determine which jurisdiction-specific rights and response processes apply.
+## Security
+Reasonable safeguards "designed to protect" (HTTPS, access controls) — no absolute-security claim.
 
-## 12. Children's Data
-Determine whether the site is directed to adults/business users and draft appropriate language.
+## Children's privacy
+Directed to business owners/professionals, not children. No knowing collection from anyone under 18.
 
-## 13. Cross-Border
-Include only if relevant.
+## Changes
+Material changes reflected by updating the effective date.
 
-## 14. Changes
-Effective date and update process.
+## Contact
+Jacob Starling / EchoFrame, 17 Ridgeway Drive, Cataula, GA 31804, (706) 366-1096, jacob.starling@echoframe.net.
 
-## 15. Contact
-Insert real privacy contact.
-
-## Production Verification Checklist
-Before counsel review, Claude should verify contact form fields, analytics, cookies, Vercel logs, email provider, CRM/webhook, storage, any AI processing, and any embedded third-party scripts.
+## Open items for counsel (do not treat as resolved)
+- Confirm whether GDPR, CCPA/CPRA, GLBA/Reg S-P, or other specific statutes actually apply given real traffic/client geography — not assumed here.
+- Confirm entity structure before this graduates from "Jacob Starling d/b/a EchoFrame" to an LLC name, and update this document and the live page together when that happens.
+- Confirm final retention period and rights-response timeline against counsel's recommendation.
+- Re-verify the service-provider list against actual configured environment variables before every material change to vendors.
