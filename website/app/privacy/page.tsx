@@ -68,32 +68,32 @@ export default function PrivacyPage() {
         </p>
 
         <h2>Service providers</h2>
-        <p>EchoFrame currently uses the following providers to operate this Site:</p>
-        <ul>
-          <li><strong>Vercel</strong> &mdash; website hosting and infrastructure.</li>
-          <li><strong>Resend</strong> &mdash; transactional email, if configured, used to notify EchoFrame when you submit the contact form.</li>
-          <li><strong>Upstash</strong> &mdash; rate-limiting and abuse-prevention, if configured, which may briefly process your IP address to prevent form spam.</li>
-        </ul>
         <p>
-          EchoFrame does not currently use a third-party CRM, marketing
+          <strong>Vercel</strong> (website hosting and infrastructure) is
+          currently the only third party involved in operating this Site.
+          EchoFrame does not currently use a third-party CRM, email-delivery
+          service, rate-limiting/abuse-prevention service, marketing
           platform, or advertising network in connection with this Site. If
-          that changes, this list will be updated before the new provider
-          begins processing your information.
+          that changes, this section will be updated to name the new
+          provider before it begins processing your information.
         </p>
 
         <h2>AI use</h2>
         <p>
           Your contact form submission is not processed by any automated AI
           system as part of receiving or routing it &mdash; a person (Jacob
-          Starling) reads and responds to inquiries directly. Jacob may use
-          general-purpose AI assistants (such as Claude or ChatGPT) as a
-          drafting aid when preparing a response; use of those tools is
-          governed by their respective business/API terms. If EchoFrame
-          begins using an AI system to automatically process, score, or
-          route website inquiries, this section will be updated before that
-          use begins. AI tools used during an actual client engagement are
-          addressed separately in the applicable Statement of Work, not this
-          policy.
+          Starling) reads and responds to inquiries directly. EchoFrame does
+          not paste your name, email, company, or the details of your
+          inquiry into general-purpose AI tools (such as Claude or ChatGPT).
+          Jacob may use those tools separately, on his own, for generic
+          drafting help that does not include your specific submitted
+          information. If EchoFrame begins using an AI system to process,
+          score, or route website inquiries &mdash; or begins including
+          submitted information in prompts to a third-party AI tool &mdash;
+          this section will be updated, and that tool will be named as a
+          service provider above, before that use begins. AI tools used
+          during an actual client engagement are addressed separately in the
+          applicable Statement of Work, not this policy.
         </p>
 
         <h2>Cookies and tracking</h2>
@@ -105,6 +105,16 @@ export default function PrivacyPage() {
           tool is added in the future, this section will be updated to
           disclose it, along with any consent mechanism required for your
           jurisdiction, before it is activated.
+        </p>
+        <p>
+          Because EchoFrame does not engage in cross-site behavioral
+          tracking through the Site, browser &ldquo;Do Not Track&rdquo;
+          signals do not change the Site&rsquo;s behavior. EchoFrame does not
+          permit third parties to collect personally identifiable
+          information through the Site about visitors&rsquo; activities over
+          time and across unrelated websites for behavioral advertising
+          purposes, and does not sell or share personal information in a way
+          that a Global Privacy Control signal would opt you out of.
         </p>
 
         <h2>Sharing, sale, and advertising</h2>
@@ -120,14 +130,17 @@ export default function PrivacyPage() {
 
         <h2>Retention</h2>
         <p>
-          Contact form submissions and related correspondence are retained
-          for up to 24 months from the date of submission, or until you
-          request deletion, whichever comes first. Technical/security logs
-          are retained for a shorter period consistent with standard
-          hosting-provider practice. If you engage EchoFrame for a paid
-          project, records related to that engagement are retained per the
-          signed agreement and applicable recordkeeping requirements, not
-          this policy.
+          Contact form submissions and related correspondence are ordinarily
+          retained for up to 24 months from the date of submission. EchoFrame
+          may retain information longer than 24 months, or decline to delete
+          it on request, where reasonably necessary for legal obligations,
+          security, fraud prevention, dispute resolution, the establishment
+          or defense of legal claims, or another lawful purpose.
+          Technical/security logs are retained for a shorter period
+          consistent with standard hosting-provider practice. If you engage
+          EchoFrame for a paid project, records related to that engagement
+          are retained per the signed agreement and applicable recordkeeping
+          requirements, not this policy.
         </p>
 
         <h2>Your privacy rights</h2>
@@ -139,8 +152,7 @@ export default function PrivacyPage() {
           communications. To exercise any of these rights, contact
           EchoFrame using the information below. EchoFrame may ask for
           information to verify your identity before fulfilling a request,
-          and will respond within a reasonable time (generally within 30
-          days).
+          and will respond within the period required by applicable law.
         </p>
 
         <h2>Security</h2>
@@ -173,7 +185,7 @@ export default function PrivacyPage() {
         <p>
           EchoFrame (Jacob Starling)
           <br />
-          17 Ridgeway Drive, Cataula, GA 31804
+          Columbus, Georgia area
           <br />
           <a href="tel:+17063661096">(706) 366-1096</a>
           <br />

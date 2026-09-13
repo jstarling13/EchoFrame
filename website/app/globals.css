@@ -465,11 +465,24 @@ select:focus-visible,
 }
 
 .grid-3 {
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .grid-2 {
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 900px) {
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
 }
 
 .card {
@@ -679,16 +692,17 @@ fieldset {
 .method-flow {
   display: flex;
   align-items: stretch;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
   margin-top: 2rem;
 }
 
 .method-flow-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  flex: 1 1 auto;
+  gap: 0.5rem;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .method-flow-card {
@@ -697,7 +711,7 @@ fieldset {
   border-radius: var(--radius);
   padding: 1.5rem;
   flex: 1;
-  min-width: 10rem;
+  min-width: 0;
 }
 
 .method-flow-card h3 {
@@ -721,6 +735,8 @@ fieldset {
   color: var(--white);
   font-weight: 700;
   font-family: var(--font-serif);
+  line-height: 1;
+  padding-top: 0.1rem;
   margin-bottom: 0.85rem;
 }
 

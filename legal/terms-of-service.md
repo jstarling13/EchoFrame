@@ -1,50 +1,38 @@
 # EchoFrame Website Terms of Use — Business Draft for Attorney Review
 
-**NOT FINAL UNTIL REVIEWED BY QUALIFIED COUNSEL.**
+**THIS IS A BUSINESS DRAFT, NOT LEGAL ADVICE. QUALIFIED COUNSEL SHOULD REVIEW BEFORE RELYING ON IT AS A FINAL LEGAL DOCUMENT.** It is kept in sync with what actually runs on the live site at `website/app/terms/page.tsx` — no placeholder instructions, no "counsel to draft" gaps, no unresolved template language.
+
+**Effective date:** September 13, 2026
 
 ## Purpose
-Terms for use of the public EchoFrame website, not the client-services agreement.
+Terms for use of the public EchoFrame website only — not the client-services agreement (see `msa-template.md` / `sow-template-hourly.md` for that).
 
-## Intended topics for counsel
+## Informational site
+Website content is informational, not legal/tax/accounting/medical/investment/other licensed professional advice. No client relationship forms from browsing or submitting the contact form — only a signed agreement creates one.
 
-### Website Owner
-Insert final legal entity and business contact information.
+## Acceptable use
+No misuse, scraping, interference, impersonation, or unlawful content submitted through the site or its forms.
 
-### Informational Purpose
-Website content describes services and general business information. It is not legal, tax, accounting, medical, investment, or other licensed professional advice.
+## Ownership
+Site and content owned by EchoFrame or its licensors, subject to identified third-party materials.
 
-### No Client Relationship From Browsing
-Using the site or submitting a form does not by itself create a consulting relationship.
+## No warranty
+Site provided "as is"/"as available," no express or implied warranties (merchantability, fitness for a particular purpose, non-infringement) beyond what applicable law requires; no uptime/error-free/security guarantee.
 
-### Proposals / Engagements
-Client work begins only under an accepted proposal/agreement/SOW.
+## Limitation of liability
+No liability for indirect/incidental/special/consequential/punitive damages or lost profits/revenue/data/goodwill, to the maximum extent permitted by law. Total liability for Site use capped at $100. Applies regardless of legal theory; doesn't apply where it can't be limited by law. Governs Site use only — an actual paid engagement's liability is instead governed by the limitation-of-liability clause in the signed MSA/SOW for that engagement, which should carry its own (likely higher, fees-based) cap negotiated with the client, not this $100 website-only figure.
 
-### Pricing
-If the site displays $40/hour, clarify that it is the current standard professional-services rate; individual scope, travel, third-party costs, and other terms are confirmed separately; website descriptions are not binding quotes.
+## Changes
+Terms may change; effective date above reflects the current version.
 
-### Intellectual Property
-Protect site text, design assets, logo, and original materials subject to third-party rights.
+## Governing law and venue
+State of Georgia law, without regard to conflict-of-laws principles; exclusive jurisdiction of Georgia state/federal courts. This is a reasonable default for a sole proprietor/DBA based and operating in Georgia — it does not need to wait for a formal entity to be established, unlike what an earlier draft of this page assumed.
 
-### Acceptable Use
-Prohibit misuse, interference, security attacks, unlawful use, and other appropriate conduct.
+## Contact
+Jacob Starling / EchoFrame, Columbus, Georgia area, (706) 366-1096, jacob.starling@echoframe.net. Residential address removed from all public pages — publish a business mailing address here once one exists.
 
-### External Links / Third-Party Services
-Disclaim control appropriately.
-
-### No Warranty
-Counsel to draft for website availability/content.
-
-### Limitation of Liability
-Counsel to draft consistent with enforceability and MSA separation.
-
-### Privacy
-Reference Privacy Policy.
-
-### Governing Law / Venue
-OPEN.
-
-### Changes
-Define ability to revise terms and effective date.
-
-## Critical Separation
-Website Terms should not accidentally override or conflict with the MSA/SOW signed by clients.
+## Open items for counsel (do not treat as resolved)
+- Verify the $100 Site-use liability cap and the "as is" disclaimer language are enforceable and appropriately scoped for Georgia law and this business's actual risk profile.
+- Confirm Georgia venue/governing-law choice is still correct if EchoFrame later forms an LLC in a different state or expands operations elsewhere.
+- If a DBA is filed with the Clerk of Superior Court in Jacob's Georgia county, or an LLC is formed, update the "Ownership"/identity framing here and in the Privacy Policy together.
+- This page's liability cap is deliberately separate from, and should never be read to override, the MSA/SOW liability clause governing actual paid client engagements — confirm that separation reads clearly to counsel.

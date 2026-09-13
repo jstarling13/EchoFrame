@@ -23,9 +23,7 @@ export default function Footer() {
               with no fixed packages.
             </p>
             <p style={{ maxWidth: "32ch", opacity: 0.85, marginTop: "1rem" }}>
-              17 Ridgeway Drive
-              <br />
-              Cataula, GA 31804
+              Columbus, Georgia area
               <br />
               <a href="tel:+17063661096">(706) 366-1096</a>
               <br />
@@ -67,10 +65,9 @@ export default function Footer() {
         </div>
         <div className="footer-legal">
           <p>
-            &copy; {new Date().getFullYear()} EchoFrame. Legal entity type,
-            formation state, and registered agent are still pending — see{" "}
-            <Link href="/about">About</Link>. Not a certification of legal,
-            medical, accounting, cybersecurity, or regulatory compliance.
+            &copy; {new Date().getFullYear()} EchoFrame, operated by Jacob
+            Starling. Not a certification of legal, medical, accounting,
+            cybersecurity, or regulatory compliance.
           </p>
         </div>
       </div>

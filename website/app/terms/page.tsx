@@ -37,30 +37,57 @@ export default function TermsPage() {
           separately.
         </p>
 
-        <h2>Disclaimers and liability</h2>
+        <h2>No warranty</h2>
         <p>
-          The site is provided without warranties beyond what applicable law
-          requires, and liability is limited as counsel finalizes.
+          This Site and its content are provided &ldquo;as is&rdquo; and
+          &ldquo;as available,&rdquo; without warranties of any kind, express
+          or implied, including implied warranties of merchantability,
+          fitness for a particular purpose, and non-infringement, except to
+          the extent such warranties cannot be disclaimed under applicable
+          law. EchoFrame does not warrant that the Site will be
+          uninterrupted, error-free, or secure.
+        </p>
+
+        <h2>Limitation of liability</h2>
+        <p>
+          To the maximum extent permitted by applicable law, EchoFrame will
+          not be liable for any indirect, incidental, special, consequential,
+          or punitive damages, or any loss of profits, revenue, data, or
+          goodwill, arising from your use of this Site, even if advised of
+          the possibility of such damages. To the maximum extent permitted
+          by applicable law, EchoFrame&rsquo;s total liability arising from
+          or relating to this Site is limited to $100. This limitation
+          applies regardless of the legal theory on which liability is
+          based, and does not apply where it cannot be limited under
+          applicable law. This section governs use of the Site only &mdash;
+          liability arising from an actual paid engagement is instead
+          governed by the limitation-of-liability provision in the signed
+          Master Services Agreement or Statement of Work for that
+          engagement, not this page.
         </p>
 
         <h2>Changes</h2>
-        <p>These terms may change; the effective date below reflects the current version.</p>
+        <p>These terms may change; the effective date above reflects the current version.</p>
 
-        <h2>Governing law and contact</h2>
+        <h2>Governing law and venue</h2>
         <p>
-          EchoFrame
+          These Terms are governed by the laws of the State of Georgia,
+          without regard to its conflict-of-laws principles. Any dispute
+          arising from your use of this Site that is not otherwise resolved
+          is subject to the exclusive jurisdiction of the state and federal
+          courts located in Georgia.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          EchoFrame (Jacob Starling)
           <br />
-          17 Ridgeway Drive, Cataula, GA 31804
+          Columbus, Georgia area
           <br />
           <a href="tel:+17063661096">(706) 366-1096</a> &middot;{" "}
           <a href="mailto:jacob.starling@echoframe.net">
             jacob.starling@echoframe.net
           </a>
-        </p>
-        <p className="hint">
-          EchoFrame is operated by Jacob Starling, doing business as
-          EchoFrame. Governing law and venue will be specified once
-          EchoFrame's legal entity is formally established.
         </p>
       </div>
     </main>

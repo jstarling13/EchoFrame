@@ -25,20 +25,14 @@ export default function AboutPage() {
           after.
         </p>
         <p className="hint">
-          EchoFrame is the working name for this practice, pending final
-          trademark and domain clearance. Legal entity type, formation
-          state, and registered agent have not been finalized and are
-          intentionally omitted here rather than fabricated.
+          EchoFrame is operated by Jacob Starling, based in the Columbus,
+          Georgia area.
         </p>
 
         <div className="grid grid-2" style={{ marginTop: "1.5rem" }}>
           <div className="card">
-            <h3>Address</h3>
-            <p>
-              17 Ridgeway Drive
-              <br />
-              Cataula, GA 31804
-            </p>
+            <h3>Location</h3>
+            <p>Columbus, Georgia area</p>
           </div>
           <div className="card">
             <h3>Contact</h3>
