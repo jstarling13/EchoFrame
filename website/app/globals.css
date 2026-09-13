@@ -587,6 +587,14 @@ select {
   max-width: 34rem;
 }
 
+input[type="radio"],
+input[type="checkbox"] {
+  width: auto;
+  max-width: none;
+  padding: 0;
+  flex-shrink: 0;
+}
+
 textarea {
   min-height: 8rem;
   resize: vertical;
