@@ -85,9 +85,9 @@ export default function SecurityPage() {
         <div className="callout callout-risk" style={{ marginTop: "2rem" }}>
           <p>
             This is a practical control framework, not a claim of compliance
-            certification. PHI use is prohibited until counsel and security
-            confirm a compliant architecture and required agreements. No
-            sensitive data is submitted to AI systems by default.
+            certification. Sensitive or regulated data is never submitted to
+            AI systems by default &mdash; that decision is made explicitly,
+            in writing, for each engagement.
           </p>
         </div>
       </div>

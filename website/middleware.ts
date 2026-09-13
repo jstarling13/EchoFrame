@@ -12,15 +12,16 @@ export const config = {
 };
 
 export function middleware(req: NextRequest) {
+  const username = process.env.ADMIN_INVOICE_USERNAME;
   const password = process.env.ADMIN_INVOICE_PASSWORD;
 
   // Fail closed: an internal billing tool (client names, rates) must
-  // never be reachable just because a password wasn't configured yet.
-  if (!password) {
+  // never be reachable just because credentials weren't configured yet.
+  if (!username || !password) {
     return new NextResponse("Not configured", { status: 503 });
   }
 
-  const expected = `Basic ${Buffer.from(`admin:${password}`).toString("base64")}`;
+  const expected = `Basic ${Buffer.from(`${username}:${password}`).toString("base64")}`;
   if (req.headers.get("authorization") === expected) {
     return NextResponse.next();
   }
