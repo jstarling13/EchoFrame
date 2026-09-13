@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import LeadForm from "@/components/LeadForm";
+import ProblemMatcher from "@/components/ProblemMatcher";
 import { INDUSTRY_OPTIONS, PROBLEM_OPTIONS, getOptionLabel } from "@/lib/industrySelector";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default async function ContactPage({
           include confidential, privileged, health, financial-account,
           credential, or other sensitive information.
         </p>
+        <ProblemMatcher />
         <LeadForm initialWorkflowProblem={prefill} />
       </div>
     </main>
