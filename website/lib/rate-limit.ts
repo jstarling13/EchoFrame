@@ -81,34 +81,53 @@ function getDurableStore(): RateLimitStore {
   return new UpstashRestRateLimitStore(url, token);
 }
 
-function toResult(count: number, durable: boolean): RateLimitResult {
+function toResult(
+  count: number,
+  durable: boolean,
+  maxRequests: number
+): RateLimitResult {
   return {
-    success: count <= MAX_REQUESTS,
-    remaining: Math.max(0, MAX_REQUESTS - count),
+    success: count <= maxRequests,
+    remaining: Math.max(0, maxRequests - count),
     durable,
   };
 }
 
-export async function checkRateLimit(identifier: string): Promise<RateLimitResult> {
-  const key = `contact-form:${identifier}`;
+export interface RateLimitOptions {
+  /** Distinguishes this feature's counters from every other caller's. */
+  namespace?: string;
+  maxRequests?: number;
+  windowSeconds?: number;
+}
+
+export async function checkRateLimit(
+  identifier: string,
+  options: RateLimitOptions = {}
+): Promise<RateLimitResult> {
+  const {
+    namespace = "contact-form",
+    maxRequests = MAX_REQUESTS,
+    windowSeconds = WINDOW_SECONDS,
+  } = options;
+  const key = `${namespace}:${identifier}`;
 
   if (isDurableStoreConfigured()) {
     try {
-      const count = await getDurableStore().increment(key, WINDOW_SECONDS);
-      return toResult(count, true);
+      const count = await getDurableStore().increment(key, windowSeconds);
+      return toResult(count, true, maxRequests);
     } catch (err) {
       console.error("rate_limit_store_unreachable", err);
-      const count = await memoryStore.increment(key, WINDOW_SECONDS);
-      return toResult(count, false);
+      const count = await memoryStore.increment(key, windowSeconds);
+      return toResult(count, false, maxRequests);
     }
   }
 
   if (isProductionRuntime()) {
     console.error("rate_limit_durable_store_missing_production", {
-      feature: "contact-form",
+      feature: namespace,
     });
   }
 
-  const count = await memoryStore.increment(key, WINDOW_SECONDS);
-  return toResult(count, false);
+  const count = await memoryStore.increment(key, windowSeconds);
+  return toResult(count, false, maxRequests);
 }

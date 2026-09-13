@@ -51,13 +51,13 @@ describe("problemMatcher", () => {
     expect(new Set(texts).size).toBe(texts.length);
   });
 
-  it("makes no network request — source contains no fetch/XHR/API call", () => {
+  it("the deterministic matching engine makes no network request", () => {
+    // The opt-in AI feedback path (components/ProblemMatcher.tsx,
+    // lib/problemMatcherAi.ts) intentionally calls /api/problem-matcher-ai —
+    // that's covered separately in problem-matcher-ai.test.ts. This only
+    // guards the always-on deterministic engine and its content catalog.
     const root = join(__dirname, "..");
-    for (const file of [
-      "lib/problemMatcher.ts",
-      "lib/problemMatcherCatalog.ts",
-      "components/ProblemMatcher.tsx",
-    ]) {
+    for (const file of ["lib/problemMatcher.ts", "lib/problemMatcherCatalog.ts"]) {
       const source = readFileSync(join(root, file), "utf-8");
       expect(source).not.toMatch(/fetch\(|XMLHttpRequest|axios|\/api\//);
     }
