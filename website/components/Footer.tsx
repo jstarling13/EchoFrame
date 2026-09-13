@@ -14,7 +14,7 @@ export default function Footer() {
                 alt="EchoFrame"
                 width={118}
                 height={31}
-                className="brand-logo-full footer-logo-inverted"
+                className="brand-logo-full logo-inverted"
               />
             </h2>
             <p style={{ maxWidth: "32ch", opacity: 0.85 }}>

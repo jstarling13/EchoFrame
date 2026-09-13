@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Reclaiming 42 Hours of Weekly Processing Capacity | EchoFrame",
+  title: "Reclaiming 40+ Hours of Weekly Processing Capacity | EchoFrame",
   description:
     "EchoFrame engineers practical AI and automation for small businesses through The OWNED Method™ — bookkeeping and financial workflows, process automation, and staff training. Billed hourly, measured in outcomes.",
 };
@@ -24,7 +24,7 @@ export default function Home() {
         <div className="hero-overlay" />
         <div className="container">
           <p className="eyebrow">The Case for Practical AI</p>
-          <h1>Reclaiming 42 Hours of Weekly Processing Capacity.</h1>
+          <h1>Reclaiming 40+ Hours of Weekly Processing Capacity.</h1>
           <p>
             EchoFrame engineers hands-on AI and workflow automation for small
             businesses &mdash; delivered through The OWNED Method&trade;, a
@@ -85,7 +85,7 @@ export default function Home() {
               For an anonymized multi-location food-service accounting
               operation, EchoFrame reduced a client-tracked weekly process
               from approximately 48 hours to approximately six hours,
-              reclaiming roughly 42 hours of weekly capacity. The result was
+              reclaiming 40+ hours of weekly capacity. The result was
               observed from June through September 2026, was not
               independently audited, and should not be interpreted as
               guaranteed savings or a typical result.

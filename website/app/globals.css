@@ -121,8 +121,8 @@ select:focus-visible,
 
 /* Header — signature periwinkle bar, black wordmark/nav */
 .site-header {
-  background: var(--white);
-  border-bottom: 3px solid var(--accent-deep);
+  background: var(--accent);
+  border-bottom: 3px solid var(--ink-pure);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -174,10 +174,17 @@ select:focus-visible,
   height: 3rem;
 }
 
-/* The real logo file is navy/gold on transparent, made for light
-   surfaces. The footer is a dark surface, so it's rendered as a white
-   silhouette there via filter rather than a second exported asset. */
-.footer-logo-inverted {
+/* The real logo file is navy/gold on transparent. The footer and the
+   header (brand-blue background) are both dark-enough surfaces, so
+   the logo is rendered as a white silhouette via filter rather than a
+   second exported asset. Logos are exempt from WCAG text-contrast
+   ratios (1.4.3), unlike the header's nav text/buttons, which stay
+   dark for real contrast against this background. (The old
+   "logo-full-white.png" and "logo-mark-white/black.png" files in
+   public/images are leftover White Oak Operations brand assets — a
+   different company's tree logo — and must never be used for
+   EchoFrame.) */
+.logo-inverted {
   filter: brightness(0) invert(1);
 }
 
@@ -300,6 +307,20 @@ select:focus-visible,
 .btn-primary:hover {
   background: var(--ink-pure);
   border-color: var(--ink-pure);
+}
+
+/* The header is now a navy surface (matches .on-dark), so its "Request
+   a Quote" button needs the same light-on-dark treatment or it would
+   render navy-on-navy and disappear. */
+.site-header .btn-primary {
+  background: var(--white);
+  color: var(--accent-deep);
+  border-color: var(--white);
+}
+
+.site-header .btn-primary:hover {
+  background: var(--paper);
+  border-color: var(--paper);
 }
 
 .btn-secondary {

@@ -18,7 +18,7 @@ export default function Header() {
             alt="EchoFrame"
             width={157}
             height={41}
-            className="brand-logo-full"
+            className="brand-logo-full logo-inverted"
             priority
           />
         </Link>
