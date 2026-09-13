@@ -102,35 +102,14 @@ export default function Home() {
       <section className="section section-border">
         <div className="container grid grid-3">
           <div>
-            <Image
-              className="line-icon on-light"
-              src="/images/icon-discovery.png"
-              alt=""
-              width={48}
-              height={48}
-            />
             <h3>Consulting</h3>
             <p>Map how the work actually moves before touching any tool.</p>
           </div>
           <div>
-            <Image
-              className="line-icon on-light"
-              src="/images/icon-implementation.png"
-              alt=""
-              width={48}
-              height={48}
-            />
             <h3>Implementation</h3>
             <p>Build, test, and integrate the workflow into daily operations.</p>
           </div>
           <div>
-            <Image
-              className="line-icon on-light"
-              src="/images/icon-training.png"
-              alt=""
-              width={48}
-              height={48}
-            />
             <h3>Training</h3>
             <p>Hand the team the skills and documentation to run it alone.</p>
           </div>

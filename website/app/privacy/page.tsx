@@ -185,8 +185,6 @@ export default function PrivacyPage() {
         <p>
           EchoFrame (Jacob Starling)
           <br />
-          Columbus, Georgia area
-          <br />
           <a href="tel:+17063661096">(706) 366-1096</a>
           <br />
           <a href="mailto:jacob.starling@echoframe.net">

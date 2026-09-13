@@ -82,8 +82,6 @@ export default function TermsPage() {
         <p>
           EchoFrame (Jacob Starling)
           <br />
-          Columbus, Georgia area
-          <br />
           <a href="tel:+17063661096">(706) 366-1096</a> &middot;{" "}
           <a href="mailto:jacob.starling@echoframe.net">
             jacob.starling@echoframe.net

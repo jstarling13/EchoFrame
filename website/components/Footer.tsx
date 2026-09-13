@@ -23,8 +23,6 @@ export default function Footer() {
               with no fixed packages.
             </p>
             <p style={{ maxWidth: "32ch", opacity: 0.85, marginTop: "1rem" }}>
-              Columbus, Georgia area
-              <br />
               <a href="tel:+17063661096">(706) 366-1096</a>
               <br />
               <a href="mailto:jacob.starling@echoframe.net">

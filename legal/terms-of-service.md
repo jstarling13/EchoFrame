@@ -29,7 +29,7 @@ Terms may change; effective date above reflects the current version.
 State of Georgia law, without regard to conflict-of-laws principles; exclusive jurisdiction of Georgia state/federal courts. This is a reasonable default for a sole proprietor/DBA based and operating in Georgia — it does not need to wait for a formal entity to be established, unlike what an earlier draft of this page assumed.
 
 ## Contact
-Jacob Starling / EchoFrame, Columbus, Georgia area, (706) 366-1096, jacob.starling@echoframe.net. Residential address removed from all public pages — publish a business mailing address here once one exists.
+Jacob Starling / EchoFrame, (706) 366-1096, jacob.starling@echoframe.net. Residential address removed from all public pages; general locality later removed too, per Jacob's call — publish a business mailing address here once one exists.
 
 ## Open items for counsel (do not treat as resolved)
 - Verify the $100 Site-use liability cap and the "as is" disclaimer language are enforceable and appropriately scoped for Georgia law and this business's actual risk profile.

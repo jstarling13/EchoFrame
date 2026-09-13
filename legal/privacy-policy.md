@@ -47,7 +47,7 @@ Directed to business owners/professionals, not children. No knowing collection f
 Material changes reflected by updating the effective date.
 
 ## Contact
-Jacob Starling / EchoFrame, Columbus, Georgia area, (706) 366-1096, jacob.starling@echoframe.net. Residential address removed from all public pages (footer, About, Privacy, Terms) — publish a business mailing address here once one exists.
+Jacob Starling / EchoFrame, (706) 366-1096, jacob.starling@echoframe.net. Residential address removed from all public pages (footer, About, Privacy, Terms); general locality ("Columbus, Georgia area") later removed too, per Jacob's call that it was unneeded information — publish a business mailing address here once one exists.
 
 ## Open items for counsel (do not treat as resolved)
 - Confirm whether GDPR, CCPA/CPRA, GLBA/Reg S-P, CalOPPA, or other specific statutes actually apply given real traffic/client geography — not assumed here. Note CalOPPA's reach is broader/lower-threshold than CCPA; don't conflate the two.

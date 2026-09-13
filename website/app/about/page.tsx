@@ -73,16 +73,9 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <p className="hint">
-          EchoFrame is operated by Jacob Starling, based in the Columbus,
-          Georgia area.
-        </p>
+        <p className="hint">EchoFrame is operated by Jacob Starling.</p>
 
-        <div className="grid grid-2" style={{ marginTop: "1.5rem" }}>
-          <div className="card">
-            <h3>Location</h3>
-            <p>Columbus, Georgia area</p>
-          </div>
+        <div style={{ marginTop: "1.5rem" }}>
           <div className="card">
             <h3>Contact</h3>
             <p>
