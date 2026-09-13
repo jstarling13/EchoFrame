@@ -6,7 +6,7 @@ import PricingModel from "@/components/PricingModel";
 import IndustrySelector from "@/components/IndustrySelector";
 
 export const metadata: Metadata = {
-  title: "Collapsing Five Hours of Reconciliation Into Zero | EchoFrame",
+  title: "Reclaiming 42 Hours of Weekly Processing Capacity | EchoFrame",
   description:
     "EchoFrame engineers practical AI and automation for small businesses through The OWNED Method™ — bookkeeping and financial workflows, process automation, and staff training. Billed hourly, measured in outcomes.",
 };
@@ -27,7 +27,7 @@ export default function Home() {
         <div className="hero-overlay" />
         <div className="container">
           <p className="eyebrow">The Case for Practical AI</p>
-          <h1>Collapsing Five Hours of Daily Reconciliation Into Zero.</h1>
+          <h1>Reclaiming 42 Hours of Weekly Processing Capacity.</h1>
           <p>
             EchoFrame engineers hands-on AI and workflow automation for small
             businesses &mdash; delivered through The OWNED Method&trade;, a
@@ -73,16 +73,21 @@ export default function Home() {
           <div className="callout">
             <p className="eyebrow">Proof, Not Promises</p>
             <p style={{ fontFamily: "var(--font-serif)", fontSize: "1.4rem", marginBottom: "0.75rem" }}>
-              5 hours a day of manual reconciliation &rarr; fully automated.
+              An 87.5% reduction in weekly processing time.
             </p>
             <p>
-              A bookkeeper at a 15-location retail business was tracking
-              everything by hand in QuickBooks and Excel. EchoFrame built an
-              AI workflow on QuickBooks&rsquo; own API to update records
-              automatically as the underlying data changed, cutting roughly
-              five hours of manual work from her day &mdash; and trained her
-              to extend the automation herself, not just run what was
-              built for her.
+              For an anonymized multi-location food-service accounting
+              operation, EchoFrame reduced a client-tracked weekly process
+              from approximately 48 hours to approximately six hours,
+              reclaiming roughly 42 hours of weekly capacity. The result was
+              observed from June through September 2026, was not
+              independently audited, and should not be interpreted as
+              guaranteed savings or a typical result.
+            </p>
+            <p style={{ marginTop: "0.75rem" }}>
+              <Link href="/insights/from-three-16-hour-days-to-six-hours-a-week">
+                Read the full case study &rarr;
+              </Link>
             </p>
           </div>
         </div>

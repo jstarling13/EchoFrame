@@ -77,6 +77,34 @@ export default function AboutPage() {
               is eating time in your business now.
             </p>
             <p>
+              The same habit of testing the first answer instead of trusting
+              it shaped Jacob&rsquo;s finance work at Emory University&rsquo;s
+              Goizueta Business School. In one academic valuation exercise
+              &mdash; not a client engagement &mdash; an initial Comcast
+              model produced a value of $57.11 per share. Rather than
+              treating a precise output as a correct one, Jacob reconsidered
+              the peer group, replaced media-heavy comparables with
+              businesses that better reflected Comcast&rsquo;s connectivity
+              economics, normalized beta from 0.655 to 1.00, and revised the
+              margin and capital-expenditure assumptions. The resulting
+              range, $29.75 to $35.74, was less dramatic and more defensible.
+              The same discipline applies to automation work: a polished
+              model, dashboard, or AI response is not evidence by itself
+              &mdash; the underlying data, assumptions, and controls have to
+              make sense.
+            </p>
+            <p>
+              Jacob was also a student fund analyst with Blue Eagle Capital,
+              an Emory student-managed investment fund, where he developed
+              investment memos and pitch decks, presented recommendations to
+              the investment committee for review, and monitored approved
+              positions against thesis-specific KPIs and catalysts. That
+              experience reinforced a second principle behind EchoFrame: the
+              work does not end when a recommendation is presented &mdash;
+              someone has to remain accountable for whether it performs as
+              expected and for recognizing when the facts change.
+            </p>
+            <p>
               Jacob Starling holds an M.S. in Finance from Emory University.
               That financial and operational discipline, paired with staying
               hands-on with the newest AI models as they ship, is what

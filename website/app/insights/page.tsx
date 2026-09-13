@@ -37,6 +37,11 @@ export default function InsightsPage() {
               style={{ marginBottom: "1.25rem" }}
             >
               <p className="hint" style={{ marginBottom: "0.35rem" }}>
+                {article.kind && (
+                  <>
+                    <strong>{article.kind}</strong> &middot;{" "}
+                  </>
+                )}
                 {formatDate(article.date)} &middot; {article.readingTimeMinutes} min read
               </p>
               <h2 style={{ marginTop: 0, marginBottom: "0.5rem" }}>
