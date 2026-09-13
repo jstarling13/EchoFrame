@@ -39,6 +39,14 @@ export default function OfferDetail({ code }: { code: OfferCode }) {
       />
       <div className="container section">
         <Breadcrumbs trail={[{ href: "/services", label: "Services" }, { href: `/${offer.slug}`, label: offer.name }]} />
+        <div className="callout callout-risk" style={{ marginBottom: "2rem" }}>
+          <p>
+            This fixed-price package has been retired. EchoFrame now bills
+            a single hourly rate across every engagement — see{" "}
+            <Link href="/services">current services and pricing</Link>.
+            The details below are kept for historical reference only.
+          </p>
+        </div>
         <p className="eyebrow">{offer.code}</p>
         <h1>{offer.name}</h1>
         <p>{offer.summary}</p>
@@ -131,7 +139,7 @@ export default function OfferDetail({ code }: { code: OfferCode }) {
         <EngagementJourney />
 
         <Link href="/contact" className="btn btn-primary">
-          Book a fit call
+          Request a Quote
         </Link>
       </div>
     </main>

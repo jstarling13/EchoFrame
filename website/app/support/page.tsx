@@ -27,10 +27,8 @@ export default function Page() {
         </p>
         <div className="callout callout-risk">
           <p>
-            Cancellation and early-termination terms are drafted but not
-            yet approved by counsel (see{" "}
-            <code>legal/ATTORNEY_REVIEW_REQUIRED.md</code>). This page will
-            be updated with final wording once that review is complete.
+            This offer is retired; the term details above are kept for
+            historical reference only and are not offered to new clients.
           </p>
         </div>
       </div>

@@ -43,6 +43,6 @@ describe("no public checkout button (website/docs/NO_PUBLIC_CHECKOUT.md)", () =>
       "utf-8"
     );
     expect(detailSource).toContain('href="/contact"');
-    expect(detailSource).toContain("Book a fit call");
+    expect(detailSource).toContain("Request a Quote");
   });
 });

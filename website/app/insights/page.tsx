@@ -15,8 +15,7 @@ export default function InsightsPage() {
         <p>
           No articles are published yet. This section is reserved for
           verified case studies and method notes, added only after real,
-          confirmed engagement results — see{" "}
-          <code>strategy/DECISION_LOG.md</code> on fabricated proof points.
+          confirmed engagement results.
         </p>
       </div>
     </main>

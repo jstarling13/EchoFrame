@@ -24,11 +24,10 @@ export default function AboutPage() {
           and exit path &mdash; never picked first and fit to the problem
           after.
         </p>
-        <p className="owner-todo">
-          EchoFrame is the selected working name for this practice, pending
-          trademark, entity-name, domain, and common-law clearance
-          (strategy/DECISION_LOG.md). Legal entity type, formation state,
-          and registered agent have not been finalized and are
+        <p className="hint">
+          EchoFrame is the working name for this practice, pending final
+          trademark and domain clearance. Legal entity type, formation
+          state, and registered agent have not been finalized and are
           intentionally omitted here rather than fabricated.
         </p>
 
