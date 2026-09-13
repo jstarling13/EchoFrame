@@ -310,9 +310,9 @@ select:focus-visible,
   border-color: var(--ink-pure);
 }
 
-/* The header is now a navy surface (matches .on-dark), so its "Request
-   a Quote" button needs the same light-on-dark treatment or it would
-   render navy-on-navy and disappear. */
+/* The header's background is the brand-blue --accent, so its "Request
+   a Quote" button needs a white treatment or it would blend into the
+   header background instead of standing out as a button. */
 .site-header .btn-primary {
   background: var(--white);
   color: var(--accent-deep);
@@ -425,22 +425,6 @@ select:focus-visible,
 
 .card-photo img {
   object-fit: cover;
-}
-
-/* Line-art icon */
-.line-icon {
-  width: 3rem;
-  height: 3rem;
-  object-fit: contain;
-  margin-bottom: 1rem;
-}
-
-.on-dark .line-icon {
-  filter: none;
-}
-
-.line-icon.on-light {
-  filter: invert(1);
 }
 
 .hero.on-dark h1 {
@@ -1082,5 +1066,49 @@ fieldset {
   table.offers td {
     font-size: 0.85rem;
     padding: 0.7rem 0.6rem;
+  }
+}
+
+/* Invoice generator (/admin/invoice) — internal tool, not brand styling */
+.invoice-preview {
+  max-width: 40rem;
+  margin: 2rem auto;
+  padding: 2rem clamp(1.25rem, 4vw, 2.5rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+}
+
+.invoice-preview__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  border-bottom: 2px solid var(--ink-pure);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.invoice-preview__bill-to {
+  margin-bottom: 1rem;
+}
+
+.invoice-preview table.offers tfoot td {
+  border-top: 2px solid var(--ink-pure);
+  border-bottom: none;
+}
+
+@media print {
+  .site-header,
+  .site-footer,
+  .draft-banner,
+  .invoice-form {
+    display: none !important;
+  }
+
+  .invoice-preview {
+    margin: 0;
+    border: none;
+    max-width: none;
   }
 }
