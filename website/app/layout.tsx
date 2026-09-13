@@ -20,6 +20,19 @@ export const metadata: Metadata = {
   robots: isProductionDeployment()
     ? { index: true, follow: true }
     : { index: false, follow: false },
+  openGraph: {
+    type: "website",
+    siteName: "EchoFrame",
+    title: "EchoFrame | AI Implementation & Workflow Automation",
+    description:
+      "Practical AI implementation and workflow automation for small businesses.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EchoFrame | AI Implementation & Workflow Automation",
+    description:
+      "Practical AI implementation and workflow automation for small businesses.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

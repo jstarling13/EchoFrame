@@ -59,3 +59,17 @@ Deposits are non-refundable once reserved work or discovery begins, subject to c
 ## Technical
 
 Use Stripe-hosted payment surfaces initially. Store no card data. Use server-side webhook verification and idempotent event processing. Preserve IONOS email-related DNS records when connecting Vercel.
+
+## Strategy doc consolidation (2026-09-12)
+
+BUSINESS_BLUEPRINT.md, MARKET_POSITIONING.md, POSITIONING_ARCHITECTURE.md,
+ICP_PERSONAS_AND_TRIGGERS.md, and INDUSTRY_PRIORITIES.md are now each a
+single active document (ChatGPT Pack 9). The pre-EchoFrame originals and
+the 2026-09-12 "REVISED" intermediates are archived at
+`archive/strategy_pre_2026-09-12/`, not deleted. Locked as of this
+consolidation: EchoFrame brand, Big-Four tone, two-lane ICP (2-50
+employee launch lane / 51-250 expansion lane), $40/hour + travel quoted
+separately + $50/day onsite stipend, free fit call then paid diagnostic
+when substantive mapping is needed, no fixed public packages, no public
+checkout, founder-led delivery, assist-not-replace bookkeeper/CPA
+positioning, OWNED Method as the public methodology.

@@ -5,7 +5,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 export const metadata: Metadata = {
   title: "Security",
   description:
-    "A practical control framework for AI-involved workflows: data classification, tool approval, access minimization, human review, failure testing, and offboarding.",
+    "How EchoFrame approaches access, human review, sensitive data, tool selection, and practical controls in AI and workflow automation projects.",
 };
 
 const CONTROLS = [

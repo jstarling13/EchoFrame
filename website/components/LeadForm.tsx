@@ -9,7 +9,11 @@ const HONEYPOT_FIELD =
 
 type Errors = Record<string, string>;
 
-export default function LeadForm() {
+export default function LeadForm({
+  initialWorkflowProblem,
+}: {
+  initialWorkflowProblem?: string;
+}) {
   const router = useRouter();
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
@@ -143,7 +147,12 @@ export default function LeadForm() {
           Do not include confidential, health, financial-account, credential, or privileged
           information.
         </span>
-        <textarea id={`${formId}-workflowProblem`} name="workflowProblem" required />
+        <textarea
+          id={`${formId}-workflowProblem`}
+          name="workflowProblem"
+          required
+          defaultValue={initialWorkflowProblem}
+        />
         {errors.workflowProblem && (
           <span className="field-error">{errors.workflowProblem}</span>
         )}
@@ -193,7 +202,7 @@ export default function LeadForm() {
       )}
 
       <button type="submit" className="btn btn-primary" disabled={submitting}>
-        {submitting ? "Sending…" : "Request a fit call"}
+        {submitting ? "Sending…" : "Request a Quote"}
       </button>
     </form>
   );

@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import ServicesGrid from "@/components/ServicesGrid";
 import PricingModel from "@/components/PricingModel";
+import IndustrySelector from "@/components/IndustrySelector";
 
 export const metadata: Metadata = {
   title: "Collapsing Five Hours of Reconciliation Into Zero | EchoFrame",
@@ -57,6 +58,13 @@ export default function Home() {
             that actually fits, and prove the result before it ever scales,
             without losing control of quality, data, or judgment.
           </p>
+        </div>
+      </section>
+
+      <section className="section section-alt section-border">
+        <div className="container">
+          <p className="eyebrow">Put the Workflow in Context</p>
+          <IndustrySelector />
         </div>
       </section>
 

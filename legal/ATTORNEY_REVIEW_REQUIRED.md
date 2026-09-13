@@ -16,18 +16,19 @@ Entity/name and authority; governing law/venue selection (see `strategy/OPEN_QUE
 
 Do not publish Terms/Privacy or sign client MSA/SOW until counsel approves final text and the implemented data flows match the documents.
 
-## Current drafts (2026-08-30)
+## Current drafts (2026-09-12)
 
-The active, current draft set is: `terms-of-service.md`, `privacy-policy.md`,
-`msa-template.md`, `sow-template-O1.md` through `sow-template-O5.md`,
-`mutual-nda-template.md`, `data-processing-agreement.md`,
-`cancellation-refund-policy.md`, `travel-expense-policy.md` — all in this
-directory. They carry real, owner-confirmed address/phone/email and
-correctly placeholder every fact still pending (entity type, formation
-state, registered agent, governing law/venue, dates, IDs).
+EchoFrame is billed hourly ($40/hour + travel quoted per trip + $50/day
+onsite food stipend) — no fixed O1-O5 packages. The active, current draft
+set is: `terms-of-service.md`, `privacy-policy.md`, `msa-template.md`,
+`sow-template-hourly.md`, `mutual-nda-template.md`,
+`data-processing-agreement.md`, `cancellation-refund-policy.md`,
+`travel-expense-policy.md`, plus `entity-options-and-advisor-questions.md`,
+`attorney-cpa-brief.md`, `insurance-and-risk-checklist.md`,
+`launch-compliance-closeout-checklist.md`, and `LEGAL_OPEN_ITEMS.md` — all
+in this directory.
 
-The earlier, thinner draft generation (`COMMERCIAL_POLICIES_DRAFT.md`,
-`MASTER_SERVICES_AGREEMENT_DRAFT.md`, `NDA_DRAFT.md`,
-`STATEMENT_OF_WORK_DRAFT.md`, `WEBSITE_TERMS_PRIVACY_DRAFT.md`) has been
-removed (2026-08-31) as superseded — recoverable via git history if ever
-needed.
+The prior O1-O5 package-era draft set (`sow-template-O1.md` through
+`sow-template-O5.md`, and the earlier versions of the MSA/NDA/DPA/ToS/
+Privacy/cancellation docs and the original White-Oak-era thin draft
+generation) is archived at `archive/legal_pre_2026-09-12/`, not deleted.

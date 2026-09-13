@@ -5,7 +5,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 export const metadata: Metadata = {
   title: "Training",
   description:
-    "A workflow is not implemented until people can use it, verify it, and recover when it fails. Owner, manager, employee, and advanced builder tracks.",
+    "Practical training for owners, managers, and staff using AI and automated workflows in real business operations.",
 };
 
 const TRACKS = [

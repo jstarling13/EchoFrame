@@ -3,11 +3,6 @@ import type { MetadataRoute } from "next";
 const ROUTES = [
   "",
   "/services",
-  "/workflow-diagnostic",
-  "/build-sprint",
-  "/transformation",
-  "/enterprise",
-  "/support",
   "/industries",
   "/method",
   "/training",
