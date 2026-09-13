@@ -84,11 +84,8 @@ export default function AboutPage() {
               is eating time in your business now.
             </p>
             <p>
-              Jacob Starling holds an M.S. in Finance from Emory University
-              and is entering the U.S. Navy as a Supply Corps officer &mdash;
-              the community responsible for logistics, contracting, and
-              financial management aboard ship and ashore. That same
-              operational and financial discipline, paired with staying
+              Jacob Starling holds an M.S. in Finance from Emory University.
+              That financial and operational discipline, paired with staying
               hands-on with the newest AI models as they ship, is what
               EchoFrame brings to client engagements: get into the actual
               workflow, build something real, and leave the client able to
@@ -98,7 +95,7 @@ export default function AboutPage() {
               Underneath the framework and the fine print, the reason this
               exists is simple: to do work that actually helps someone,
               learn something real from every engagement, and build a
-              practice worth being proud of before the next chapter starts.
+              practice worth being proud of.
             </p>
           </div>
         </div>

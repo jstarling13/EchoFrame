@@ -12,31 +12,32 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Do you only train teams?",
     answer:
-      "No. Training is tied to implemented or clearly designed workflows.",
+      "No. Training only exists to transfer ownership of something real — a workflow that's already been mapped, built, or actively designed. Training without an underlying system is just a workshop, and that's not what gets sold here.",
   },
   {
     question: "Do you require ChatGPT or Claude?",
-    answer: "No. We compare appropriate options.",
+    answer:
+      "No single AI vendor gets picked by default. Every workflow is evaluated on cost, reliability, data handling, and maintenance burden — the model or tool is chosen to fit that, never the other way around.",
   },
   {
     question: "Will AI replace staff?",
     answer:
-      "The engagement is designed around operating outcomes and accountable roles, not a headcount promise.",
+      "EchoFrame isn't sold as a headcount-replacement service. The engagement is built around measurable operating outcomes and clear ownership — what a business does with the capacity it creates afterward is a business decision, not something baked into the workflow.",
   },
   {
     question: "Can you use sensitive data?",
     answer:
-      "Only after classification, authorization, vendor/control review, and written scope; some uses are declined.",
+      "Only after the data is classified, the right controls and vendor terms are confirmed, and the scope is agreed in writing. Some sensitive workflows get declined outright rather than forced through inadequate controls.",
   },
   {
     question: "Who owns the work?",
     answer:
-      "The contract identifies bespoke client deliverables, background methods, third-party materials, accounts, and transfer.",
+      "The client owns the delivered system, its documentation, and the ability to run and extend it. EchoFrame keeps its own reusable methods and background tools, the same way any consultant keeps their own playbook — the written agreement spells out exactly where that line sits.",
   },
   {
     question: "Can you guarantee savings?",
     answer:
-      "No. We baseline, classify, and measure effects without calling capacity cash savings.",
+      "No. Value gets estimated from the current workflow using conservative assumptions, then measured after implementation. Reclaimed time is capacity, not automatically cash — treating it as guaranteed savings would be dishonest.",
   },
 ];
 

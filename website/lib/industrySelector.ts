@@ -25,6 +25,24 @@ export const PROBLEM_OPTIONS: Option[] = [
   { slug: "not-sure", label: "I'm Not Sure Yet" },
 ];
 
+export const SIZE_OPTIONS: Option[] = [
+  { slug: "solo", label: "Just me / a handful of people" },
+  { slug: "small-team", label: "A small team (roughly 2-25)" },
+  { slug: "growing", label: "Growing (roughly 25-50)" },
+  { slug: "established", label: "Established (50+)" },
+];
+
+const SIZE_NOTE: Record<string, string> = {
+  solo:
+    "At this size, the fastest win is usually removing one manual task entirely rather than building a system around a team that doesn't exist yet.",
+  "small-team":
+    "At this size, the goal is usually giving one or two people back real hours a week without adding a tool nobody else learns to use.",
+  growing:
+    "At this size, workflows usually start breaking in the handoffs between people — that's typically where the highest-value fix is.",
+  established:
+    "At this size, the constraint is usually consistency across people and locations more than the workflow itself.",
+};
+
 interface IndustryContent {
   workflows: string[];
   message: string;
@@ -181,11 +199,13 @@ export interface SelectorResult {
   capabilities: string[];
   firstQuestion: string;
   industryMessage: string;
+  sizeNote?: string;
 }
 
 export function getSelectorResult(
   industrySlug: string,
-  problemSlug: string
+  problemSlug: string,
+  sizeSlug?: string | null
 ): SelectorResult | null {
   const industry = INDUSTRY_CONTENT[industrySlug];
   const problem = PROBLEM_CONTENT[problemSlug];
@@ -196,6 +216,7 @@ export function getSelectorResult(
     capabilities: problem.capabilities,
     firstQuestion: problem.firstQuestion,
     industryMessage: industry.message,
+    sizeNote: sizeSlug ? SIZE_NOTE[sizeSlug] : undefined,
   };
 }
 

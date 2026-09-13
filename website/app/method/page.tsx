@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import MethodFlow from "@/components/MethodFlow";
 
 export const metadata: Metadata = {
   title: "Method",
@@ -30,14 +31,7 @@ export default function MethodPage() {
           five deliberate moves from diagnosis to full ownership transfer,
           engineered for measurable risk reduction at every stage.
         </p>
-        <ol className="steps">
-          {STEPS.map((step) => (
-            <li key={step.title}>
-              <h3>{step.title}</h3>
-              <p>{step.body}</p>
-            </li>
-          ))}
-        </ol>
+        <MethodFlow steps={STEPS} />
       </div>
     </main>
   );

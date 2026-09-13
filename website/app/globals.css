@@ -2,7 +2,7 @@
   --ink: #0a0a0a;
   --ink-pure: #000000;
   --white: #ffffff;
-  --paper: #f5f5f6;
+  --paper: #eef2f8;
   --line: #d9d9dc;
   --slate: #55585e;
   --accent: #7297c5;
@@ -122,7 +122,7 @@ select:focus-visible,
 /* Header — signature periwinkle bar, black wordmark/nav */
 .site-header {
   background: var(--white);
-  border-bottom: 1px solid var(--line);
+  border-bottom: 3px solid var(--accent-deep);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -288,14 +288,14 @@ select:focus-visible,
 }
 
 .btn-primary {
-  background: var(--ink-pure);
+  background: var(--accent-deep);
   color: var(--white);
-  border-color: var(--ink-pure);
+  border-color: var(--accent-deep);
 }
 
 .btn-primary:hover {
-  background: var(--accent-deep);
-  border-color: var(--accent-deep);
+  background: var(--ink-pure);
+  border-color: var(--ink-pure);
 }
 
 .btn-secondary {
@@ -670,6 +670,87 @@ fieldset {
 
 .industry-selector {
   margin-top: 1.5rem;
+}
+
+.services-group + .services-group {
+  margin-top: 2.5rem;
+}
+
+.method-flow {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.method-flow-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1 1 auto;
+}
+
+.method-flow-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  flex: 1;
+  min-width: 10rem;
+}
+
+.method-flow-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.method-flow-card p {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.method-flow-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--accent-deep);
+  color: var(--white);
+  font-weight: 700;
+  font-family: var(--font-serif);
+  margin-bottom: 0.85rem;
+}
+
+.method-flow-arrow {
+  color: var(--accent-deep);
+  flex-shrink: 0;
+  display: flex;
+}
+
+@media (max-width: 900px) {
+  .method-flow {
+    flex-direction: column;
+  }
+  .method-flow-item {
+    flex-direction: column;
+  }
+  .method-flow-arrow svg {
+    transform: rotate(90deg);
+  }
+}
+
+.services-group-label {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-deep);
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .pill-group {

@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   INDUSTRY_OPTIONS,
   PROBLEM_OPTIONS,
+  SIZE_OPTIONS,
   getSelectorResult,
   getOptionLabel,
 } from "@/lib/industrySelector";
@@ -12,8 +13,10 @@ import {
 export default function IndustrySelector() {
   const [industry, setIndustry] = useState<string | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
+  const [size, setSize] = useState<string | null>(null);
 
-  const result = industry && problem ? getSelectorResult(industry, problem) : null;
+  const result =
+    industry && problem ? getSelectorResult(industry, problem, size) : null;
   const industryLabel = industry ? getOptionLabel(INDUSTRY_OPTIONS, industry) : undefined;
 
   return (
@@ -56,10 +59,29 @@ export default function IndustrySelector() {
         </div>
       )}
 
+      {industry && problem && (
+        <div style={{ marginTop: "2rem" }}>
+          <h2>How big is the team right now?</h2>
+          <div className="pill-group" role="group" aria-label="Business size">
+            {SIZE_OPTIONS.map((option) => (
+              <button
+                key={option.slug}
+                type="button"
+                className="pill"
+                aria-pressed={size === option.slug}
+                onClick={() => setSize(option.slug)}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div aria-live="polite">
         {result && (
           <div className="callout industry-selector-result" style={{ marginTop: "2rem" }}>
-            <p className="eyebrow">A Practical Place to Start</p>
+            <p className="eyebrow">Your Practical First Step</p>
             <p style={{ fontFamily: "var(--font-serif)", fontSize: "1.3rem" }}>
               {result.headline}
             </p>
@@ -72,6 +94,7 @@ export default function IndustrySelector() {
               ))}
             </ul>
             <p className="hint">{result.industryMessage}</p>
+            {result.sizeNote && <p className="hint">{result.sizeNote}</p>}
             <p>
               <strong>First question:</strong> {result.firstQuestion}
             </p>

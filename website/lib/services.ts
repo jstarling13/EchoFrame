@@ -12,7 +12,7 @@ export const HOURLY_RATE_USD = 40;
 export const FOOD_STIPEND_USD_PER_DAY = 50;
 
 export const TRAVEL_FEE_SUMMARY =
-  "A flat travel fee to cover the trip — mileage or airfare and lodging — quoted upfront based on distance. A typical single-day regional trip runs around $1,250; it's confirmed before anything is booked.";
+  "Required for any onsite engagement — this is what it takes to get me there in person. The exact figure depends on where you're located and gets confirmed directly once we talk.";
 
 export interface PricingLineItem {
   label: string;
