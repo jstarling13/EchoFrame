@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
       if (!emailConfigured) return { sent: false, reason: "not_configured" as const };
       return sendNotificationEmail({
         to: process.env.LEAD_NOTIFICATION_EMAIL!,
-        subject: `New fit call request: ${parsed.data.company}`,
+        subject: `New discovery call request: ${parsed.data.company}`,
         text: [
           `Lead ID: ${leadId}`,
           `Name: ${parsed.data.name}`,
