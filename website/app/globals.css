@@ -681,6 +681,46 @@ fieldset {
   content: "\2212";
 }
 
+/* Accordion (Method stages, Security controls) — same interaction
+   pattern as .faq, styled for card-bordered content instead of a
+   plain list. */
+.accordion details {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  background: var(--white);
+}
+
+.accordion details + details {
+  margin-top: 0.75rem;
+}
+
+.accordion summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.05rem;
+  list-style: none;
+}
+
+.accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion summary::before {
+  content: "+";
+  color: var(--accent-deep);
+  margin-right: 0.6rem;
+  font-weight: 700;
+}
+
+.accordion details[open] summary::before {
+  content: "\2212";
+}
+
+.accordion details[open] summary {
+  margin-bottom: 0.85rem;
+}
+
 /* Callouts */
 .callout {
   border-left: 4px solid var(--accent);

@@ -1,9 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import ServicesGrid from "@/components/ServicesGrid";
-import PricingModel from "@/components/PricingModel";
-import IndustrySelector from "@/components/IndustrySelector";
 
 export const metadata: Metadata = {
   title: "Reclaiming 42 Hours of Weekly Processing Capacity | EchoFrame",
@@ -64,7 +61,16 @@ export default function Home() {
       <section className="section section-alt section-border">
         <div className="container">
           <p className="eyebrow">Put the Workflow in Context</p>
-          <IndustrySelector />
+          <h2>Every Industry Repeats the Same Work. The Controls Differ.</h2>
+          <p>
+            Accounting, professional services, real estate, construction,
+            retail, staffing, and multi-entity operations each carry their
+            own version of the same bottleneck &mdash; and their own limits
+            on what should ever run unattended.
+          </p>
+          <Link href="/industries" className="btn btn-secondary">
+            Find Your Industry &rarr;
+          </Link>
         </div>
       </section>
 
@@ -149,9 +155,9 @@ export default function Home() {
         <div className="container">
           <h2>The OWNED Method&trade;</h2>
           <p>Observe, Weigh, Navigate, Engineer, Demonstrate and Transfer.</p>
-          <p>
-            <Link href="/method">Read the Full Method</Link>
-          </p>
+          <Link href="/method" className="btn btn-secondary">
+            Read the Full Method &rarr;
+          </Link>
         </div>
       </section>
 
@@ -159,25 +165,16 @@ export default function Home() {
         <div className="container">
           <h2>One Engagement Model. Every Capability the Business Needs.</h2>
           <p>
-            A single hourly rate covers all of it &mdash; scoped to the
-            problem in front of it, not sold off a shelf of fixed packages.
+            Bookkeeping automation, process automation, staff training, and
+            ongoing consulting &mdash; all covered by a single hourly rate,
+            scoped to the problem in front of it, not sold off a shelf of
+            fixed packages. No enterprise price tag, just an hourly rate, a
+            travel fee for onsite work, and a modest daily food stipend when
+            it runs a full day on-site.
           </p>
-          <ServicesGrid />
-          <p style={{ marginTop: "2rem" }}>
-            <Link href="/services">See Pricing and Every Service in Detail &rarr;</Link>
-          </p>
-        </div>
-      </section>
-
-      <section className="section section-border">
-        <div className="container">
-          <h2>How Engagement Works</h2>
-          <PricingModel />
-          <p className="hint" style={{ marginTop: "1rem" }}>
-            No enterprise price tag and no fixed packages &mdash; an hourly
-            rate, a travel fee for onsite work, and a modest daily food
-            stipend when it runs a full day on-site.
-          </p>
+          <Link href="/services" className="btn btn-primary">
+            See Every Service &amp; How Pricing Works &rarr;
+          </Link>
         </div>
       </section>
 

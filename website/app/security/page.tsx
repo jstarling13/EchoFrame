@@ -65,12 +65,12 @@ export default function SecurityPage() {
           framework, regardless of industry or workflow.
         </p>
 
-        <div className="grid grid-3" style={{ marginTop: "1.5rem", gap: "1.5rem" }}>
+        <div className="accordion" style={{ marginTop: "1.5rem" }}>
           {CONTROL_AREAS.map((area) => (
-            <div className="card" key={area.title}>
-              <h3>{area.title}</h3>
-              <p>{area.body}</p>
-            </div>
+            <details key={area.title}>
+              <summary>{area.title}</summary>
+              <p style={{ marginBottom: 0 }}>{area.body}</p>
+            </details>
           ))}
         </div>
 

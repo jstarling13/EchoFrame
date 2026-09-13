@@ -158,16 +158,17 @@ export default function MethodPage() {
           </table>
         </div>
 
-        <div style={{ marginTop: "2.5rem" }}>
+        <p style={{ marginTop: "2.5rem" }}>
+          Click a stage below for the full breakdown &mdash; minimum
+          contents, acceptance test, and the decision it unlocks.
+        </p>
+        <div className="accordion">
           {STAGE_DETAILS.map((detail) => (
-            <div
-              key={detail.stage}
-              className="card"
-              style={{ marginBottom: "1.5rem" }}
-            >
-              <p className="eyebrow">{detail.stage}</p>
-              <h3 style={{ marginTop: 0 }}>{detail.deliverable}</h3>
-              <p className="hint" style={{ marginTop: "-0.5rem" }}>
+            <details key={detail.stage}>
+              <summary>
+                {detail.stage} &mdash; {detail.deliverable}
+              </summary>
+              <p className="hint" style={{ marginTop: 0 }}>
                 {detail.whatEchoFrameDoes}
               </p>
               <p style={{ fontWeight: 700, marginBottom: "0.35rem" }}>
@@ -184,7 +185,7 @@ export default function MethodPage() {
               <p style={{ marginBottom: 0 }}>
                 <strong>Decision enabled:</strong> {detail.decisionEnabled}
               </p>
-            </div>
+            </details>
           ))}
         </div>
       </div>
