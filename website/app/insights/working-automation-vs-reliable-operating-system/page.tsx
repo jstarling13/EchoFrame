@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "A Working Automation Is Not Yet a Reliable Operating System",
   description:
     "A prototype proves a path can work. An operating system has to prove what happens when it doesn't.",
+  // Held back from the /insights index and search indexing for now —
+  // staggered for a later, real publish date. See lib/insights.ts.
+  robots: { index: false, follow: false },
 };
 
 export default function ArticlePage() {

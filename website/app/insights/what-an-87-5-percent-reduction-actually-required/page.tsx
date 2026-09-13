@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "What an 87.5% Reduction in Weekly Processing Time Actually Required",
   description:
     "An 87.5% result sounds like the whole story. It is not — what the number means, what it doesn't, and what actually produced it.",
+  // Held back from the /insights index and search indexing for now —
+  // staggered for a later, real publish date. See lib/insights.ts.
+  robots: { index: false, follow: false },
 };
 
 export default function ArticlePage() {

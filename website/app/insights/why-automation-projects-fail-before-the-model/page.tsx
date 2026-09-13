@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "Why Most Automation Projects Fail Before the First Model Is Chosen",
   description:
     "The easiest part of an automation project is picking a tool — and picking it too early is what usually breaks the project.",
+  // Held back from the /insights index and search indexing for now —
+  // staggered for a later, real publish date. See lib/insights.ts.
+  robots: { index: false, follow: false },
 };
 
 export default function ArticlePage() {

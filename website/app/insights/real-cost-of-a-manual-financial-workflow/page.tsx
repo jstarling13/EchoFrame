@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "The Real Cost of a Manual Financial Workflow",
   description:
     "The wage attached to a task is not its full cost. A useful business case counts touch time, rework, delay, concentration risk, and management attention.",
+  // Held back from the /insights index and search indexing for now —
+  // staggered for a later, real publish date. See lib/insights.ts.
+  robots: { index: false, follow: false },
 };
 
 export default function ArticlePage() {

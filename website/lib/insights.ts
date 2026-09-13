@@ -7,6 +7,20 @@ export interface InsightArticle {
   kind?: "Case Study";
 }
 
+/**
+ * Deliberately short. Jacob's call: six articles all dated the same day
+ * with near-identical reading times read as a same-day content dump, not
+ * an ongoing publishing practice — a real credibility problem, not a
+ * cosmetic one. Rather than backdate the rest to fake an earlier history
+ * (dishonest), the other four (why-automation-projects-fail-before-the-
+ * model, real-cost-of-a-manual-financial-workflow,
+ * working-automation-vs-reliable-operating-system,
+ * what-an-87-5-percent-reduction-actually-required) stay written and in
+ * place under app/insights/ but out of this list, to be added back one
+ * at a time with real publish dates as they actually go live. Add
+ * `robots: {index:false}` was applied to those pages so they don't get
+ * indexed while unlisted.
+ */
 export const INSIGHTS_ARTICLES: InsightArticle[] = [
   {
     slug: "from-three-16-hour-days-to-six-hours-a-week",
@@ -16,38 +30,6 @@ export const INSIGHTS_ARTICLES: InsightArticle[] = [
     date: "2026-09-13",
     readingTimeMinutes: 6,
     kind: "Case Study",
-  },
-  {
-    slug: "what-an-87-5-percent-reduction-actually-required",
-    title: "What an 87.5% Reduction in Weekly Processing Time Actually Required",
-    description:
-      "An 87.5% result sounds like the whole story. It is not — what the number means, what it doesn't, and what actually produced it.",
-    date: "2026-09-13",
-    readingTimeMinutes: 6,
-  },
-  {
-    slug: "why-automation-projects-fail-before-the-model",
-    title: "Why Most Automation Projects Fail Before the First Model Is Chosen",
-    description:
-      "The easiest part of an automation project is picking a tool — and picking it too early is what usually breaks the project.",
-    date: "2026-09-13",
-    readingTimeMinutes: 6,
-  },
-  {
-    slug: "real-cost-of-a-manual-financial-workflow",
-    title: "The Real Cost of a Manual Financial Workflow",
-    description:
-      "The wage attached to a task is not its full cost. A useful business case counts touch time, rework, delay, concentration risk, and management attention.",
-    date: "2026-09-13",
-    readingTimeMinutes: 6,
-  },
-  {
-    slug: "working-automation-vs-reliable-operating-system",
-    title: "A Working Automation Is Not Yet a Reliable Operating System",
-    description:
-      "A prototype proves a path can work. An operating system has to prove what happens when it doesn't.",
-    date: "2026-09-13",
-    readingTimeMinutes: 6,
   },
   {
     slug: "evaluating-an-ai-automation-proposal",
