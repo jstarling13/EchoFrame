@@ -8,7 +8,7 @@ import IndustrySelector from "@/components/IndustrySelector";
 export const metadata: Metadata = {
   title: "Collapsing Five Hours of Reconciliation Into Zero | EchoFrame",
   description:
-    "EchoFrame engineers practical AI and automation for small businesses across the Northeast through The OWNED Method™ — bookkeeping and financial workflows, process automation, and staff training. Billed hourly, measured in outcomes.",
+    "EchoFrame engineers practical AI and automation for small businesses through The OWNED Method™ — bookkeeping and financial workflows, process automation, and staff training. Billed hourly, measured in outcomes.",
 };
 
 export default function Home() {
@@ -30,10 +30,10 @@ export default function Home() {
           <h1>Collapsing Five Hours of Daily Reconciliation Into Zero.</h1>
           <p>
             EchoFrame engineers hands-on AI and workflow automation for small
-            businesses across the Northeast &mdash; delivered through The
-            OWNED Method&trade;, a proprietary five-stage framework built for
-            measurable risk reduction, not another platform demo. Scoped to
-            the operation as it actually runs. Built to be owned outright.
+            businesses &mdash; delivered through The OWNED Method&trade;, a
+            proprietary five-stage framework built for measurable risk
+            reduction, not another platform demo. Scoped to the operation as
+            it actually runs. Built to be owned outright.
           </p>
           <div className="hero-actions">
             <Link href="/contact" className="btn btn-primary">
@@ -169,9 +169,9 @@ export default function Home() {
           <h2>How Engagement Works</h2>
           <PricingModel />
           <p className="hint" style={{ marginTop: "1rem" }}>
-            No enterprise price tag, and no writing your business AI checks
-            it can&rsquo;t cash &mdash; just an hourly rate, a travel fee, and
-            a receipt for the food.
+            No enterprise price tag and no fixed packages &mdash; an hourly
+            rate, a travel fee for onsite work, and a modest daily food
+            stipend when it runs a full day on-site.
           </p>
         </div>
       </section>
