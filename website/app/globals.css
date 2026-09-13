@@ -941,32 +941,39 @@ fieldset {
 /* Founder */
 .founder-section {
   display: grid;
-  grid-template-columns: 180px 1fr;
+  grid-template-columns: 320px 1fr;
   gap: 2.5rem;
-  align-items: center;
+  align-items: start;
   background: var(--paper);
   border-radius: var(--radius);
-  padding: 2rem clamp(1.5rem, 4vw, 3rem);
+  padding: 2.5rem clamp(1.5rem, 4vw, 3rem);
   margin-block: 2rem;
 }
 
 .founder-photo {
-  width: 160px;
-  height: 160px;
+  width: 320px;
+  height: 320px;
   border-radius: var(--radius);
   object-fit: cover;
-  border-bottom: 3px solid var(--accent-deep);
+  border-bottom: 4px solid var(--accent-deep);
 }
 
 .founder-section h2 {
   margin-top: 0;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 800px) {
   .founder-section {
     grid-template-columns: 1fr;
     text-align: center;
     justify-items: center;
+  }
+
+  .founder-photo {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    aspect-ratio: 1 / 1;
   }
 }
 
