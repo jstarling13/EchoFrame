@@ -16,8 +16,8 @@ export default function Header() {
           <Image
             src="/images/echoframe-logo.png"
             alt="EchoFrame"
-            width={118}
-            height={31}
+            width={157}
+            height={41}
             className="brand-logo-full"
             priority
           />

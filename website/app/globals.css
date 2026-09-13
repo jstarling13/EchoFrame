@@ -170,6 +170,10 @@ select:focus-visible,
   object-fit: contain;
 }
 
+.site-header .brand-logo-full {
+  height: 3rem;
+}
+
 /* The real logo file is navy/gold on transparent, made for light
    surfaces. The footer is a dark surface, so it's rendered as a white
    silhouette there via filter rather than a second exported asset. */
@@ -747,7 +751,7 @@ fieldset {
 
 .method-flow-item {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 0.5rem;
   flex: 1 1 0;
   min-width: 0;
@@ -782,9 +786,8 @@ fieldset {
   background: var(--accent-deep);
   color: var(--white);
   font-weight: 700;
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   line-height: 1;
-  padding-top: 0.1rem;
   margin-bottom: 0.85rem;
 }
 
@@ -792,6 +795,7 @@ fieldset {
   color: var(--accent-deep);
   flex-shrink: 0;
   display: flex;
+  align-self: center;
 }
 
 @media (max-width: 900px) {
