@@ -18,6 +18,14 @@ export const INSIGHTS_ARTICLES: InsightArticle[] = [
     kind: "Case Study",
   },
   {
+    slug: "what-an-87-5-percent-reduction-actually-required",
+    title: "What an 87.5% Reduction in Weekly Processing Time Actually Required",
+    description:
+      "An 87.5% result sounds like the whole story. It is not — what the number means, what it doesn't, and what actually produced it.",
+    date: "2026-09-13",
+    readingTimeMinutes: 6,
+  },
+  {
     slug: "why-automation-projects-fail-before-the-model",
     title: "Why Most Automation Projects Fail Before the First Model Is Chosen",
     description:
@@ -48,13 +56,5 @@ export const INSIGHTS_ARTICLES: InsightArticle[] = [
       "A buyer's checklist: the questions to ask about scope, baselines, human review, data flow, failure handling, ownership, and measurement before approving the work.",
     date: "2026-09-13",
     readingTimeMinutes: 7,
-  },
-  {
-    slug: "what-an-87-5-percent-reduction-actually-required",
-    title: "What an 87.5% Reduction in Weekly Processing Time Actually Required",
-    description:
-      "An 87.5% result sounds like the whole story. It is not — what the number means, what it doesn't, and what actually produced it.",
-    date: "2026-09-13",
-    readingTimeMinutes: 6,
   },
 ];
