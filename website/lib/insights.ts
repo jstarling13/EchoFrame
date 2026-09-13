@@ -28,7 +28,7 @@ export const INSIGHTS_ARTICLES: InsightArticle[] = [
     description:
       "An anonymized case study: a client-tracked 87.5% reduction in weekly processing time for a multi-location food-service accounting operation — including what the result does and does not prove.",
     date: "2026-09-13",
-    readingTimeMinutes: 6,
+    readingTimeMinutes: 9,
     kind: "Case Study",
   },
   {
