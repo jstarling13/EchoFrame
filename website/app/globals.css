@@ -8,6 +8,8 @@
   --accent: #7297c5;
   --accent-deep: #3c5c88;
   --focus: #2451b6;
+  --brand-navy: #14284f;
+  --brand-gold: #b8902f;
   --max-content: 76rem;
   --radius: 2px;
   --font-serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
@@ -119,7 +121,8 @@ select:focus-visible,
 
 /* Header — signature periwinkle bar, black wordmark/nav */
 .site-header {
-  background: var(--accent);
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -155,10 +158,23 @@ select:focus-visible,
   flex-shrink: 0;
 }
 
+.logo-icon {
+  height: 2.25rem;
+  width: auto;
+  flex-shrink: 0;
+}
+
 .brand-logo-full {
-  height: 3.25rem;
+  height: 2.25rem;
   width: auto;
   object-fit: contain;
+}
+
+/* The real logo file is navy/gold on transparent, made for light
+   surfaces. The footer is a dark surface, so it's rendered as a white
+   silhouette there via filter rather than a second exported asset. */
+.footer-logo-inverted {
+  filter: brightness(0) invert(1);
 }
 
 .footer-brand {
@@ -224,9 +240,9 @@ select:focus-visible,
 }
 
 .mobile-nav {
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  border-top: 1px solid var(--line);
   padding: 1rem clamp(1.25rem, 4vw, 3rem) 1.5rem;
-  background: var(--accent);
+  background: var(--white);
 }
 
 .mobile-nav ul {

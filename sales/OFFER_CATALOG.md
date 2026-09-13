@@ -1,5 +1,9 @@
 # Offer Catalog
 
+> **Superseded 2026-09-12.** New client work is quoted hourly — see
+> `HOURLY_PRICING_MODEL.md`. This file is kept for historical reference,
+> not deleted.
+
 **Purpose:** Define scope and price consistently
 
 **Version:** 1.0 | **Date:** 2026-08-28

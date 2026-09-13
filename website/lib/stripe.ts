@@ -34,7 +34,7 @@ export function getStripeClient(): Stripe {
 
   cachedClient = new Stripe(key, {
     apiVersion: "2026-08-26.dahlia",
-    appInfo: { name: "white-oak-operations-site" },
+    appInfo: { name: "echoframe-site" },
   });
   return cachedClient;
 }

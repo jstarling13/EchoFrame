@@ -84,7 +84,7 @@ export default function MobileNav() {
             ))}
             <li>
               <Link href="/contact" className="btn btn-primary">
-                Book a fit call
+                Request a Quote
               </Link>
             </li>
           </ul>

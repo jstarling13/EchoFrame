@@ -3,7 +3,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Privacy policy for White Oak Operations.",
+  description: "Privacy policy for EchoFrame.",
   // Attorney-review draft, not final — never indexed regardless of
   // environment, even once Production is otherwise indexable.
   robots: { index: false, follow: true },
@@ -66,12 +66,12 @@ export default function PrivacyPage() {
 
         <h2>Contact</h2>
         <p>
-          White Oak Operations
+          EchoFrame
           <br />
           17 Ridgeway Drive, Cataula, GA 31804
           <br />
-          <a href="mailto:jacobstarling4313@gmail.com">
-            jacobstarling4313@gmail.com
+          <a href="mailto:jacob.starling@echoframe.net">
+            jacob.starling@echoframe.net
           </a>
         </p>
         <p className="owner-todo">

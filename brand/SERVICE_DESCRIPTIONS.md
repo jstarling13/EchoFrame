@@ -1,5 +1,9 @@
 # Service Descriptions
 
+> **Superseded 2026-09-12.** Pricing is now hourly, not fixed packages —
+> see `sales/HOURLY_PRICING_MODEL.md`. This file is kept for historical
+> reference, not deleted.
+
 **Purpose:** Explain the five commercial offers in plain language
 
 **Version:** 1.0 | **Date:** 2026-08-28

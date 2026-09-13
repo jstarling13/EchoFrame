@@ -20,11 +20,11 @@ export const FOOTER_COMPANY: NavItem[] = [
 ];
 
 export const FOOTER_SERVICES: NavItem[] = [
-  { href: "/workflow-diagnostic", label: "Workflow Opportunity Diagnostic" },
-  { href: "/build-sprint", label: "Workflow Build Sprint" },
-  { href: "/transformation", label: "AI Operations Transformation" },
-  { href: "/enterprise", label: "Enterprise AI Operations Program" },
-  { href: "/support", label: "Workflow Assurance & Enablement" },
+  { href: "/services#workflow-discovery", label: "Workflow Discovery" },
+  { href: "/services#bookkeeping-automation", label: "Financial Workflow Automation" },
+  { href: "/services#process-automation", label: "Process Automation" },
+  { href: "/services#staff-training", label: "Staff Training" },
+  { href: "/services#ongoing-consulting", label: "Ongoing AI Consulting" },
 ];
 
 export const FOOTER_LEGAL: NavItem[] = [

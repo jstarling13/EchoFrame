@@ -179,7 +179,7 @@ export default function LeadForm() {
         <label style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem", fontWeight: 400 }}>
           <input type="checkbox" name="consent" required style={{ width: "auto", marginTop: "0.2rem" }} />
           <span className="consent-notice">
-            I consent to White Oak Operations contacting me about this request and
+            I consent to EchoFrame contacting me about this request and
             storing the information above per the <a href="/privacy">privacy policy</a>.
           </span>
         </label>

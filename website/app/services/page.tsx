@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import OfferTable from "@/components/OfferTable";
+import ServicesGrid from "@/components/ServicesGrid";
+import PricingModel from "@/components/PricingModel";
 import EngagementJourney from "@/components/EngagementJourney";
 import Faq from "@/components/Faq";
 
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "Five AI operations engagements, from a 10-day diagnostic to a full enterprise program. Choose the smallest engagement that can produce evidence.",
+    "Bookkeeping and financial workflow automation, process automation, staff training, and ongoing AI consulting for small businesses — billed hourly, no fixed packages.",
 };
 
 export default function ServicesPage() {
@@ -15,17 +16,17 @@ export default function ServicesPage() {
     <main id="content">
       <div className="container section">
         <Breadcrumbs trail={[{ href: "/services", label: "Services" }]} />
-        <h1>Choose the smallest engagement that can produce evidence.</h1>
-        <OfferTable />
-        <div className="callout" style={{ marginTop: "2rem" }}>
-          <p>
-            Additional workflow: from $2,500. Additional onsite day: $2,000
-            plus approved travel. Additional training cohort: $1,250. Data
-            cleanup/migration: scoped separately. Ten-hour support block:
-            $2,000. Security/compliance specialist: pass-through or
-            separately quoted.
-          </p>
-        </div>
+        <p className="eyebrow">The Capability Stack</p>
+        <h1>One Engagement Model. Whatever the Business Actually Needs.</h1>
+        <p>
+          No tiered SKUs to decode, no platform to license &mdash; every
+          project is scoped to the real problem, engineered through The
+          OWNED Method&trade;, and billed the same simple way.
+        </p>
+        <ServicesGrid />
+
+        <h2 style={{ marginTop: "3rem" }}>How Engagement Works</h2>
+        <PricingModel />
 
         <div style={{ marginTop: "3rem" }}>
           <EngagementJourney />

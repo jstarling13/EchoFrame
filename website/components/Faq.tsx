@@ -5,6 +5,11 @@ interface FaqItem {
 
 const FAQ_ITEMS: FaqItem[] = [
   {
+    question: "Is the first conversation free?",
+    answer:
+      "Yes. The initial fit call is free — 20-30 minutes to confirm the workflow is real and automation is the right answer. If it's complex enough to need real mapping, that discovery work is billed at the standard hourly rate before any implementation begins.",
+  },
+  {
     question: "Do you only train teams?",
     answer:
       "No. Training is tied to implemented or clearly designed workflows.",

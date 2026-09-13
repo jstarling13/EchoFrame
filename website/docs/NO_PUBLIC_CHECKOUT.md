@@ -2,7 +2,7 @@
 
 **This is intentional, not an unfinished feature.**
 
-White Oak Operations sells scoped professional services (consulting,
+EchoFrame sells scoped professional services (consulting,
 implementation, training, ownership transfer), not a self-serve product.
 A stranger clicking "buy" on a marketing page and immediately being
 charged does not fit that model — there is no scope agreement, no signed

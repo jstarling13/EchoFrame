@@ -3,7 +3,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
-  description: "Website terms of use for White Oak Operations.",
+  description: "Website terms of use for EchoFrame.",
   // Attorney-review draft, not final — never indexed regardless of
   // environment, even once Production is otherwise indexable.
   robots: { index: false, follow: true },
@@ -42,7 +42,7 @@ export default function TermsPage() {
 
         <h2>Ownership</h2>
         <p>
-          The site and its content are owned by White Oak Operations or
+          The site and its content are owned by EchoFrame or
           its licensors, subject to third-party materials identified
           separately.
         </p>
@@ -58,13 +58,13 @@ export default function TermsPage() {
 
         <h2>Governing law and contact</h2>
         <p>
-          White Oak Operations
+          EchoFrame
           <br />
           17 Ridgeway Drive, Cataula, GA 31804
           <br />
           <a href="tel:+17063661096">(706) 366-1096</a> &middot;{" "}
-          <a href="mailto:jacobstarling4313@gmail.com">
-            jacobstarling4313@gmail.com
+          <a href="mailto:jacob.starling@echoframe.net">
+            jacob.starling@echoframe.net
           </a>
         </p>
         <p className="owner-todo">

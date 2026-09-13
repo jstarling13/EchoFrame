@@ -14,10 +14,10 @@ export default function Header() {
       <div className="bar">
         <Link href="/" className="brand-mark">
           <Image
-            src="/images/logo-full-white.png"
-            alt="White Oak Operations"
-            width={175}
-            height={140}
+            src="/images/echoframe-logo.png"
+            alt="EchoFrame"
+            width={118}
+            height={31}
             className="brand-logo-full"
             priority
           />
@@ -36,7 +36,7 @@ export default function Header() {
             ))}
             <li>
               <Link href="/contact" className="btn btn-primary">
-                Book a fit call
+                Request a Quote
               </Link>
             </li>
           </ul>
