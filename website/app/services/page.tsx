@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import ServicesGrid from "@/components/ServicesGrid";
-import PricingModel from "@/components/PricingModel";
-import EngagementJourney from "@/components/EngagementJourney";
-import Faq from "@/components/Faq";
+import ServicesTabs from "@/components/ServicesTabs";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -23,17 +20,7 @@ export default function ServicesPage() {
           project is scoped to the real problem, engineered through The
           OWNED Method&trade;, and billed the same simple way.
         </p>
-        <ServicesGrid />
-
-        <h2 style={{ marginTop: "3rem" }}>How Engagement Works</h2>
-        <PricingModel />
-
-        <div style={{ marginTop: "3rem" }}>
-          <EngagementJourney />
-        </div>
-
-        <h2 style={{ marginTop: "3rem" }}>Frequently asked questions</h2>
-        <Faq />
+        <ServicesTabs />
       </div>
     </main>
   );
