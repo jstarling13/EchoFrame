@@ -82,7 +82,7 @@ export default function SecurityPage() {
           ))}
         </div>
 
-        <div className="callout callout-risk" style={{ marginTop: "2rem" }}>
+        <div className="callout" style={{ marginTop: "2rem" }}>
           <p>
             This is a practical control framework, not a claim of compliance
             certification. Sensitive or regulated data is never submitted to
