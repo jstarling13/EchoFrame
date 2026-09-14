@@ -17,11 +17,33 @@ export const employeeRanges = [
 
 export const urgencyLevels = ["Exploring", "This quarter", "Urgent"] as const;
 
+// Matches the three buyer personas in strategy/ICP_PERSONAS_AND_TRIGGERS.md,
+// plus a catch-all for anyone who doesn't fit those.
+export const roles = [
+  "Owner / Managing Partner",
+  "Office / Operations Manager",
+  "Bookkeeper / CPA / Finance Professional",
+  "Other",
+] as const;
+
+export const usStates = [
+  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
+  "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia",
+  "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+  "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
+  "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
+  "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota",
+  "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+  "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
+  "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming",
+  "Outside the U.S.",
+] as const;
+
 export const contactFormSchema = z.object({
   name: z.string().trim().min(2, "Enter your full name").max(120),
   email: z.string().trim().email("Enter a valid work email").max(200),
   company: z.string().trim().min(2, "Enter your company name").max(160),
-  role: z.string().trim().min(2, "Enter your role").max(120),
+  role: z.enum(roles, { message: "Select a role" }),
   website: z
     .string()
     .trim()
@@ -32,7 +54,7 @@ export const contactFormSchema = z.object({
   employeeRange: z.enum(employeeRanges, {
     message: "Select an employee range",
   }),
-  state: z.string().trim().min(2, "Enter a state or region").max(60),
+  state: z.enum(usStates, { message: "Select a state" }),
   workflowProblem: z
     .string()
     .trim()

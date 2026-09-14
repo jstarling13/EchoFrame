@@ -2,7 +2,7 @@
 
 import { useId, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { employeeRanges, urgencyLevels } from "@/lib/validation";
+import { employeeRanges, roles, urgencyLevels, usStates } from "@/lib/validation";
 
 const HONEYPOT_FIELD =
   process.env.NEXT_PUBLIC_CONTACT_FORM_HONEYPOT_FIELD || "company_website";
@@ -108,7 +108,16 @@ export default function LeadForm({
 
       <div className={`form-field ${errors.role ? "has-error" : ""}`}>
         <label htmlFor={`${formId}-role`}>Role</label>
-        <input id={`${formId}-role`} name="role" type="text" required />
+        <select id={`${formId}-role`} name="role" required defaultValue="">
+          <option value="" disabled>
+            Select your role
+          </option>
+          {roles.map((role) => (
+            <option key={role} value={role}>
+              {role}
+            </option>
+          ))}
+        </select>
         {errors.role && <span className="field-error">{errors.role}</span>}
       </div>
 
@@ -137,7 +146,16 @@ export default function LeadForm({
 
       <div className={`form-field ${errors.state ? "has-error" : ""}`}>
         <label htmlFor={`${formId}-state`}>State</label>
-        <input id={`${formId}-state`} name="state" type="text" autoComplete="address-level1" required />
+        <select id={`${formId}-state`} name="state" required defaultValue="">
+          <option value="" disabled>
+            Select a state
+          </option>
+          {usStates.map((state) => (
+            <option key={state} value={state}>
+              {state}
+            </option>
+          ))}
+        </select>
         {errors.state && <span className="field-error">{errors.state}</span>}
       </div>
 

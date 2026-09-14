@@ -951,16 +951,6 @@ fieldset {
   margin: 0;
 }
 
-.problem-matcher__ai {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--line);
-}
-
-.problem-matcher__ai .btn {
-  margin-top: 0.5rem;
-}
-
 .callout-risk {
   border-left-color: #8a6d00;
   background: #fbf6e3;

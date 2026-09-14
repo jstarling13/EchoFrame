@@ -10,10 +10,10 @@ const validPayload = {
   name: "Jordan Lee",
   email: "jordan@example.com",
   company: "Example Co",
-  role: "Operations Director",
+  role: "Office / Operations Manager" as const,
   website: "https://example.com",
   employeeRange: "25-49" as const,
-  state: "NY",
+  state: "New York" as const,
   workflowProblem: "Invoice approvals take two weeks and nobody knows why.",
   urgency: "This quarter" as const,
   referralSource: "Referral",
@@ -71,6 +71,8 @@ describe("normalizeContactPayload", () => {
       const messages = result.error.issues.map((i) => i.message);
       expect(messages).toContain("Enter your full name");
       expect(messages).toContain("Select an employee range");
+      expect(messages).toContain("Select a role");
+      expect(messages).toContain("Select a state");
       expect(messages).toContain("Consent is required to submit this form");
       expect(messages.some((m) => m.includes("expected string"))).toBe(false);
     }
