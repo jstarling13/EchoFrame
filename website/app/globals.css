@@ -297,6 +297,17 @@ select:focus-visible,
   letter-spacing: 0.04em;
   min-height: 44px;
   line-height: 1.2;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px -8px rgba(0, 0, 0, 0.35);
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: none;
 }
 
 .btn-primary {
@@ -500,6 +511,13 @@ select:focus-visible,
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1.5rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-deep);
+  box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.25);
 }
 
 /* Offer cards / table */
@@ -691,6 +709,27 @@ fieldset {
   content: "\2212";
 }
 
+/* Content that just opened "pops" in with a fade + slight rise. A CSS
+   animation (not transition) is used deliberately — <details> content is
+   display:none while closed, so there's no "before" state for a
+   transition to interpolate from, but a keyframe animation just plays
+   fresh every time the element starts rendering again. Respects
+   prefers-reduced-motion via the global override above. */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.faq details[open] > p {
+  animation: pop-in 0.2s ease;
+}
+
 /* Accordion (Method stages, Security controls) — same interaction
    pattern as .faq, styled for card-bordered content instead of a
    plain list. */
@@ -729,6 +768,10 @@ fieldset {
 
 .accordion details[open] summary {
   margin-bottom: 0.85rem;
+}
+
+.accordion details[open] > *:not(summary) {
+  animation: pop-in 0.2s ease;
 }
 
 /* Callouts */
@@ -1150,4 +1193,23 @@ fieldset {
 .services-tabs__tab.is-active {
   color: var(--ink-pure);
   border-bottom-color: var(--accent-deep);
+}
+
+/* Same technique as the accordions: [hidden] maps to display:none, so a
+   fresh keyframe animation (not a transition) plays every time a panel
+   is un-hidden by clicking its tab. */
+.services-tabs [role="tabpanel"]:not([hidden]) {
+  animation: pop-in 0.25s ease;
+}
+
+/* Scroll-triggered reveal (components/ScrollReveal.tsx). */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }

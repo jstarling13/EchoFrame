@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
   title: "Reclaiming 40+ Hours of Weekly Processing Capacity | EchoFrame",
@@ -44,7 +45,7 @@ export default function Home() {
       </section>
 
       <section className="section section-border">
-        <div className="container">
+        <ScrollReveal className="container">
           <p className="eyebrow">Point of View</p>
           <h2>The Case for Architectural Restraint.</h2>
           <p>
@@ -55,11 +56,11 @@ export default function Home() {
             that actually fits, and prove the result before it ever scales,
             without losing control of quality, data, or judgment.
           </p>
-        </div>
+        </ScrollReveal>
       </section>
 
       <section className="section section-alt section-border">
-        <div className="container">
+        <ScrollReveal className="container">
           <p className="eyebrow">Put the Workflow in Context</p>
           <h2>Every Industry Repeats the Same Work. The Controls Differ.</h2>
           <p>
@@ -71,11 +72,11 @@ export default function Home() {
           <Link href="/industries" className="btn btn-secondary">
             Find Your Industry &rarr;
           </Link>
-        </div>
+        </ScrollReveal>
       </section>
 
       <section className="section section-border">
-        <div className="container">
+        <ScrollReveal className="container">
           <div className="callout">
             <p className="eyebrow">Proof, Not Promises</p>
             <p style={{ fontFamily: "var(--font-serif)", fontSize: "1.4rem", marginBottom: "0.75rem" }}>
@@ -96,11 +97,11 @@ export default function Home() {
               </Link>
             </p>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       <section className="section section-border">
-        <div className="container grid grid-3">
+        <ScrollReveal className="container grid grid-3">
           <div>
             <h3>Consulting</h3>
             <p>Map how the work actually moves before touching any tool.</p>
@@ -113,11 +114,11 @@ export default function Home() {
             <h3>Training</h3>
             <p>Hand the team the skills and documentation to run it alone.</p>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       <section className="section section-alt section-border">
-        <div className="container">
+        <ScrollReveal className="container">
           <h2>What EchoFrame Delivers</h2>
           <ul>
             <li>Clear opportunity priorities</li>
@@ -127,21 +128,21 @@ export default function Home() {
             <li>Operating documentation</li>
             <li>Measurable risk reduction</li>
           </ul>
-        </div>
+        </ScrollReveal>
       </section>
 
       <section className="section section-border">
-        <div className="container">
+        <ScrollReveal className="container">
           <h2>The OWNED Method&trade;</h2>
           <p>Observe, Weigh, Navigate, Engineer, Demonstrate and Transfer.</p>
           <Link href="/method" className="btn btn-secondary">
             Read the Full Method &rarr;
           </Link>
-        </div>
+        </ScrollReveal>
       </section>
 
       <section className="section section-alt section-border">
-        <div className="container">
+        <ScrollReveal className="container">
           <h2>One Engagement Model. Every Capability the Business Needs.</h2>
           <p>
             Bookkeeping automation, process automation, staff training, and
@@ -154,16 +155,16 @@ export default function Home() {
           <Link href="/services" className="btn btn-primary">
             See Every Service &amp; How Pricing Works &rarr;
           </Link>
-        </div>
+        </ScrollReveal>
       </section>
 
       <section className="section">
-        <div className="container">
+        <ScrollReveal className="container">
           <h2>Start With the Workflow Costing You the Most.</h2>
           <Link href="/contact" className="btn btn-primary">
             Request a Quote
           </Link>
-        </div>
+        </ScrollReveal>
       </section>
     </main>
   );
